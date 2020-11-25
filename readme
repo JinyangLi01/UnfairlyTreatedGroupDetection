@@ -69,12 +69,20 @@ Formal dataset: miss_class3.csv, CleanAdult3.csv
 
 
 
+dataset: CleanAdult3.csv  size = 45222
 
 M30: result in Deepdiver, Tao = 30 (Threshold of accuracy * threshold of cardinality)
 all misclassfied patterns, with tao = 30
+size = 7550
 
 P30: patterns satisfying both cardinality and accuracy requreiments
 come from M30
+size = 6640
+
+
+
+
+
 
 
 
