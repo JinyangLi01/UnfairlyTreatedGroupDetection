@@ -160,6 +160,17 @@ class PatternCounter:
         return self.char_index(attr_value) + sum(self.cardinalities[:attr_index])
 
 
+def num2string(pattern):
+    st = ''
+    for i in pattern:
+        if i != -1:
+            st += str(i)
+        st += '|'
+    st = st[:-1]
+    return st
+
+
+
 def main():
     '''
     Test case to check for pattern count correctness
