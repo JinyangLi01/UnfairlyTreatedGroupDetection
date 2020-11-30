@@ -51,9 +51,12 @@ class PatternCounter:
         if self.selected_attrs_names is not None:
             df = df[self.selected_attrs_names]
             self.num_attrs = len(self.selected_attrs_names)
-        else:
+        elif self.selected_attrs_id is not None:
             df = df.iloc[:, self.selected_attrs_id]
             self.num_attrs = len(self.selected_attrs_id)
+        else:
+            self.selected_attrs_names = df.columns.values.tolist()
+            self.num_attrs = len(self.selected_attrs_names)
         data = df.values.astype(str) # 2d np array
         cardinalities = list(df.nunique())
         self.cardinalities = cardinalities
@@ -175,7 +178,7 @@ def main():
     '''
     Test case to check for pattern count correctness
     '''
-    pc = PatternCounter('test_data.txt', ['col1', 'col2', 'col3', 'col4'])
+    pc = PatternCounter('../InputData/test_data.txt')
     pc.parse_data()
     print(pc.pattern_count('2XXX')) # 6
     print(pc.pattern_count('XXXX')) # 13
@@ -186,7 +189,7 @@ def main():
     print(pc.pattern_count('21XX')) # 0
     print(pc.pattern_count('X1X0')) # 2
 
-    pc2 = PatternCounter('test_data2.txt', ['col1', 'col2', 'col3', 'col4'], encoded=False)
+    pc2 = PatternCounter('../InputData/test_data2.txt', ['col1', 'col2', 'col3', 'col4'], encoded=False)
     pc2.parse_data()
     print(pc2.pattern_count('hehe|||')) # 6
     print(pc2.pattern_count('|||')) # 13
@@ -197,10 +200,13 @@ def main():
     print(pc2.pattern_count('hehe|123||')) # 0
     print(pc2.pattern_count('|123||Yifan')) # 2
 
-    pc3 = PatternCounter('test_data3.txt', ['age', 'workclass', 'education', 'educational-num'], encoded=False)
+    """
+    pc3 = PatternCounter('../InputData/test_data3.txt', ['age', 'workclass', 'education', 'educational-num'], encoded=False)
     pc3.parse_data()
     print(pc3.pattern_count('|||37')) # 1
     print(pc3.pattern_count('|||33')) # 0
+    """
+
     return 0
 
 

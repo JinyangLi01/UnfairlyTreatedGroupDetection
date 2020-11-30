@@ -50,6 +50,16 @@ def num2string(pattern):
     return st
 
 
+def PatternEqual(m, P):
+    length = len(m)
+    if len(P) != length:
+        return False
+    for i in range(length):
+        if m[i] != P[i]:
+            return False
+    return True
+
+
 def P1DominatedByP2(P1, P2):
     length = len(P1)
     for i in range(length):
@@ -71,12 +81,16 @@ def cov(P, D):
     return cnt
 
 
+
 # whether a pattern P is dominated by MUP M
+# except from P itself
 def PDominatedByM(P, M):
     for m in M:
+        if PatternEqual(m, P):
+            continue
         if P1DominatedByP2(P, m):
-            return True
-    return False
+            return True, m
+    return False, None
 
 
 def equalPattern(s, t):
@@ -92,41 +106,44 @@ def equalPattern(s, t):
 def NaiveAlg(whole_data_file, mis_class_data_file, Tha, Thc):
     time1 = time.time()
 
-    mc, mcdes, attributes = Prepatation(mis_class_data_file)
+    pc_mis_class = pattern_count.PatternCounter(mis_class_data_file, encoded=False)
+    pc_mis_class.parse_data()
+
+    pc_whole_data = pattern_count.PatternCounter(whole_data_file, encoded=False)
+    pc_whole_data.parse_data()
+
+    whole_data = pd.read_csv(whole_data_file)
+    whole_data_frame = whole_data.describe()
+    attributes = whole_data_frame.columns.values.tolist()
     NumAttribute = len(attributes)
     index_list = list(range(0, NumAttribute))  # list[1, 2, ...13]
 
-    column_list_mc = np.array(mc.columns).tolist()
-    pc_mc = pattern_count.PatternCounter(mis_class_data_file, column_list_mc, encoded=False)
-    pc_mc.parse_data()
-
-    data = pd.read_csv(whole_data_file)
-    column_list_adult = np.array(data.columns).tolist()
-    pc_adult = pattern_count.PatternCounter(whole_data_file, column_list_adult, encoded=False)
-    pc_adult.parse_data()
-
     num_pattern_checked = 0
     pattern_with_low_accuracy = []
+    finished1 = False
     for num_att in range(1, NumAttribute + 1):
-        comb_num_att = list(
-            combinations(index_list, num_att))  # list of combinations of attribute index, length num_att
+        print("----------------------------------------------------  num_att = ", num_att)
+        comb_num_att = list(combinations(index_list, num_att))  # list of combinations of attribute index, length num_att
+        allDominatedByCurrentCandidateSet = True
         for comb in comb_num_att:
-            patterns = AllPatternsInComb(comb, NumAttribute, mcdes, attributes)
+            patterns = AllPatternsInComb(comb, NumAttribute, whole_data_frame, attributes)
             for p in patterns:
 
                 num_pattern_checked += 1
                 p_ = num2string(p)
-                cardinality = pc_adult.pattern_count(p_)
+                whole_cardinality = pc_whole_data.pattern_count(p_)
 
-                if cardinality < Thc:
+                if whole_cardinality < Thc:
                     continue
-                mc = pc_mc.pattern_count(p_)
-                acc = 1 - mc / cardinality
-
-                if acc < Tha:
-                    if not PDominatedByM(p, pattern_with_low_accuracy):
+                mis_class_cardinality = pc_mis_class.pattern_count(p_)
+                accuracy = (whole_cardinality - mis_class_cardinality) / whole_cardinality
+                if accuracy < Tha:
+                    if PDominatedByM(p, pattern_with_low_accuracy)[0] is False:
+                        allDominatedByCurrentCandidateSet = False
                         pattern_with_low_accuracy.append(p)
-                        #print("pattern_with_low_accuracy number = {}".format(len(pattern_with_low_accuracy)))
+                        print(len(pattern_with_low_accuracy))
+        if allDominatedByCurrentCandidateSet:
+            break
 
     time2 = time.time()
     execution_time = time2 - time1
