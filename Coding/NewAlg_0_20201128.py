@@ -1,4 +1,9 @@
-
+"""
+New algorithm for minority group detection
+Search the graph top-down, generate children using the method in coverage paper to avoid redundancy.
+Stop point 1: when finding a pattern satisfying the requirements
+Stop point 2: when the cardinality is too small
+"""
 import pandas as pd
 import pattern_count
 import time

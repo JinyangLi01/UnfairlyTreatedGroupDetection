@@ -1,3 +1,12 @@
+"""
+Naive algorithm for minority group detection.
+The number of definied attributes in a pattern is 0, 1, 2.....
+In each for loop, enumerate all kinds of combinations, and all possible attribute values
+
+Stop condition: when there are x definied attributes in a pattern, but all patterns satisfying cardinality and accuracy
+    condition are dominated by the current answer set, then, stop searching.
+"""
+
 from itertools import combinations
 import pandas as pd
 import numpy as np
@@ -120,7 +129,6 @@ def NaiveAlg(whole_data_file, mis_class_data_file, Tha, Thc):
 
     num_pattern_checked = 0
     pattern_with_low_accuracy = []
-    finished1 = False
     for num_att in range(1, NumAttribute + 1):
         print("----------------------------------------------------  num_att = ", num_att)
         comb_num_att = list(combinations(index_list, num_att))  # list of combinations of attribute index, length num_att
@@ -142,6 +150,7 @@ def NaiveAlg(whole_data_file, mis_class_data_file, Tha, Thc):
                         allDominatedByCurrentCandidateSet = False
                         pattern_with_low_accuracy.append(p)
                         print(len(pattern_with_low_accuracy))
+        # stop condition: if all patterns satisfying all conditions are dominated by pattern_with_low_accuracy, stop searching
         if allDominatedByCurrentCandidateSet:
             break
 
