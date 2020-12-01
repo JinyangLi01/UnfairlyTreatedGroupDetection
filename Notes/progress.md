@@ -45,3 +45,9 @@ number of attributes = 13
 | number of patterns found | 4 | |
 
 
+---
+**Problems:**
+- how to further improve new algorithm?
+- time depends on attribute number, not data size!!!!
+
+
