@@ -51,3 +51,22 @@ number of attributes = 13
 - time depends on attribute number, not data size!!!!
 
 
+## 2020.12.02 meeting with Yuval 
+
+1. use correct end-to-end experiment pipeline
+
+2. Take part of attributes: age, gender, ... helps to debug and analyze
+
+3. what is the most time-consuming part in the code, how to improve
+
+4. what happens to the other datasets
+
+5. whether we can explain the reason. look at the decision tree. [optional]
+
+
+
+
+
+
+
+
