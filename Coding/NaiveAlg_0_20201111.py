@@ -112,16 +112,16 @@ def equalPattern(s, t):
     return True
 
 
-def NaiveAlg(whole_data_file, mis_class_data_file, Tha, Thc):
+def NaiveAlg(whole_data, mis_class_data, Tha, Thc):
     time1 = time.time()
 
-    pc_mis_class = pattern_count.PatternCounter(mis_class_data_file, encoded=False)
+    pc_mis_class = pattern_count.PatternCounter(mis_class_data, encoded=False)
     pc_mis_class.parse_data()
 
-    pc_whole_data = pattern_count.PatternCounter(whole_data_file, encoded=False)
+    pc_whole_data = pattern_count.PatternCounter(whole_data, encoded=False)
     pc_whole_data.parse_data()
 
-    whole_data = pd.read_csv(whole_data_file)
+
     whole_data_frame = whole_data.describe()
     attributes = whole_data_frame.columns.values.tolist()
     NumAttribute = len(attributes)
@@ -150,9 +150,11 @@ def NaiveAlg(whole_data_file, mis_class_data_file, Tha, Thc):
                         allDominatedByCurrentCandidateSet = False
                         pattern_with_low_accuracy.append(p)
                         print(len(pattern_with_low_accuracy))
+        """
         # stop condition: if all patterns satisfying all conditions are dominated by pattern_with_low_accuracy, stop searching
         if allDominatedByCurrentCandidateSet:
             break
+        """
 
     time2 = time.time()
     execution_time = time2 - time1

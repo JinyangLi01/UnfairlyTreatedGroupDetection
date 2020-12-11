@@ -68,16 +68,14 @@ def PDominatedByM(P, M):
             return True, m
     return False, None
 
-def GraphTraverse(whole_data_file, mis_class_data_file, Tha, Thc):
+def GraphTraverse(whole_data, mis_class_data, Tha, Thc):
     time1 = time.time()
 
-    pc_mis_class = pattern_count.PatternCounter(mis_class_data_file, encoded=False)
+    pc_mis_class = pattern_count.PatternCounter(mis_class_data, encoded=False)
     pc_mis_class.parse_data()
-
-    pc_whole_data = pattern_count.PatternCounter(whole_data_file, encoded=False)
+    pc_whole_data = pattern_count.PatternCounter(whole_data, encoded=False)
     pc_whole_data.parse_data()
 
-    whole_data = pd.read_csv(whole_data_file)
     whole_data_frame = whole_data.describe()
     attributes = whole_data_frame.columns.values.tolist()
 
@@ -90,7 +88,7 @@ def GraphTraverse(whole_data_file, mis_class_data_file, Tha, Thc):
         st = num2string(P)
         num_patterns_checked += 1
         mis_class_cardinality = pc_mis_class.pattern_count(st)
-        if mis_class_cardinality < Tha * Thc:
+        if mis_class_cardinality < (1-Tha) * Thc:
             continue
         whole_cardinality = pc_whole_data.pattern_count(st)
         if whole_cardinality < Thc:

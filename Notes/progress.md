@@ -64,6 +64,11 @@ number of attributes = 13
 5. whether we can explain the reason. look at the decision tree. [optional]
 
 
+## 2020.12.11 work
+
+finish 1 and 2 of the tasks.
+
+TODO: 3, 4, 5
 
 
 

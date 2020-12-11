@@ -22,15 +22,16 @@ class PatternCounter:
     Create object, call parse_data(), then call pattern_count()
     add support for non-encoded dataset; that is, to deal with any-arbitrary attribute value for each attribute
     '''
-    def __init__(self, filename, selected_attrs_names=None, selected_attrs_id=None, encoded=True):
+    def __init__(self, dataframe, selected_attrs_names=None, selected_attrs_id=None, encoded=True):
         '''
+        dataframe: df = pd.read_csv(self.filename, delimiter=', *', engine='python')
         filename: name of the data file
         selected_attrs_names: selected attributes considered in a lattice
         selected_attrs_id: id of selected attributes considered in a lattice
         both of them are in a iterable format (i.e. list) At least one of them should be provided
         encoded: whether the dataset has been processed
         '''
-        self.filename = filename
+        self.dataframe = dataframe
         self.selected_attrs_names = selected_attrs_names
         self.selected_attrs_id = selected_attrs_id
         self.encoded = encoded
@@ -47,7 +48,8 @@ class PatternCounter:
 
     def parse_data(self):
         # open file, read corresponding columns
-        df = pd.read_csv(self.filename, delimiter=', *', engine='python')
+        df = self.dataframe
+
         if self.selected_attrs_names is not None:
             df = df[self.selected_attrs_names]
             self.num_attrs = len(self.selected_attrs_names)
@@ -178,7 +180,9 @@ def main():
     '''
     Test case to check for pattern count correctness
     '''
-    pc = PatternCounter('../InputData/test_data.txt')
+    file1 = '../InputData/test_data.txt'
+    file1_data = pd.read_csv(file1, delimiter=', *', engine='python')
+    pc = PatternCounter(file1_data)
     pc.parse_data()
     print(pc.pattern_count('2XXX')) # 6
     print(pc.pattern_count('XXXX')) # 13
@@ -189,7 +193,9 @@ def main():
     print(pc.pattern_count('21XX')) # 0
     print(pc.pattern_count('X1X0')) # 2
 
-    pc2 = PatternCounter('../InputData/test_data2.txt', ['col1', 'col2', 'col3', 'col4'], encoded=False)
+    file2 = '../InputData/test_data2.txt'
+    file2_data = pd.read_csv(file2, delimiter=', *', engine='python')
+    pc2 = PatternCounter(file2_data, ['col1', 'col2', 'col3', 'col4'], encoded=False)
     pc2.parse_data()
     print(pc2.pattern_count('hehe|||')) # 6
     print(pc2.pattern_count('|||')) # 13
@@ -199,6 +205,7 @@ def main():
     print(pc2.pattern_count('|123|0|')) # 0
     print(pc2.pattern_count('hehe|123||')) # 0
     print(pc2.pattern_count('|123||Yifan')) # 2
+
 
     """
     pc3 = PatternCounter('../InputData/test_data3.txt', ['age', 'workclass', 'education', 'educational-num'], encoded=False)
