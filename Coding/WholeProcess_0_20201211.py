@@ -16,8 +16,7 @@ import numpy as np
 import csv
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
-from sklearn import tree
+
 
 
 
@@ -37,15 +36,6 @@ def Prediction(less_attribute_data, attributes):
 
     OverallAccuracy = (1 - mis_num / len(X_test))  # accuracy
     AccThreshold = OverallAccuracy - 0.2  # Low accuracy threshold
-
-    fig = plt.figure(figsize=(25, 20))
-    _ = tree.plot_tree(clf,
-                       # feature_names=attributes,
-                       class_names=['0', '1'],
-                       filled=True,
-                       rounded=True)
-    fig.savefig("tree2.png")
-
     return mis_class, mis_num, OverallAccuracy, AccThreshold
 
 

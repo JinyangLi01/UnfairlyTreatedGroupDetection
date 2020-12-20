@@ -70,6 +70,35 @@ finish 1 and 2 of the tasks.
 
 TODO: 3, 4, 5
 
+## 2020.12.18 work
+
+The most time-consuming part of new algorithm: pattern_count :) 
+
+
+
+
+##
+
+1. pattern_count is time-consuming, maybe we need try to avoid executing this function in some cases.
+
+2. generate graph for experiments. 
+ - number of attributes
+ - datasize
+ - threshold of mis-classified size
+ - threshold of accuracy
+ 
+ - run on two different datasets, generate graphs for each
+
+ use python or excel
+
+ python: easy to change
+ 
+
+3. find patterns with at most 5 attributes. patterns are not too specific
+
+4. group have different grades from true grades, not binary
+
+
 
 
 

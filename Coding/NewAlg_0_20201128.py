@@ -4,7 +4,7 @@ Search the graph top-down, generate children using the method in coverage paper 
 Stop point 1: when finding a pattern satisfying the requirements
 Stop point 2: when the cardinality is too small
 """
-import pandas as pd
+
 import pattern_count
 import time
 
@@ -83,23 +83,45 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc):
     root = [-1] * (len(attributes))
     S = [root]
     pattern_with_low_accuracy = []
+    duration1 = 0
+    duration2 = 0
+    duration3, duration4, duration5, duration6 = 0, 0, 0, 0
+
     while len(S) > 0:
+        time3 = time.time()
         P = S.pop()
         st = num2string(P)
         num_patterns_checked += 1
+        time4 = time.time()
+        # time consuming!!
         mis_class_cardinality = pc_mis_class.pattern_count(st)
+        time7 = time.time()
         if mis_class_cardinality < (1-Tha) * Thc:
             continue
+        time8 = time.time()
+        # time consuming!!
         whole_cardinality = pc_whole_data.pattern_count(st)
+        time9 = time.time()
         if whole_cardinality < Thc:
             continue
         accuracy = (whole_cardinality - mis_class_cardinality) / whole_cardinality
+        time10 = time.time()
+        duration1 += time4 - time3
+        duration3 += time7 - time4
+        duration4 += time8 - time7
+        duration5 += time9 - time8
+        duration6 += time10 - time9
+
         if accuracy >= Tha:
+            time5 = time.time()
             children = GenerateChildren(P, whole_data_frame, attributes)
+            time6 = time.time()
+            duration2 += time6 - time5
             S = S + children
             continue
         if PDominatedByM(P, pattern_with_low_accuracy)[0] is False:
             pattern_with_low_accuracy.append(P)
     time2 = time.time()
+    #print(duration1, duration2, duration3, duration4, duration5, duration6)
     return pattern_with_low_accuracy, num_patterns_checked, time2-time1
 
