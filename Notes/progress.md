@@ -77,11 +77,13 @@ The most time-consuming part of new algorithm: pattern_count :)
 
 
 
-##
+## 2020.12.19 meeting with Yuval
 
 1. pattern_count is time-consuming, maybe we need try to avoid executing this function in some cases.
 
 2. generate graph for experiments. 
+y axis: execution time, num_patterns_checked
+x axis:
  - number of attributes
  - datasize
  - threshold of mis-classified size
@@ -99,7 +101,29 @@ The most time-consuming part of new algorithm: pattern_count :)
 4. group have different grades from true grades, not binary
 
 
+## 2020.12.26 working
 
+1. the number of choices of an attribute: 15 or 4
+
+
+## 2020.12.30 meeting with Yuval
+
+1. data size experiment: start from the whole dataset, and increase it by generating random tuples
+
+2. use only new alg, use whole dataset, all att, and all tuples.
+check if the output set is empty
+
+3. check a pattern means check its accuracy
+
+4. tha: decrease? increase? check it! 
+
+5. thc: make sense. run it 10 times and record average
+
+6. number of attributes: running time problem. need to check
+
+7. one scenario where the result is not empty. and show problematic patterns.
+
+8. try more att in compas dataset? now I use 6. maybe try 7?
 
 
 
