@@ -27,86 +27,110 @@ def thousands_formatter(x, pos):
     return int(x/1000)
 
 def GridSearch(original_data_file, selected_attributes, Thc, time_limit, att_to_predict, difference_from_overall_acc=0.2):
+    pattern_with_low_accuracy, num_calculation, execution_time, overall_acc, Tha, mis_class_data = \
+        wholeprocess.WholeProcessWithOneAlgorithm(original_data_file, selected_attributes, Thc, time_limit,
+                                                  newalg.GraphTraverse, att_to_predict, difference_from_overall_acc)
 
-    sanity_check, pattern_with_low_accuracy1, num_patterns_checked1, execution_time1, \
-    pattern_with_low_accuracy2, num_patterns_checked2, execution_time2, overall_acc, Tha, mis_class_data = \
-        wholeprocess.WholeProcessWithTwoAlgorithms(original_data_file, selected_attributes, Thc, time_limit,
-                                                   att_to_predict)
+    print("{} patterns with low accuracy: \n {}".format(len(pattern_with_low_accuracy), pattern_with_low_accuracy))
 
-    if execution_time1 > time_limit:
+
+    if execution_time > time_limit:
         print("new alg exceeds time limit")
-    if execution_time2 > time_limit:
-        print("naive alg exceeds time limit")
-    elif sanity_check is False:
-        print("sanity check failes!")
 
-    print(pattern_with_low_accuracy1, pattern_with_low_accuracy2)
+    return execution_time, num_calculation, pattern_with_low_accuracy
 
-    return execution_time1, execution_time2, num_patterns_checked1, num_patterns_checked2
+# all att:
+selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree',
+                       'decile_score', 'c_days_from_compas_C', 'juv_fel_count_C', 'juv_misd_count_C',
+                       'juv_other_count_C']
 
-
-selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree']
 diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
 original_data_file = "../../../InputData/RecidivismData/RecidivismData_att_classified.csv"
 att_to_predict = 'is_recid'
-time_limit = 10*60
-execution_time1 = list()
-execution_time2 = list()
-num_patterns_checked1 = list()
+time_limit = 20*60
+execution_time = list()
+num_calculations = list()
 num_patterns_checked2 = list()
-thc = 30
+num_pattern_skipped_mis_c1 = list()
+num_pattern_skipped_mis_c2 = list()
+num_pattern_skipped_whole_c1 = list()
+num_pattern_skipped_whole_c2 = list()
+num_patterns_found = list()
+patterns_found = list()
+thc = 10
+num_loops = 5
 
 for dif in diff_acc:
     print("dif = {}".format(dif))
-    t1, t2, n1, n2 = GridSearch(original_data_file, selected_attributes, thc, time_limit, att_to_predict)
-    execution_time1.append(t1)
-    num_patterns_checked1.append(n1)
-    execution_time2.append(t2)
-    num_patterns_checked2.append(n2)
+    t, calculations = 0, 0
+    result_cardinality = 0
+    for l in range(num_loops):
+        t_, calculations_, result = GridSearch(original_data_file, selected_attributes,
+                                                thc, time_limit, att_to_predict, dif)
+        t += t_
+        calculations += calculations_
+        if l == 0:
+            result_cardinality = len(result)
+            patterns_found.append(result)
+            num_patterns_found.append(result_cardinality)
+    t /= num_loops
+    calculations /= num_loops
+    execution_time.append(t)
+    num_calculations.append(calculations)
 
 
 
 
 output_path = r'../../../OutputData/RecidivismDataset/tha.txt'
 output_file = open(output_path, "w")
-num_lines = len(execution_time1)
+num_lines = len(execution_time)
 
 output_file.write("execution time\n")
 for n in range(len(diff_acc)):
-    output_file.write('{} {} {}\n'.format(diff_acc[n], execution_time1[n], execution_time2[n]))
+    output_file.write('{} {}\n'.format(diff_acc[n], execution_time[n]))
 
 
-output_file.write("\n\nnumber of patterns checked\n")
+output_file.write("\n\nnumber of calculations\n")
 for n in range(len(diff_acc)):
-    output_file.write('{} {} {}\n'.format(diff_acc[n], num_patterns_checked1[n], num_patterns_checked2[n]))
+    output_file.write('{} {}\n'.format(diff_acc[n], num_calculations[n]))
+
+
+output_file.write("\n\nnumber of patterns found\n")
+for n in range(len(diff_acc)):
+    output_file.write('{} {} \n {}\n'.format(diff_acc[n], num_patterns_found[n], patterns_found[n]))
 
 
 
 
 
-plt.plot(diff_acc, execution_time1, label="new algorithm", color='blue', linewidth = 3.4)
-plt.plot(diff_acc, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
+plt.plot(diff_acc, execution_time, label="new algorithm", color='blue', linewidth = 3.4)
+
 
 plt.xlabel('threshold of accuracy')
 plt.ylabel('execution time (s)')
-#plt.title('Title???')
+plt.title('CompasDataset')
 plt.xticks(diff_acc)
+#plt.yscale('log')
 plt.legend()
+plt.savefig("../../../OutputData/RecidivismDataset/tha_time.png")
 plt.show()
 
 
 fig, ax = plt.subplots()
-plt.plot(diff_acc, num_patterns_checked1, label="new algorithm", color='blue', linewidth = 3.4)
-plt.plot(diff_acc, num_patterns_checked2, label="naive algorithm", color='orange', linewidth = 3.4)
+plt.plot(diff_acc, num_calculations, label="new algorithm", color='blue', linewidth = 3.4)
+
 plt.xlabel('threshold of accuracy')
-plt.ylabel('number of patterns checked (K)')
-#plt.title('Title???')
+plt.ylabel('number of cardinality calculations (K)')
+plt.title('CompasDataset')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
-#ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
+
 plt.xticks(diff_acc)
 plt.legend()
+plt.savefig("../../../OutputData/RecidivismDataset/tha_calculations.png")
 plt.show()
+
+
 
 plt.close()
 plt.clf()

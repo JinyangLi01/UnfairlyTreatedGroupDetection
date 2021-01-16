@@ -33,44 +33,66 @@ def thousands_formatter(x, pos):
 
 def GridSearch(original_data_file_pathpre, datasize, Thc, selected_attributes, att_to_predict):
     original_data_file = original_data_file_pathpre + str(datasize) + ".csv"
-    original_data = pd.read_csv(original_data_file)
 
-    sanity_check, pattern_with_low_accuracy1, num_patterns_checked1, execution_time1, \
-    pattern_with_low_accuracy2, num_patterns_checked2, execution_time2, overall_acc, Tha, mis_class_data = \
-        wholeprocess.WholeProcessWithTwoAlgorithms(original_data_file, selected_attributes, Thc, time_limit, att_to_predict)
+    sanity_check, pattern_with_low_accuracy1, num_calculation1, execution_time1, \
+    num_pattern_skipped_mis_c1, num_pattern_skipped_whole_c1, pattern_with_low_accuracy2, \
+    num_calculation2, execution_time2, \
+    overall_acc, Tha, mis_class_data = \
+        wholeprocess.WholeProcessWithTwoAlgorithms(original_data_file, selected_attributes, Thc, time_limit,
+                                                   att_to_predict)
 
+    print("{} patterns with low accuracy: \n {}".format(len(pattern_with_low_accuracy1), pattern_with_low_accuracy1))
 
     if execution_time1 > time_limit:
         print("new alg exceeds time limit")
     if execution_time2 > time_limit:
         print("naive alg exceeds time limit")
     elif sanity_check is False:
-        print("sanity check failes for datasize {}".format(datasize))
+        print("sanity check fails!")
 
-    return execution_time1, execution_time2, num_patterns_checked1, num_patterns_checked2
+    return execution_time1, num_calculation1, execution_time2, num_calculation2, pattern_with_low_accuracy1
 
 
-selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass']
-data_sizes = [100, 500, 1000, 5000, 10000, 20000, 30000, 40000]
+selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship']
+data_sizes = [40000, 45000, 50000, 55000, 60000, 65000, 70000, 75000, 80000, 85000, 90000, 95000, 100000]
 Thc = 30
-original_data_file_pathprefix = "../../../InputData/DifferentDataSizes/"
+original_data_file_pathprefix = "../../../InputData/AdultDataset/LargerDatasets/"
 att_to_predict = 'income'
-time_limit = 10*60
+time_limit = 20*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
 # so for naive alg, we only do when number of attributes <= 7
 execution_time1 = list()
 execution_time2 = list()
 num_patterns_checked1 = list()
 num_patterns_checked2 = list()
-
+num_patterns_found = list()
+patterns_found = list()
+num_loops = 1
 
 for datasize in data_sizes:
     print('datasize = {}'.format(datasize))
-    t1, t2, n1, n2 = GridSearch(original_data_file_pathprefix, datasize, Thc, selected_attributes, att_to_predict)
+    t1, t2, calculation1, calculation2 = 0, 0, 0, 0
+    result_cardinality = 0
+    for l in range(num_loops):
+        t1_, calculation1_, t2_, calculation2_, result = \
+            GridSearch(original_data_file_pathprefix, datasize, Thc, selected_attributes, att_to_predict)
+        t1 += t1_
+        t2 += t2_
+        calculation1 += calculation1_
+        calculation2 += calculation2_
+        if l == 0:
+            result_cardinality = len(result)
+            patterns_found.append(result)
+            num_patterns_found.append(result_cardinality)
+    t1 /= num_loops
+    t2 /= num_loops
+    calculation1 /= num_loops
+    calculation2 /= num_loops
+
     execution_time1.append(t1)
-    num_patterns_checked1.append(n1)
+    num_patterns_checked1.append(calculation1)
     execution_time2.append(t2)
-    num_patterns_checked2.append(n2)
+    num_patterns_checked2.append(calculation2)
 
 
 
@@ -82,10 +104,9 @@ num_lines = len(execution_time1)
 output_file.write("execution time\n")
 for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], execution_time1[n], execution_time2[n]))
-#output_file.write('\n'.join('{} {} {}'.format(index + num_att_min, x, y) for index, x, y in enumerate(execution_time1) and execution_time2))
 
 
-output_file.write("\n\nnumber of patterns checked\n")
+output_file.write("\n\nnumber of calculations\n")
 for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], num_patterns_checked1[n], num_patterns_checked2[n]))
 
@@ -94,11 +115,14 @@ for n in range(len(data_sizes)):
 plt.plot(data_sizes, execution_time1, label="new algorithm", color='blue', linewidth = 3.4)
 plt.plot(data_sizes, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 
-plt.xlabel('data size')
+fig, ax = plt.subplots()
+plt.xlabel('data size (K)')
 plt.ylabel('execution time (s)')
-#plt.title('Title???')
-plt.xticks([0, 5000, 10000, 20000, 30000, 40000])
+plt.title('AdultDataset')
+plt.xticks([40000, 50000, 60000, 70000, 80000, 90000, 100000])
+ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend()
+plt.savefig("../../../OutputData/AdultDataset/datasize_time.png")
 plt.show()
 
 
@@ -106,14 +130,15 @@ fig, ax = plt.subplots()
 plt.plot(data_sizes, num_patterns_checked1, label="new algorithm", color='blue', linewidth=3.4)
 plt.plot(data_sizes, num_patterns_checked2, label="naive algorithm", color='orange', linewidth=3.4)
 plt.xlabel('data size')
-plt.ylabel('number of patterns checked (K)')
-#plt.title('Title???')
+plt.xticks([40000, 50000, 60000, 70000, 80000, 90000, 100000])
+ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
+plt.ylabel('number of cardinality calculations (K)')
+plt.title('AdultDataset')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-
-#ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-plt.xticks([0, 5000, 10000, 20000, 30000, 40000])
 plt.legend()
+plt.savefig("../../../OutputData/AdultDataset/datasize_calculations.png")
 plt.show()
+
 
 plt.close()
 plt.clf()

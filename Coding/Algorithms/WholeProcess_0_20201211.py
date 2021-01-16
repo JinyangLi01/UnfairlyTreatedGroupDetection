@@ -65,12 +65,10 @@ def WholeProcessWithOneAlgorithm(original_data_file, selected_attributes, Thc, t
                                                                  att_to_predict,
                                                                  difference_from_overall_acc)
     less_attribute_data.drop(att_to_predict, axis=1, inplace=True)
-    pattern_with_low_accuracy, num_patterns_checked, execution_time, \
-    num_pattern_skipped_mis_c, num_pattern_skipped_whole_c = algorithm_function(less_attribute_data,
-                                                                                         mis_class_data, Tha, Thc,
-                                                                                         time_limit)
-    return pattern_with_low_accuracy, num_patterns_checked, execution_time, num_pattern_skipped_mis_c, \
-           num_pattern_skipped_whole_c, overall_acc, Tha, mis_class_data
+    pattern_with_low_accuracy, num_calculation, execution_time, num_pattern_skipped_mis_c, num_pattern_skipped_whole_c \
+        = algorithm_function(less_attribute_data, mis_class_data, Tha, Thc, time_limit)
+    return pattern_with_low_accuracy, num_calculation, execution_time, \
+           overall_acc, Tha, mis_class_data
 
 
 
@@ -85,41 +83,42 @@ def WholeProcessWithTwoAlgorithms(original_data_file, selected_attributes, Thc, 
                                                                  att_to_predict,
                                                                  difference_from_overall_acc)
     less_attribute_data.drop(att_to_predict, axis=1, inplace=True)
-    pattern_with_low_accuracy1, num_patterns_checked1, execution_time1, \
+    pattern_with_low_accuracy1, num_calculation1, execution_time1, \
     num_pattern_skipped_mis_c1, num_pattern_skipped_whole_c1 = newalg.GraphTraverse(less_attribute_data,
                                                                                            mis_class_data, Tha, Thc,
                                                                                            time_limit)
 
-    pattern_with_low_accuracy2, num_patterns_checked2, execution_time2, \
-    num_pattern_skipped_mis_c2, num_pattern_skipped_whole_c2 = naivealg.NaiveAlg(less_attribute_data,
+    pattern_with_low_accuracy2, num_calculation2, execution_time2, _, _ = naivealg.NaiveAlg(less_attribute_data,
                                                                                            mis_class_data, Tha, Thc,
                                                                                            time_limit)
+
+
     # sanity check
     sanity_check = True
     if ComparePatternSets(pattern_with_low_accuracy1, pattern_with_low_accuracy2) is False:
         print("sanity check fails!")
+        # print(len(pattern_with_low_accuracy1), "\n", pattern_with_low_accuracy1)
+        # print(len(pattern_with_low_accuracy2), "\n", pattern_with_low_accuracy2)
         sanity_check = False
-    return sanity_check, pattern_with_low_accuracy1, num_patterns_checked1, execution_time1, \
+    return sanity_check, pattern_with_low_accuracy1, num_calculation1, execution_time1, \
     num_pattern_skipped_mis_c1, num_pattern_skipped_whole_c1, pattern_with_low_accuracy2, \
-    num_patterns_checked2, execution_time2, num_pattern_skipped_mis_c2, num_pattern_skipped_whole_c2,\
+    num_calculation2, execution_time2, \
     overall_acc, Tha, mis_class_data
 
 
+
+
 """
-original_data_file = r'../../InputData/DifferentDataSizes/5000.csv'
-original_data = pd.read_csv(original_data_file)
-att_to_predict = 'income'
-Thc = 10
+original_data_file = "../../InputData/AdultDataset/CleanAdult2.csv"
+Thc = 30
 time_limit = 60*10
-selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass']
+num_attributes = 3
+original_data = pd.read_csv(original_data_file)
+selected_attributes = original_data.columns.tolist()[:num_attributes]
 #selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship', 'occupation']
-pattern_with_low_accuracy2, num_patterns_checked2, execution_time2, OverallAccuracy2, Tha2, mis_class_data2 = \
-    WholeProcessWithOneAlgorithm(original_data_file, selected_attributes, Thc, time_limit, naivealg.NaiveAlg,
-                                 att_to_predict)
-
-print(pattern_with_low_accuracy2, "\n", num_patterns_checked2, execution_time2, OverallAccuracy2, Tha2)
-
-print(len(pattern_with_low_accuracy2))
-
-
+sanity_check, pattern_with_low_accuracy1, num_calculation1, execution_time1, \
+    num_pattern_skipped_mis_c1, num_pattern_skipped_whole_c1, pattern_with_low_accuracy2, \
+    num_calculation2, execution_time2, \
+    overall_acc, Tha, mis_class_data = \
+    WholeProcessWithTwoAlgorithms(original_data_file, selected_attributes, Thc, time_limit, 'income')
 """

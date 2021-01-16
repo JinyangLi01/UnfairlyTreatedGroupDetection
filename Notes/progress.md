@@ -126,5 +126,24 @@ check if the output set is empty
 8. try more att in compas dataset? now I use 6. maybe try 7?
 
 
+## 2020.1.5 meeting with Yuval
 
+1. most naive alg
+
+2. graphs:
+
+- data_size graph: running time, number of calculations
+- number of attribute: same
+- thc: both. thc also affects naive alg, since thc is in definition
+
+- tha: only do it for new alg
+
+## 2020.1.15 working
+
+
+| dataset | num_att | thre of car | thre of acc | datasize |
+| --- | --- | --- | --- | --- |
+| adult | running |  running | done, need explain  |   |
+| compas |  done  | running  |  done, need explain  |    |
+| credit card |     |    |     |    |
 

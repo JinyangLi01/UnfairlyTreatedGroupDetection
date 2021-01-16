@@ -27,10 +27,10 @@ def thousands_formatter(x, pos):
     return int(x/1000)
 
 def GridSearch(original_data_file, selected_attributes, Thc, time_limit, att_to_predict):
-
-    sanity_check, pattern_with_low_accuracy1, num_patterns_checked1, execution_time1, \
+    
+    sanity_check, pattern_with_low_accuracy1, num_calculation1, execution_time1, \
     num_pattern_skipped_mis_c1, num_pattern_skipped_whole_c1, pattern_with_low_accuracy2, \
-    num_patterns_checked2, execution_time2, num_pattern_skipped_mis_c2, num_pattern_skipped_whole_c2, \
+    num_calculation2, execution_time2, \
     overall_acc, Tha, mis_class_data = \
         wholeprocess.WholeProcessWithTwoAlgorithms(original_data_file, selected_attributes, Thc, time_limit,
                                                    att_to_predict)
@@ -42,65 +42,54 @@ def GridSearch(original_data_file, selected_attributes, Thc, time_limit, att_to_
     if execution_time2 > time_limit:
         print("naive alg exceeds time limit")
     elif sanity_check is False:
-        print("sanity check failes!")
+        print("sanity check fails!")
 
-    return execution_time1, num_patterns_checked1, num_pattern_skipped_mis_c1, num_pattern_skipped_whole_c1, \
-           execution_time2, num_patterns_checked2, num_pattern_skipped_mis_c2, num_pattern_skipped_whole_c2, \
+    return execution_time1, num_calculation1, num_pattern_skipped_mis_c1, num_pattern_skipped_whole_c1, \
+           execution_time2, num_calculation2, num_pattern_skipped_mis_c2, num_pattern_skipped_whole_c2, \
            pattern_with_low_accuracy1
 
-selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass']
+
+selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship']
 Thc_list = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 500, 1000]
 original_data_file = "../../../InputData/AdultDataset/CleanAdult2.csv"
 att_to_predict = 'income'
-time_limit = 10*60
+time_limit = 20*60
 execution_time1 = list()
 execution_time2 = list()
-num_patterns_checked1 = list()
-num_patterns_checked2 = list()
+num_calculation1 = list()
+num_calculation2 = list()
 num_pattern_skipped_mis_c1 = list()
 num_pattern_skipped_mis_c2 = list()
 num_pattern_skipped_whole_c1 = list()
 num_pattern_skipped_whole_c2 = list()
 num_patterns_found = list()
 patterns_found = list()
-num_loops = 1
+num_loops = 5
 
 for thc in Thc_list:
     print("Thc = {}".format(thc))
-    t1, t2, check1, check2, skipmis1, skipmis2, skipwhole1, skipwhole2 = 0, 0, 0, 0, 0, 0, 0, 0
+    t1, t2, calculation1, calculation2 = 0, 0, 0, 0
     result_cardinality = 0
     for l in range(num_loops):
-        t1_, check1_, skipmis1_, skipwhole1_, t2_, check2_, skipmis2_, skipwhole2_, result = \
+        t1_, calculation1_, _, _, t2_, calculation2_, _, _, result = \
             GridSearch(original_data_file, selected_attributes, thc, time_limit, att_to_predict)
         t1 += t1_
         t2 += t2_
-        check1 += check1_
-        check2 += check2_
-        skipmis1 += skipmis1_
-        skipmis2 += skipmis2_
-        skipwhole1 += skipwhole1_
-        skipwhole2 += skipwhole2_
+        calculation1 += calculation1_
+        calculation2 += calculation2_
         if l == 0:
             result_cardinality = len(result)
             patterns_found.append(result)
             num_patterns_found.append(result_cardinality)
     t1 /= num_loops
     t2 /= num_loops
-    check1 /= num_loops
-    check2 /= num_loops
-    skipmis1 /= num_loops
-    skipmis2 /= num_loops
-    skipwhole1 /= num_loops
-    skipwhole2 /= num_loops
+    calculation1 /= num_loops
+    calculation2 /= num_loops
 
     execution_time1.append(t1)
-    num_patterns_checked1.append(check1)
-    num_pattern_skipped_mis_c1.append(skipmis1)
-    num_pattern_skipped_whole_c1.append(skipwhole1)
+    num_calculation1.append(calculation1)
     execution_time2.append(t2)
-    num_patterns_checked2.append(check2)
-    num_pattern_skipped_mis_c2.append(skipmis2)
-    num_pattern_skipped_whole_c2.append(skipwhole2)
+    num_calculation2.append(calculation2)
 
 
 
@@ -115,9 +104,9 @@ for n in range(len(Thc_list)):
     output_file.write('{} {} {}\n'.format(Thc_list[n], execution_time1[n], execution_time2[n]))
 
 
-output_file.write("\n\nnumber of patterns checked\n")
+output_file.write("\n\nnumber of calculations\n")
 for n in range(len(Thc_list)):
-    output_file.write('{} {} {}\n'.format(Thc_list[n], num_patterns_checked1[n], num_patterns_checked2[n]))
+    output_file.write('{} {} {}\n'.format(Thc_list[n], num_calculation1[n], num_calculation2[n]))
 
 
 output_file.write("\n\nnumber of patterns found\n")
@@ -132,27 +121,28 @@ plt.plot(Thc_list, execution_time2, label="naive algorithm", color='orange', lin
 
 plt.xlabel('threshold of cardinality')
 plt.ylabel('execution time (s)')
-#plt.title('Title???')
+plt.title('AdultDataset')
 plt.xticks(Thc_list)
+plt.xscale("log")
 plt.legend()
+plt.savefig("../../../OutputData/AdultDataset/thc_time.png")
 plt.show()
 
 
 fig, ax = plt.subplots()
-plt.plot(Thc_list, num_patterns_checked1, label="new algorithm", color='blue', linewidth = 3.4)
-plt.plot(Thc_list, num_patterns_checked2, label="naive algorithm", color='orange', linewidth = 3.4)
+plt.plot(Thc_list, num_calculation1, label="new algorithm", color='blue', linewidth = 3.4)
+plt.plot(Thc_list, num_calculation2, label="naive algorithm", color='orange', linewidth = 3.4)
 plt.xlabel('threshold of cardinality')
-plt.ylabel('number of patterns checked (K)')
-#plt.title('Title???')
+plt.ylabel('number of cardinality calculations (K)')
+plt.title('AdultDataset')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
-#ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
+
 plt.xticks(Thc_list)
 plt.xscale("log")
 plt.legend()
+plt.savefig("../../../OutputData/AdultDataset/thc_calculations.png")
 plt.show()
-
-
 
 plt.close()
 plt.clf()

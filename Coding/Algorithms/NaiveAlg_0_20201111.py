@@ -126,17 +126,17 @@ def NaiveAlg(whole_data, mis_class_data, Tha, Thc, time_limit):
     NumAttribute = len(attributes)
     index_list = list(range(0, NumAttribute))  # list[1, 2, ...13]
 
-    num_pattern_checked = 0
-    num_pattern_skipped_whole_c = 0
-    num_pattern_skipped_mis_c = 0
+    num_calculation = 0
     pattern_with_low_accuracy = []
     for num_att in range(1, NumAttribute + 1):
         # print("----------------------------------------------------  num_att = ", num_att)
         comb_num_att = list(combinations(index_list, num_att))  # list of combinations of attribute index, length num_att
+        """
         if len(pattern_with_low_accuracy) != 0:
             allDominatedByCurrentCandidateSet = True
         else:
             allDominatedByCurrentCandidateSet = False
+        """
         overTime = False
         for comb in comb_num_att:
             if time.time() - time1 > time_limit:
@@ -144,25 +144,20 @@ def NaiveAlg(whole_data, mis_class_data, Tha, Thc, time_limit):
                 break
             patterns = AllPatternsInComb(comb, NumAttribute, whole_data_frame, attributes)
             for p in patterns:
-
                 p_ = num2string(p)
-                mis_class_cardinality = pc_mis_class.pattern_count(p_)
-                if mis_class_cardinality < (1 - Tha) * Thc:
-                    num_pattern_skipped_mis_c += 1
-                    continue
-
+                num_calculation += 1
                 whole_cardinality = pc_whole_data.pattern_count(p_)
                 if whole_cardinality < Thc:
-                    num_pattern_skipped_whole_c += 1
                     continue
-
-                num_pattern_checked += 1
+                num_calculation += 1
+                mis_class_cardinality = pc_mis_class.pattern_count(p_)
                 accuracy = (whole_cardinality - mis_class_cardinality) / whole_cardinality
                 if accuracy < Tha:
                     if PDominatedByM(p, pattern_with_low_accuracy)[0] is False:
-                        allDominatedByCurrentCandidateSet = False
+                        # allDominatedByCurrentCandidateSet = False
                         pattern_with_low_accuracy.append(p)
         if overTime:
+            print("naive alg overtime")
             break
         """
         # stop condition: if all patterns satisfying all conditions are dominated by pattern_with_low_accuracy, stop searching
@@ -173,6 +168,6 @@ def NaiveAlg(whole_data, mis_class_data, Tha, Thc, time_limit):
     execution_time = time2 - time1
     # print("execution time = %s seconds" % execution_time)
     # print(len(pattern_with_low_accuracy))
-    # print("num_pattern_checked = ", num_pattern_checked)
-    return pattern_with_low_accuracy, num_pattern_checked, execution_time, num_pattern_skipped_mis_c, num_pattern_skipped_whole_c
+    # print("num_calculation = ", num_calculation)
+    return pattern_with_low_accuracy, num_calculation, execution_time, 0, 0
 
