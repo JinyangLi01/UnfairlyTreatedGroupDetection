@@ -56,7 +56,7 @@ def GridSearch(original_data_file_pathpre, datasize, Thc, selected_attributes, a
 
 selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score', 'c_days_from_compas_C']
 data_sizes = [6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000]
-Thc = 20
+Thc = 10
 original_data_file_pathprefix = "../../../InputData/RecidivismData/LargerDatasets/"
 att_to_predict = 'is_recid'
 time_limit = 20*60
@@ -113,19 +113,16 @@ for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], num_patterns_checked1[n], num_patterns_checked2[n]))
 
 
-
+fig, ax = plt.subplots()
 plt.plot(data_sizes, execution_time1, label="new algorithm", color='blue', linewidth = 3.4)
 plt.plot(data_sizes, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
-
-
-fig, ax = plt.subplots()
 plt.xlabel('data size (K)')
 plt.ylabel('execution time (s)')
 plt.title('CompasDataset')
 plt.xticks(data_sizes)
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend()
-plt.savefig("../../../OutputData/RecidivismDataset/datasize_calculations.png")
+plt.savefig("../../../OutputData/RecidivismDataset/datasize_time.png")
 plt.show()
 
 
@@ -141,6 +138,7 @@ ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend()
 plt.savefig("../../../OutputData/RecidivismDataset/datasize_calculations.png")
 plt.show()
+
 
 plt.close()
 plt.clf()

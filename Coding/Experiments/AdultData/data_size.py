@@ -53,7 +53,9 @@ def GridSearch(original_data_file_pathpre, datasize, Thc, selected_attributes, a
     return execution_time1, num_calculation1, execution_time2, num_calculation2, pattern_with_low_accuracy1
 
 
-selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship']
+#selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship']
+selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass']
+
 data_sizes = [40000, 45000, 50000, 55000, 60000, 65000, 70000, 75000, 80000, 85000, 90000, 95000, 100000]
 Thc = 30
 original_data_file_pathprefix = "../../../InputData/AdultDataset/LargerDatasets/"
@@ -111,11 +113,9 @@ for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], num_patterns_checked1[n], num_patterns_checked2[n]))
 
 
-
+fig, ax = plt.subplots()
 plt.plot(data_sizes, execution_time1, label="new algorithm", color='blue', linewidth = 3.4)
 plt.plot(data_sizes, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
-
-fig, ax = plt.subplots()
 plt.xlabel('data size (K)')
 plt.ylabel('execution time (s)')
 plt.title('AdultDataset')

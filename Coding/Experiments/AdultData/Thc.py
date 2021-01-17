@@ -8,7 +8,7 @@ x axis: Thc, from 1 to 1000
 
 Other parameters:
 CleanAdult2.csv
-selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass']
+selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship']
 threshold of minority group accuracy: overall acc - 20
 
 
