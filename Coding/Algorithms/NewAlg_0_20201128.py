@@ -126,3 +126,5 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
     #print(duration1, duration2, duration3, duration4, duration5, duration6)
     return pattern_with_low_accuracy, num_calculation, time2-time1, num_pattern_skipped_mis_c, num_pattern_skipped_whole_c
 
+
+

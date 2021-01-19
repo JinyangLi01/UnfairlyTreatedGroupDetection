@@ -7,7 +7,7 @@ y axis: running time, number of patterns checked
 x axis: the number of attributes, from 2 to 13.
 
 other parameters:
-CleanAdult2.csv
+credit_card_clients_categorized.csv: 30,000
 threshold of cardinality Thc = 30
 threshold of minority group accuracy: overall acc - 20
 """
@@ -31,8 +31,9 @@ def GridSearch(original_data_file, Thc, num_attributes, time_limit, att_to_predi
 
     if only_new_alg:
         pattern_with_low_accuracy1, num_calculation1, execution_time1, overall_acc, Tha, mis_class_data = \
-            wholeprocess.WholeProcessWithOneAlgorithm(original_data_file, selected_attributes, Thc, 
+            wholeprocess.WholeProcessWithOneAlgorithm(original_data_file, selected_attributes, Thc,
                                                       time_limit, newalg.GraphTraverse, att_to_predict)
+        print("{} patterns with low accuracy: \n {}".format(len(pattern_with_low_accuracy1), pattern_with_low_accuracy1))
         return execution_time1, num_calculation1, 0, 0, pattern_with_low_accuracy1
 
     sanity_check, pattern_with_low_accuracy1, num_calculation1, execution_time1, \
@@ -53,17 +54,19 @@ def GridSearch(original_data_file, Thc, num_attributes, time_limit, att_to_predi
     return execution_time1, num_calculation1, execution_time2, num_calculation2, \
            pattern_with_low_accuracy1
 
-# selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship', 'occupation']
+
+# selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_0']
 Thc = 30
-original_data_file = "../../../InputData/AdultDataset/CleanAdult2.csv"
-att_to_predict = 'income'
-time_limit = 60*60
+original_data_file = "../../../InputData/CreditcardDataset/credit_card_clients_categorized.csv"
+
+att_to_predict = 'default payment next month'
+
+time_limit = 30*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
 # so for naive alg, we only do when number of attributes <= 7
-# when there are 6 att, naive alg runs faster than new alg with 13 att
 num_att_max_naive = 8
 num_att_min = 3
-num_att_max = 14
+num_att_max = 12
 execution_time1 = list()
 execution_time2 = list()
 num_calculation1 = list()
@@ -75,6 +78,7 @@ num_pattern_skipped_whole_c2 = list()
 num_patterns_found = list()
 patterns_found = list()
 num_loops = 1
+
 
 
 for number_attributes in range(num_att_min, num_att_max_naive):
@@ -126,7 +130,8 @@ for number_attributes in range(num_att_max_naive, num_att_max):
 
 
 
-output_path = r'../../../OutputData/AdultDataset/num_attribute.txt'
+
+output_path = r'../../../OutputData/CreditcardDataset/num_attribute.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -166,25 +171,24 @@ plt.plot(x_naive, execution_time2, label="naive algorithm", color='orange', line
 
 plt.xlabel('number of attributes')
 plt.ylabel('execution time (s)')
-plt.title('AdultDataset')
+plt.title('CreditcardData')
 plt.xticks(x_new)
 plt.legend()
-plt.savefig("../../../OutputData/AdultDataset/num_att_time.png")
+plt.savefig("../../../OutputData/CreditcardDataset/time.png")
 plt.show()
-
 
 fig, ax = plt.subplots()
 plt.plot(x_new, num_calculation1, label="new algorithm", color='blue', linewidth = 3.4)
 plt.plot(x_naive, num_calculation2, label="naive algorithm", color='orange', linewidth = 3.4)
 plt.xlabel('number of attributes')
 plt.ylabel('number of cardinality calculations (K)')
-plt.title('AdultDataset')
+plt.title('CreditcardData')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
 plt.xticks(x_new)
 plt.legend()
-plt.savefig("../../../OutputData/AdultDataset/num_att_calculations.png")
+plt.savefig("../../../OutputData/CreditcardDataset/num_att_calculations.png")
 plt.show()
 
 plt.close()

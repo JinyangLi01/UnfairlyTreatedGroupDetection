@@ -106,19 +106,20 @@ def WholeProcessWithTwoAlgorithms(original_data_file, selected_attributes, Thc, 
     overall_acc, Tha, mis_class_data
 
 
-
-
 """
-original_data_file = "../../InputData/AdultDataset/CleanAdult2.csv"
-Thc = 30
+original_data_file = "../../InputData/CreditcardDataset/credit_card_clients_categorized.csv"
+Thc = 1
+Tha = 0.05
 time_limit = 60*10
-num_attributes = 3
-original_data = pd.read_csv(original_data_file)
-selected_attributes = original_data.columns.tolist()[:num_attributes]
-#selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship', 'occupation']
-sanity_check, pattern_with_low_accuracy1, num_calculation1, execution_time1, \
-    num_pattern_skipped_mis_c1, num_pattern_skipped_whole_c1, pattern_with_low_accuracy2, \
-    num_calculation2, execution_time2, \
-    overall_acc, Tha, mis_class_data = \
-    WholeProcessWithTwoAlgorithms(original_data_file, selected_attributes, Thc, time_limit, 'income')
+#selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_0', 'pay_2']
+selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_0']
+
+pattern_with_low_accuracy2, num_calculation2, execution_time2, OverallAccuracy2, Tha2, mis_class_data2 = \
+    WholeProcessWithOneAlgorithm(original_data_file, selected_attributes, Thc,
+                                time_limit, newalg.GraphTraverse,
+                                 'default payment next month', Tha)
+
+print(pattern_with_low_accuracy2, "\n", num_calculation2, execution_time2, OverallAccuracy2, Tha2)
+
+
 """
