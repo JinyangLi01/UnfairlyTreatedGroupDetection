@@ -64,7 +64,7 @@ num_pattern_skipped_whole_c1 = list()
 num_pattern_skipped_whole_c2 = list()
 num_patterns_found = list()
 patterns_found = list()
-num_loops = 5
+num_loops = 1
 
 for thc in Thc_list:
     print("Thc = {}".format(thc))

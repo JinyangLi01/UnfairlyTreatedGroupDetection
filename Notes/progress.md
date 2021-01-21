@@ -147,3 +147,25 @@ check if the output set is empty
 | compas |  done  | running  |  done, need explain  |    |
 | credit card |     |    |     |    |
 
+## 2021.1.20 Meeting with Yuval
+
+1. check for AdultDataset/tha_calculations. Why it decreases from 0.05 to 0.1
+
+2. thc_time for AdultDataset. Why it goes up finally?
+
+3. Other datasets have similar figures?
+
+4. Start to write paper.
+
+5. Prove no polynomial time. Similar to Theorem 1 in Coverage paper.
+- Have a similar theory and prove it.
+- Read Paper 'Fairness definitions explained'. See which definitions can be applied in our paper.
+This is a better task! Which definitions can we support and what to do in order to support them.
+
+6. Generate examples from each dataset. 
+
+7. Complexity of algorithm. We can do it later.
+
+
+
+
