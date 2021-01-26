@@ -67,6 +67,7 @@ def WholeProcessWithOneAlgorithm(original_data_file, selected_attributes, Thc, t
     less_attribute_data.drop(att_to_predict, axis=1, inplace=True)
     pattern_with_low_accuracy, num_calculation, execution_time, num_pattern_skipped_mis_c, num_pattern_skipped_whole_c \
         = algorithm_function(less_attribute_data, mis_class_data, Tha, Thc, time_limit)
+    print("num_pattern_skipped_mis_c = {}, num_pattern_skipped_whole_c = {}".format(num_pattern_skipped_mis_c, num_pattern_skipped_whole_c))
     return pattern_with_low_accuracy, num_calculation, execution_time, \
            overall_acc, Tha, mis_class_data
 

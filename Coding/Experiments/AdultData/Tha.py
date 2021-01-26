@@ -66,6 +66,7 @@ for dif in diff_acc:
     for l in range(num_loops):
         t_, calculations_, result = GridSearch(original_data_file, selected_attributes,
                                                 thc, time_limit, att_to_predict, dif)
+        print(t_, calculations_, result)
         t += t_
         calculations += calculations_
         if l == 0:
