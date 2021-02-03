@@ -62,6 +62,7 @@ patterns_found = list()
 thc = 30
 num_loops = 1
 
+
 for dif in diff_acc:
     print("dif = {}".format(dif))
     t, calculations = 0, 0

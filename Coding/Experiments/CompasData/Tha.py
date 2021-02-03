@@ -8,8 +8,10 @@ x axis: diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
 threshold of minority group accuracy: overall acc - diff_acc
 
 Other parameters:
-CleanAdult2.csv
-selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree']
+original_data_file = "../../../InputData/RecidivismData/RecidivismData_att_classified.csv"
+selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree',
+                       'decile_score', 'c_days_from_compas_C', 'juv_fel_count_C', 'juv_misd_count_C',
+                       'juv_other_count_C']
 Thc = 30
 
 """
@@ -45,7 +47,7 @@ selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charg
                        'juv_other_count_C']
 
 diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
-original_data_file = "../../../InputData/RecidivismData/RecidivismData_att_classified.csv"
+original_data_file = "../../../InputData/CompasData/RecidivismData_att_classified.csv"
 att_to_predict = 'is_recid'
 time_limit = 20*60
 execution_time = list()
@@ -81,7 +83,7 @@ for dif in diff_acc:
 
 
 
-output_path = r'../../../OutputData/RecidivismDataset/tha.txt'
+output_path = r'../../../OutputData/CompasDataset/tha.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time)
 

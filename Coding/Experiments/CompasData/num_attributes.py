@@ -55,7 +55,7 @@ def GridSearch(original_data_file, Thc, num_attributes, time_limit, att_to_predi
 
 # selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship', 'occupation']
 Thc = 30
-original_data_file = "../../../InputData/RecidivismData/RecidivismData_att_classified.csv"
+original_data_file = "../../../InputData/CompasData/RecidivismData_att_classified.csv"
 att_to_predict = 'is_recid'
 time_limit = 30*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
@@ -127,7 +127,7 @@ for number_attributes in range(num_att_max_naive, num_att_max):
 
 
 
-output_path = r'../../../OutputData/AdultDataset/num_attribute.txt'
+output_path = r'../../../OutputData/CompasDataset/num_attribute.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 

@@ -51,7 +51,7 @@ def GridSearch(original_data_file, selected_attributes, Thc, time_limit, att_to_
 
 selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score', 'c_days_from_compas_C']
 Thc_list = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 500, 1000]
-original_data_file = "../../../InputData/RecidivismData/RecidivismData_att_classified.csv"
+original_data_file = "../../../InputData/CompasData/RecidivismData_att_classified.csv"
 att_to_predict = 'is_recid'
 time_limit = 20*60
 execution_time1 = list()
@@ -95,7 +95,7 @@ for thc in Thc_list:
 
 
 
-output_path = r'../../../OutputData/RecidivismDataset/thc.txt'
+output_path = r'../../../OutputData/CompasDataset/thc.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 

@@ -149,9 +149,10 @@ check if the output set is empty
 
 ## 2021.1.20 Meeting with Yuval
 
-1. check for AdultDataset/tha_calculations. Why it decreases from 0.05 to 0.1
+1. check for AdultDataset/tha_calculations. Why it decreases from 0.05 to 0.1. 
+done
 
-2. thc_time for AdultDataset. Why it goes up finally?
+2. thc_time for AdultDataset. Why it goes up finally? 
 
 3. Other datasets have similar figures?
 
@@ -168,4 +169,21 @@ This is a better task! Which definitions can we support and what to do in order 
 
 
 
+## 2020.01.26 Working
 
+1. the current alg has an error:
+   
+We should use machine learning once, generate the mis-classified set. 
+   And then apply newalg/naivealg on this mis-classified set with different configurations.
+   
+But right now every time we run newalg/naivealg, we build machine learning model from scratch.
+This means every time the mis-classified set is different.
+
+2. thc_time for AdultDataset. Why it goes up finally? 
+
+because 
+
+
+3. 
+
+   

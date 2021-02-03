@@ -76,6 +76,7 @@ Tha: threshold of accuracy
 Thc: threshold of cardinality
 """
 def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
+    print("(1-Tha) * Thc = {}".format((1-Tha) * Thc))
     time1 = time.time()
 
     pc_mis_class = pattern_count.PatternCounter(mis_class_data, encoded=False)
@@ -87,11 +88,12 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
     attributes = whole_data_frame.columns.values.tolist()
 
     num_calculation = 0
-    num_pattern_skipped_whole_c = 0
-    num_pattern_skipped_mis_c = 0
     root = [-1] * (len(attributes))
     S = [root]
     pattern_with_low_accuracy = []
+
+    # card_mis_cal, card_whole_cal = 0, 0
+
 
     while len(S) > 0:
         if time.time() - time1 > time_limit:
@@ -101,20 +103,26 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
         st = num2string(P)
 
         num_calculation += 1
+        # card_mis_cal += 1
         # time consuming!!
         mis_class_cardinality = pc_mis_class.pattern_count(st)
-        if mis_class_cardinality < (1-Tha) * Thc:
-            num_pattern_skipped_mis_c += 1
+
+        if mis_class_cardinality < (1 - Tha) * Thc:
+            # pattern_skipped_mis_c.append(P)
             continue
 
+
         num_calculation += 1
+        # card_whole_cal += 1
         # time consuming!!
         whole_cardinality = pc_whole_data.pattern_count(st)
+
         if whole_cardinality < Thc:
-            num_pattern_skipped_whole_c += 1
+            # pattern_skipped_whole_c.append(P)
             continue
 
         accuracy = (whole_cardinality - mis_class_cardinality) / whole_cardinality
+
 
         if accuracy >= Tha:
             children = GenerateChildren(P, whole_data_frame, attributes)
@@ -124,7 +132,7 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
             pattern_with_low_accuracy.append(P)
     time2 = time.time()
     #print(duration1, duration2, duration3, duration4, duration5, duration6)
-    return pattern_with_low_accuracy, num_calculation, time2-time1, num_pattern_skipped_mis_c, num_pattern_skipped_whole_c
+    return pattern_with_low_accuracy, num_calculation, time2-time1
 
 
 

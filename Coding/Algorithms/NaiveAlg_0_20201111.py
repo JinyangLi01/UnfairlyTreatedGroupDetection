@@ -169,5 +169,5 @@ def NaiveAlg(whole_data, mis_class_data, Tha, Thc, time_limit):
     # print("execution time = %s seconds" % execution_time)
     # print(len(pattern_with_low_accuracy))
     # print("num_calculation = ", num_calculation)
-    return pattern_with_low_accuracy, num_calculation, execution_time, 0, 0
+    return pattern_with_low_accuracy, num_calculation, execution_time
 

@@ -57,7 +57,7 @@ def GridSearch(original_data_file_pathpre, datasize, Thc, selected_attributes, a
 selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score', 'c_days_from_compas_C']
 data_sizes = [6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000]
 Thc = 10
-original_data_file_pathprefix = "../../../InputData/RecidivismData/LargerDatasets/"
+original_data_file_pathprefix = "../../../InputData/CreditcardDataset/LargerDatasets/"
 att_to_predict = 'is_recid'
 time_limit = 20*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
@@ -99,7 +99,7 @@ for datasize in data_sizes:
 
 
 
-output_path = r'../../../OutputData/RecidivismDataset/data_size.txt'
+output_path = r'../../../OutputData/CreditcardDataset/data_size.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -118,7 +118,7 @@ plt.plot(data_sizes, execution_time1, label="new algorithm", color='blue', linew
 plt.plot(data_sizes, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 plt.xlabel('data size (K)')
 plt.ylabel('execution time (s)')
-plt.title('CompasDataset')
+plt.title('CreditcardDataset')
 plt.xticks(data_sizes)
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend()
@@ -131,7 +131,7 @@ plt.plot(data_sizes, num_patterns_checked1, label="new algorithm", color='blue',
 plt.plot(data_sizes, num_patterns_checked2, label="naive algorithm", color='orange', linewidth=3.4)
 plt.xlabel('data size (K)')
 plt.ylabel('number of cardinality calculations (K)')
-plt.title('CompasDataset')
+plt.title('CreditcardDataset')
 plt.xticks(data_sizes)
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
