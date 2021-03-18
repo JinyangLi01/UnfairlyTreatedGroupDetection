@@ -128,10 +128,11 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
             children = GenerateChildren(P, whole_data_frame, attributes)
             S = S + children
             continue
+        # why this line?
         if PDominatedByM(P, pattern_with_low_accuracy)[0] is False:
             pattern_with_low_accuracy.append(P)
     time2 = time.time()
-    #print(duration1, duration2, duration3, duration4, duration5, duration6)
+    # print(duration1, duration2, duration3, duration4, duration5, duration6)
     return pattern_with_low_accuracy, num_calculation, time2-time1
 
 

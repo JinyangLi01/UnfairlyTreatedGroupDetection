@@ -96,7 +96,7 @@ time_limit = 60*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
 # so for naive alg, we only do when number of attributes <= 7
 # when there are 6 att, naive alg runs faster than new alg with 13 att
-num_att_max_naive = 7
+num_att_max_naive = 8
 num_att_min = 3
 num_att_max = 14
 execution_time1 = list()
@@ -205,7 +205,7 @@ plt.ylabel('execution time (s)')
 plt.title('AdultDataset')
 plt.xticks(x_new)
 plt.legend()
-plt.savefig("../../../OutputData/AdultDataset/num_att_time_6.png")
+plt.savefig("../../../OutputData/AdultDataset/num_att_time_7.png")
 plt.show()
 
 
@@ -220,7 +220,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 plt.xticks(x_new)
 plt.legend()
-plt.savefig("../../../OutputData/AdultDataset/num_att_calculations_6.png")
+plt.savefig("../../../OutputData/AdultDataset/num_att_calculations_7.png")
 plt.show()
 
 plt.close()

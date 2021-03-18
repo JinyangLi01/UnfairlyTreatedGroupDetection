@@ -85,9 +85,10 @@ def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes, a
     return execution_time1, num_calculation1, execution_time2, num_calculation2, pattern_with_low_accuracy1
 
 
-selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score', 'c_days_from_compas_C']
+selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree',
+                       'decile_score', 'c_days_from_compas_C']
 data_sizes = [6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000]
-Thc = 10
+Thc = 30
 original_data_file_pathprefix = "../../../InputData/CompasData/LargerDatasets/"
 att_to_predict = 'is_recid'
 time_limit = 20*60
@@ -142,6 +143,12 @@ for n in range(len(data_sizes)):
 output_file.write("\n\nnumber of calculations\n")
 for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], num_patterns_checked1[n], num_patterns_checked2[n]))
+
+
+output_file.write("\n\nnumber of patterns found\n")
+for n in range(len(data_sizes)):
+    output_file.write('{} {} \n {}\n'.format(data_sizes[n], num_patterns_found[n], patterns_found[n]))
+
 
 
 fig, ax = plt.subplots()

@@ -7,3 +7,10 @@
 | thc   |  done    |   done   |   done    |
 | tha    |   done   |  done     |   done    |
 
+
+compas datasize:
+
+Naive alg, the line of calculations is flat and high, but the line of time grows from low to high.
+
+Possible reason: when data size is small, time of one cardinatlity calculation is small.
+

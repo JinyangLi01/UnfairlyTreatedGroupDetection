@@ -184,6 +184,27 @@ This means every time the mis-classified set is different.
 because 
 
 
-3. 
 
-   
+## 2021.02.03 meeting with Yuval
+
+1. look at the 7th attribute.
+
+2. data size figure time limitation?
+
+3. definition paper: apply to our algorithm, and fine groups which makes the ml model unfair w.r.t. the definition.
+
+
+Tasks:
+1. check figure issues.
+2. apply different definitions to algorithm
+
+Different definitions may give different groups.
+
+
+3. we have a ranking algorithm, divide into good/bad ranking.
+
+Read ranking papers.
+
+
+
+
