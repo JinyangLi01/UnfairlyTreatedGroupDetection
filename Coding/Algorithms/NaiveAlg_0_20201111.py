@@ -101,16 +101,6 @@ def PDominatedByM(P, M):
     return False, None
 
 
-def equalPattern(s, t):
-    if len(s) != len(t):
-        return False
-    lens = len(s)
-    for i in range(0, lens):
-        if s[i] != t[i]:
-            return False
-    return True
-
-
 def NaiveAlg(whole_data, mis_class_data, Tha, Thc, time_limit):
     time1 = time.time()
 

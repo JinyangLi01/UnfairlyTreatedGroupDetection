@@ -92,8 +92,6 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
     S = [root]
     pattern_with_low_accuracy = []
 
-    # card_mis_cal, card_whole_cal = 0, 0
-
 
     while len(S) > 0:
         if time.time() - time1 > time_limit:
@@ -111,7 +109,6 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
             # pattern_skipped_mis_c.append(P)
             continue
 
-
         num_calculation += 1
         # card_whole_cal += 1
         # time consuming!!
@@ -122,7 +119,6 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
             continue
 
         accuracy = (whole_cardinality - mis_class_cardinality) / whole_cardinality
-
 
         if accuracy >= Tha:
             children = GenerateChildren(P, whole_data_frame, attributes)
