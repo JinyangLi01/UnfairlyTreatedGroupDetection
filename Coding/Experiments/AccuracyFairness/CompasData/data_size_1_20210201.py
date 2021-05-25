@@ -28,6 +28,18 @@ from Algorithms import NaiveAlg_0_20201111 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
+SMALL_SIZE = 8
+MEDIUM_SIZE = 10
+BIGGER_SIZE = 16
+plt.rc('figure', figsize=(7.1, 5.6))
+
+plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=BIGGER_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 
 def ComparePatternSets(set1, set2):
@@ -131,7 +143,7 @@ for datasize in data_sizes:
 
 
 
-output_path = r'../../../../OutputData/CompasDataset/data_size.txt'
+output_path = r'../../../../OutputData/LowAccDetection/CompasDataset/data_size.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -160,7 +172,7 @@ plt.title('CompasDataset')
 plt.xticks([6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend()
-plt.savefig("../../../OutputData/CompasDataset/datasize_time.png")
+plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/datasize_time.png")
 plt.show()
 
 
@@ -174,7 +186,7 @@ plt.ylabel('number of cardinality calculations (K)')
 plt.title('CompasDataset')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend()
-plt.savefig("../../../OutputData/CompasDataset/datasize_calculations.png")
+plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/datasize_calculations.png")
 plt.show()
 
 

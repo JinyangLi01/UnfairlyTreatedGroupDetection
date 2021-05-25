@@ -26,6 +26,18 @@ from Algorithms import Predict_0_20210127 as predict
 from Algorithms import NaiveAlg_0_20201111 as naivealg
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
+SMALL_SIZE = 8
+MEDIUM_SIZE = 10
+BIGGER_SIZE = 16
+plt.rc('figure', figsize=(7.1, 5.6))
+
+plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=BIGGER_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 def thousands_formatter(x, pos):
     return int(x/1000)
@@ -88,7 +100,7 @@ for dif in diff_acc:
 
 
 
-output_path = r'../../../../OutputData/CompasDataset/tha.txt'
+output_path = r'../../../../OutputData/LowAccDetection/CompasDataset/tha.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time)
 
@@ -119,7 +131,7 @@ plt.title('CompasDataset')
 plt.xticks(diff_acc)
 #plt.yscale('log')
 plt.legend()
-plt.savefig("../../../OutputData/CompasDataset/tha_time.png")
+plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/tha_time.png")
 plt.show()
 
 
@@ -134,7 +146,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 plt.xticks(diff_acc)
 plt.legend()
-plt.savefig("../../../OutputData/CompasDataset/tha_calculations.png")
+plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/tha_calculations.png")
 plt.show()
 
 

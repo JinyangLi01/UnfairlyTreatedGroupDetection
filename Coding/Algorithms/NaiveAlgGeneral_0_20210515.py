@@ -10,6 +10,7 @@ import pandas as pd
 from Algorithms import pattern_count
 import time
 from Algorithms import Predict_0_20210127 as predict
+from Algorithms import NewAlgGeneral_0_20210412 as newalggeneral
 
 
 def DFSattributes(cur, last, comb, pattern, all_p, mcdes, attributes):
@@ -112,6 +113,7 @@ def GenerateChildren(P, whole_data_frame, attributes):
 """
 Predictive parity:The fraction of correct positive prediction 
 TP/(TP+FP) should be similar for all groups
+The higher, the more unfairly treated
 """
 def Predictive_parity(whole_data, TPdata, FPdata,
                       delta_Thf, Thc, time_limit):
@@ -129,9 +131,13 @@ def Predictive_parity(whole_data, TPdata, FPdata,
     attributes = whole_data_frame.columns.values.tolist()
     NumAttribute = len(attributes)
     index_list = list(range(0, NumAttribute))  # list[1, 2, ...13]
+    denominator = len(TPdata) + len(FPdata)
+    if denominator == 0:
+        print("len(TPdata) + len(FPdata) = 0, exit")
+        return [], 0, 0
+    original_thf = len(TPdata) / denominator
 
-    original_thf = len(TPdata) / (len(TPdata) + len(FPdata))
-    Thf = original_thf - delta_Thf
+    Thf = original_thf + delta_Thf
     print("Predictive_parity, original_thf = {}, Thf = {}".format(original_thf, Thf))
 
     num_calculation = 0
@@ -156,13 +162,13 @@ def Predictive_parity(whole_data, TPdata, FPdata,
                 tp = pc_TP.pattern_count(st)
                 num_calculation += 1
 
-                fp = pc_TP.pattern_count(st)
+                fp = pc_FP.pattern_count(st)
                 num_calculation += 1
                 if tp + fp == 0:
                     continue
                 correct_positive_prediction = tp / (tp + fp)
 
-                if correct_positive_prediction < Thf:
+                if correct_positive_prediction > Thf:
                     if PDominatedByM(p, pattern_with_low_accuracy)[0] is False:
                         # allDominatedByCurrentCandidateSet = False
                         pattern_with_low_accuracy.append(p)
@@ -387,13 +393,18 @@ def Equalized_odds(whole_data, TPdata, TNdata, FPdata, FNdata,
                 num_calculation += 1
 
                 tp = pc_TP.pattern_count(st)
+                num_calculation += 1
+                if fn + tp == 0:
+                    continue
                 FNR = fn / (fn + tp)
-                num_calculation += 1
-                tn = pc_TN.pattern_count(st)
-                FPR = fp / (fp + tn)
-                num_calculation += 1
 
-                if not (FNR <= Thf_FNR and FPR <= Thf_FPR):
+                tn = pc_TN.pattern_count(st)
+                num_calculation += 1
+                if fp + tn == 0:
+                    continue
+                FPR = fp / (fp + tn)
+
+                if not (FNR <= Thf_FNR and FPR >= Thf_FPR):
                     if PDominatedByM(p, pattern_with_low_accuracy)[0] is False:
                         # allDominatedByCurrentCandidateSet = False
                         pattern_with_low_accuracy.append(p)
@@ -469,12 +480,15 @@ def Conditional_use_accuracy_equality(whole_data, TPdata, TNdata, FPdata, FNdata
                 tn = pc_TN.pattern_count(st)
                 num_calculation += 1
                 tp = pc_TP.pattern_count(st)
+                num_calculation += 1
+                if tp + fp == 0:
+                    continue
                 positive_prob = tp / (tp + fp)
-                num_calculation += 1
                 fn = pc_FN.pattern_count(st)
-                negative_prob = tn / (tn + fn)
                 num_calculation += 1
-
+                if tn + fn == 0:
+                    continue
+                negative_prob = tn / (tn + fn)
                 if not (positive_prob >= Thf_FP and negative_prob <= Thf_FN):
                     if PDominatedByM(p, pattern_with_low_accuracy)[0] is False:
                         # allDominatedByCurrentCandidateSet = False
@@ -546,6 +560,9 @@ def Treatment_equality(whole_data, TPdata, TNdata, FPdata, FNdata,
                 fn = pc_FN.pattern_count(st)
                 num_calculation += 1
 
+                if fn == 0:
+                    continue
+
                 ratio = fp / fn
 
                 if ratio < Thf_ratio:
@@ -611,27 +628,53 @@ def NaiveAlg(whole_data, TPdata, TNdata, FPdata, FNdata,
                   delta_thf, Thc, time_limit)
 
 
-
-# age,workclass,education,educational-num,marital-status
-selected_attributes = ['age', 'workclass', 'education', 'educational-num', 'marital-status']
-original_data_file = "../../InputData/AdultDataset/CleanAdult2.csv"
-
-att_to_predict = 'income'
-time_limit = 20*60
-
-fairness_definition = 0
-delta_thf = 0.1
-thc = 3
-
-less_attribute_data, TP, TN, FP, FN = predict.PredictWithMLReturnTPTNFPFN(original_data_file,
-                                                                         selected_attributes,
-                                                                         att_to_predict)
-
-
-pattern_with_low_fairness, num_calculation, t_ = NaiveAlg(less_attribute_data,
-                                                          TP, TN, FP, FN, delta_thf,
-                                                          thc, time_limit, 2)
-
-print(len(pattern_with_low_fairness))
-print("time = {} s, num_calculation = {}".format(t_, num_calculation), "\n", pattern_with_low_fairness)
-
+#
+# # age,workclass,education,educational-num,marital-status
+# selected_attributes = ['age', 'workclass', 'education', 'educational-num', 'marital-status']
+# original_data_file = "../../InputData/AdultDataset/CleanAdult2.csv"
+#
+# att_to_predict = 'income'
+# time_limit = 20*60
+#
+# fairness_definition = 0
+# delta_thf = 0.1
+# thc = 3
+#
+# less_attribute_data, TP, TN, FP, FN = predict.PredictWithMLReturnTPTNFPFN(original_data_file,
+#                                                                          selected_attributes,
+#                                                                          att_to_predict)
+#
+#
+# pattern_with_low_fairness1, num_calculation1, t1_ = NaiveAlg(less_attribute_data,
+#                                                           TP, TN, FP, FN, delta_thf,
+#                                                           thc, time_limit, 5)
+#
+# print(len(pattern_with_low_fairness1))
+# print("time = {} s, num_calculation = {}".format(t1_, num_calculation1), "\n", pattern_with_low_fairness1)
+#
+# pattern_with_low_fairness2, num_calculation2, t2_ = newalggeneral.GraphTraverse(less_attribute_data,
+#                                                           TP, TN, FP, FN, delta_thf,
+#                                                           thc, time_limit, 5)
+#
+# print(len(pattern_with_low_fairness2))
+# print("time = {} s, num_calculation = {}".format(t2_, num_calculation2), "\n", pattern_with_low_fairness2)
+#
+# print("1 in 2")
+# for p in pattern_with_low_fairness1:
+#     flag = False
+#     for q in pattern_with_low_fairness2:
+#         if PatternEqual(p, q):
+#             flag = True
+#     if not flag:
+#         print(p)
+#
+# print("2 in 1")
+# for p in pattern_with_low_fairness2:
+#     flag = False
+#     for q in pattern_with_low_fairness1:
+#         if PatternEqual(p, q):
+#             flag = True
+#     if not flag:
+#         print(p)
+#
+#

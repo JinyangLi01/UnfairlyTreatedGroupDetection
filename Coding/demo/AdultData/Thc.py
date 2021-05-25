@@ -95,7 +95,7 @@ for thc in Thc_list:
 
 
 
-output_path = r'../../../OutputData/AdultDataset/thc.txt'
+output_path = r'../../../OutputData/LowAccDetection/AdultDataset/thc.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 

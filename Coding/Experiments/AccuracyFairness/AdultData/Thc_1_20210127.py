@@ -23,6 +23,19 @@ from Algorithms import NaiveAlg_0_20201111 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
+SMALL_SIZE = 8
+MEDIUM_SIZE = 10
+BIGGER_SIZE = 16
+plt.rc('figure', figsize=(7.1, 5.6))
+
+plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=BIGGER_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
 
 def ComparePatternSets(set1, set2):
     len1 = len(set1)
@@ -110,7 +123,7 @@ for thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/AdultDataset/thc.txt'
+output_path = r'../../../../OutputData/LowAccDetection/AdultDataset/thc.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -140,7 +153,7 @@ plt.title('AdultDataset')
 plt.xticks(Thc_list)
 plt.xscale("log")
 plt.legend()
-plt.savefig("../../../OutputData/AdultDataset/thc_time.png")
+plt.savefig("../../../../OutputData/LowAccDetection/AdultDataset/thc_time.png")
 plt.show()
 
 
@@ -156,7 +169,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.xticks(Thc_list)
 plt.xscale("log")
 plt.legend()
-plt.savefig("../../../OutputData/AdultDataset/thc_calculations.png")
+plt.savefig("../../../../OutputData/LowAccDetection/AdultDataset/thc_calculations.png")
 plt.show()
 
 plt.close()

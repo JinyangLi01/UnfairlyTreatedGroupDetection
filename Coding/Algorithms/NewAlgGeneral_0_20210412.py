@@ -72,10 +72,13 @@ def PDominatedByM(P, M):
 
 """
 Predictive parity:The fraction of correct positive prediction 
-TP/(TP+FP) should be similar for all groups
+TP/(TP+FP) <= 1 should be similar for all groups.
+The higher, the more unfairly treated
+original_thf = 0.6778772657785542
 """
 def Predictive_parity(whole_data, TPdata, FPdata,
                       delta_Thf, Thc, time_limit):
+    # print("wholedata={}, TP={}, FP={}".format(len(whole_data), len(TPdata), len(FPdata)))
     time1 = time.time()
 
     pc_whole_data = pattern_count.PatternCounter(whole_data, encoded=False)
@@ -84,13 +87,17 @@ def Predictive_parity(whole_data, TPdata, FPdata,
     pc_TP.parse_data()
     pc_FP = pattern_count.PatternCounter(FPdata, encoded=False)
     pc_FP.parse_data()
+    time3 = time.time()
 
     whole_data_frame = whole_data.describe()
     attributes = whole_data_frame.columns.values.tolist()
-
-    original_thf = len(TPdata) / (len(TPdata) + len(FPdata))
-    Thf = original_thf - delta_Thf
-    print("Predictive_parity, original_thf = {}, Thf = {}".format(original_thf, Thf))
+    denominator = len(TPdata) + len(FPdata)
+    if denominator == 0:
+        print("len(TPdata) + len(FPdata) = 0, exit")
+        return [], 0, 0
+    original_thf = len(TPdata) / denominator
+    Thf = original_thf + delta_Thf
+    # print("Predictive_parity, original_thf = {}, Thf = {}".format(original_thf, Thf))
 
     num_calculation = 0
     root = [-1] * (len(attributes))
@@ -98,34 +105,40 @@ def Predictive_parity(whole_data, TPdata, FPdata,
     S = initial_children
     pattern_with_low_fairness = []
 
+    time4 = time.time()
     while len(S) > 0:
         if time.time() - time1 > time_limit:
             print("newalg overtime")
             break
+        time5 = time.time()
         P = S.pop()
         st = num2string(P)
-
+        time6 = time.time()
         whole_cardinality = pc_whole_data.pattern_count(st)
+        time7 = time.time()
         num_calculation += 1
         if whole_cardinality < Thc:
             # pattern_skipped_whole_c.append(P)
             continue
 
-        # time consuming!!
+        time8 = time.time()
         tp = pc_TP.pattern_count(st)
+        time9 = time.time()
         num_calculation += 1
         if tp == 0:
             continue
-        fp = pc_TP.pattern_count(st)
+        fp = pc_FP.pattern_count(st)
         correct_positive_prediction = tp / (tp + fp)
         num_calculation += 1
-
-        if correct_positive_prediction >= Thf:
+        time10 = time.time()
+        # print(time6-time5, time7-time6, time8-time7, time9-time8, time10-time9)
+        if correct_positive_prediction <= Thf:
             children = GenerateChildren(P, whole_data_frame, attributes)
             S = S + children
             continue
-        # why this line?
+
         if PDominatedByM(P, pattern_with_low_fairness)[0] is False:
+            # print("whole_cardinality={}, tp={}, fp={}, correct_positive_prediction={}".format(whole_cardinality, tp, fp, correct_positive_prediction))
             pattern_with_low_fairness.append(P)
     time2 = time.time()
     # print(duration1, duration2, duration3, duration4, duration5, duration6)
@@ -187,7 +200,7 @@ def False_positive_error_rate_balance(whole_data, FPdata, TNdata,
             children = GenerateChildren(P, whole_data_frame, attributes)
             S = S + children
             continue
-        # why this line?
+
         if PDominatedByM(P, pattern_with_low_fairness)[0] is False:
             pattern_with_low_fairness.append(P)
     time2 = time.time()
@@ -250,7 +263,7 @@ def False_negative_error_rate_balance(whole_data, TPdata, FNdata,
             children = GenerateChildren(P, whole_data_frame, attributes)
             S = S + children
             continue
-        # why this line?
+
         if PDominatedByM(P, pattern_with_low_fairness)[0] is False:
             pattern_with_low_fairness.append(P)
     time2 = time.time()
@@ -310,25 +323,25 @@ def Equalized_odds(whole_data, TPdata, TNdata, FPdata, FNdata,
         # time consuming!!
         fp = pc_FP.pattern_count(st)
         num_calculation += 1
-        if fp == 0:
-            continue
         fn = pc_FN.pattern_count(st)
         num_calculation += 1
-        if fn == 0:
-            continue
 
         tp = pc_TP.pattern_count(st)
+        num_calculation += 1
+        if fn + tp == 0:
+            continue
         FNR = fn / (fn + tp)
-        num_calculation += 1
         tn = pc_TN.pattern_count(st)
-        FPR = fp / (fp + tn)
         num_calculation += 1
+        if fp + tn == 0:
+            continue
+        FPR = fp / (fp + tn)
 
-        if FNR <= Thf_FNR and FPR <= Thf_FPR:
+        if FNR <= Thf_FNR and FPR >= Thf_FPR:
             children = GenerateChildren(P, whole_data_frame, attributes)
             S = S + children
             continue
-        # why this line?
+
         if PDominatedByM(P, pattern_with_low_fairness)[0] is False:
             pattern_with_low_fairness.append(P)
     time2 = time.time()
@@ -387,25 +400,26 @@ def Conditional_use_accuracy_equality(whole_data, TPdata, TNdata, FPdata, FNdata
         # time consuming!!
         tp = pc_TP.pattern_count(st)
         num_calculation += 1
-        if tp == 0 and Thf_FP > 0:
-            continue
         tn = pc_TN.pattern_count(st)
         num_calculation += 1
-        if tn == 0 and Thf_FN > 0:
-            continue
-
         fp = pc_FP.pattern_count(st)
+        num_calculation += 1
+
+        if tp + fp == 0:
+            continue
         positive_prob = tp / (tp + fp)
-        num_calculation += 1
+
         fn = pc_FN.pattern_count(st)
-        negative_prob = tn / (tn + fn)
         num_calculation += 1
+        if tn + fn == 0:
+            continue
+        negative_prob = tn / (tn + fn)
 
         if positive_prob >= Thf_FP and negative_prob <= Thf_FN:
             children = GenerateChildren(P, whole_data_frame, attributes)
             S = S + children
             continue
-        # why this line?
+
         if PDominatedByM(P, pattern_with_low_fairness)[0] is False:
             pattern_with_low_fairness.append(P)
     time2 = time.time()
@@ -416,7 +430,6 @@ def Conditional_use_accuracy_equality(whole_data, TPdata, TNdata, FPdata, FNdata
 """
 This definition considers the ratio of error.
 A classifier satisfies it if all groups have similar ratio of false negatives and false positives.
-
 """
 def Treatment_equality(whole_data, TPdata, TNdata, FPdata, FNdata,
                        delta_Thf, Thc, time_limit):
@@ -460,20 +473,18 @@ def Treatment_equality(whole_data, TPdata, TNdata, FPdata, FNdata,
         # time consuming!!
         fp = pc_FP.pattern_count(st)
         num_calculation += 1
-        if fp == 0 and Thf_ratio > 0:
-            continue
         fn = pc_FN.pattern_count(st)
         num_calculation += 1
-        if fn == 0 and Thf_ratio > 0:
-            continue
 
+        if fn == 0:
+            continue
         ratio = fp / fn
 
-        if ratio <= Thf_ratio:
+        if ratio >= Thf_ratio:
             children = GenerateChildren(P, whole_data_frame, attributes)
             S = S + children
             continue
-        # why this line?
+
         if PDominatedByM(P, pattern_with_low_fairness)[0] is False:
             pattern_with_low_fairness.append(P)
     time2 = time.time()
@@ -525,26 +536,33 @@ def GraphTraverse(whole_data, TPdata, TNdata, FPdata, FNdata,
 
 
 
-
-# age,workclass,education,educational-num,marital-status
-selected_attributes = ['age', 'workclass', 'education', 'educational-num', 'marital-status']
-# original_data_file = "../../InputData/AdultDataset/SmallDataset/SmallWhole_5_10.csv"
-original_data_file = "../../InputData/AdultDataset/CleanAdult2.csv"
-
-att_to_predict = 'income'
-time_limit = 20*60
-
-fairness_definition = 0
-delta_thf = 0.1
-thc = 3
-
-less_attribute_data, TP, TN, FP, FN = predict.PredictWithMLReturnTPTNFPFN(original_data_file,
-                                                                         selected_attributes,
-                                                                         att_to_predict)
-pattern_with_low_fairness, num_calculation, t_ = GraphTraverse(less_attribute_data,
-                                                              TP, TN, FP, FN, delta_thf,
-                                                              thc, time_limit, 2)
-
-print(len(pattern_with_low_fairness))
-print("time = {} s, num_calculation = {}".format(t_, num_calculation), "\n", pattern_with_low_fairness)
-
+#
+# # age,workclass,education,educational-num,marital-status
+# selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship',
+#                        'occupation', 'educational-num', 'capital-gain']
+# # original_data_file = "../../InputData/AdultDataset/SmallDataset/SmallWhole_5_10.csv"
+# original_data_file = "../../InputData/AdultDataset/CleanAdult2.csv"
+#
+# att_to_predict = 'income'
+# time_limit = 20*60
+#
+# fairness_definition = 0
+# delta_thf = 0.2
+# thc = 500
+#
+# less_attribute_data, TP, TN, FP, FN = predict.PredictWithMLReturnTPTNFPFN(original_data_file,
+#                                                                          selected_attributes,
+#                                                                          att_to_predict)
+# pattern_with_low_fairness, num_calculation, t_ = GraphTraverse(less_attribute_data,
+#                                                               TP, TN, FP, FN, delta_thf,
+#                                                               thc, time_limit, 0)
+#
+# print("newalg, time = {} s, num_calculation = {}, num_pattern = {}".format(t_, num_calculation,
+#       len(pattern_with_low_fairness)),
+#       "\n",
+#       pattern_with_low_fairness)
+#
+# for p in pattern_with_low_fairness:
+#     if PDominatedByM(p, pattern_with_low_fairness)[0]:
+#         print(p)
+#

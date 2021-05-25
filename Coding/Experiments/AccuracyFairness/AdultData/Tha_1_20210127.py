@@ -24,6 +24,20 @@ from Algorithms import NaiveAlg_0_20201111 as naivealg
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 
+SMALL_SIZE = 8
+MEDIUM_SIZE = 10
+BIGGER_SIZE = 16
+plt.rc('figure', figsize=(7.1, 5.6))
+
+plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=BIGGER_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
+
 def thousands_formatter(x, pos):
     return int(x/1000)
 
@@ -32,6 +46,8 @@ def thousands_formatter(x, pos):
 selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship',
                        'occupation', 'educational-num', 'capital-gain']
 diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
+# selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship']
+# diff_acc = [0.05, 0.1, 0.15, 0.2]
 original_data_file = "../../../../InputData/AdultDataset/CleanAdult2.csv"
 att_to_predict = 'income'
 time_limit = 20*60
@@ -82,7 +98,7 @@ for dif in diff_acc:
 
 
 
-output_path = r'../../../../OutputData/AdultDataset/tha.txt'
+output_path = r'../../../../OutputData/LowAccDetection/AdultDataset/tha.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time)
 
@@ -113,12 +129,13 @@ plt.title('AdultDataset')
 plt.xticks(diff_acc)
 #plt.yscale('log')
 plt.legend()
-plt.savefig("../../../OutputData/AdultDataset/tha_time.png")
+plt.savefig("../../../../OutputData/LowAccDetection/AdultDataset/tha_time.png")
 plt.show()
 
 
 fig, ax = plt.subplots()
 plt.plot(diff_acc, num_calculations, label="new algorithm", color='blue', linewidth = 3.4)
+
 
 plt.xlabel('threshold of accuracy')
 plt.ylabel('number of cardinality calculations (K)')
@@ -128,7 +145,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 plt.xticks(diff_acc)
 plt.legend()
-plt.savefig("../../../OutputData/AdultDataset/tha_calculations.png")
+plt.savefig("../../../../OutputData/LowAccDetection/AdultDataset/tha_calculations.png")
 plt.show()
 
 

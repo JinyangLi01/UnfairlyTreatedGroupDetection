@@ -31,6 +31,7 @@ class PatternCounter:
         both of them are in a iterable format (i.e. list) At least one of them should be provided
         encoded: whether the dataset has been processed
         '''
+        self.empty = False
         self.dataframe = dataframe
         self.selected_attrs_names = selected_attrs_names
         self.selected_attrs_id = selected_attrs_id
@@ -49,7 +50,10 @@ class PatternCounter:
     def parse_data(self):
         # open file, read corresponding columns
         df = self.dataframe
-
+        if len(df) == 0:
+            print("PatternCount original set is empty!")
+            self.empty = True
+            return
         if self.selected_attrs_names is not None:
             df = df[self.selected_attrs_names]
             self.num_attrs = len(self.selected_attrs_names)
@@ -118,6 +122,9 @@ class PatternCounter:
         pattern is of the format: 0X100X, etc
         return the coverge/count of a pattern
         '''
+        if self.empty:
+            print("PatternCount original set is empty, so return count 0")
+            return 0
         if not self.encoded: # dataset contains non-processed strings (i.e. not in the format of OXXX, etc)
             and_bitarray = bitarray(self.num_unique_value_combinations)
             and_bitarray.setall(1)

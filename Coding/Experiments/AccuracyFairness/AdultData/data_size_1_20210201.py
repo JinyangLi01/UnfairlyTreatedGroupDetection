@@ -28,6 +28,19 @@ from Algorithms import NaiveAlg_0_20201111 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
+SMALL_SIZE = 8
+MEDIUM_SIZE = 10
+BIGGER_SIZE = 16
+plt.rc('figure', figsize=(7.1, 5.6))
+
+plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=BIGGER_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
 
 
 def ComparePatternSets(set1, set2):
@@ -132,7 +145,7 @@ for datasize in data_sizes:
 
 
 
-output_path = r'../../../../OutputData/AdultDataset/data_size.txt'
+output_path = r'../../../../OutputData/LowAccDetection/AdultDataset/data_size.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -146,6 +159,8 @@ for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], num_patterns_checked1[n], num_patterns_checked2[n]))
 
 
+
+
 fig, ax = plt.subplots()
 plt.plot(data_sizes, execution_time1, label="new algorithm", color='blue', linewidth = 3.4)
 plt.plot(data_sizes, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
@@ -155,7 +170,7 @@ plt.title('AdultDataset')
 plt.xticks([40000, 50000, 60000, 70000, 80000, 90000, 100000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend()
-plt.savefig("../../../OutputData/AdultDataset/datasize_time.png")
+plt.savefig("../../../../OutputData/LowAccDetection/AdultDataset/datasize_time.png")
 plt.show()
 
 
@@ -169,7 +184,7 @@ plt.ylabel('number of cardinality calculations (K)')
 plt.title('AdultDataset')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend()
-plt.savefig("../../../OutputData/AdultDataset/datasize_calculations.png")
+plt.savefig("../../../../OutputData/LowAccDetection/AdultDataset/datasize_calculations.png")
 plt.show()
 
 

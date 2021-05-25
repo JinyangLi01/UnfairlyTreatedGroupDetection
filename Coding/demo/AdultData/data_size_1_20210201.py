@@ -132,7 +132,7 @@ for datasize in data_sizes:
 
 
 
-output_path = r'../../../OutputData/AdultDataset/data_size.txt'
+output_path = r'../../../OutputData/LowAccDetection/AdultDataset/data_size.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
