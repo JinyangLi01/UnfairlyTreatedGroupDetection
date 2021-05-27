@@ -54,7 +54,7 @@ def thousands_formatter(x, pos):
 
 def GridSearch(original_data_file, thc, num_attributes, time_limit, att_to_predict, only_new_alg=False):
     original_data = pd.read_csv(original_data_file)
-    selected_attributes = original_data.columns.tolist()[:num_attributes]
+    selected_attributes = original_data.columns.tolist()[1:num_attributes+1]
     print("selected_attributes:", selected_attributes)
 
     if only_new_alg:
@@ -101,7 +101,7 @@ def GridSearch(original_data_file, thc, num_attributes, time_limit, att_to_predi
            pattern_with_low_accuracy1
 
 # selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship', 'occupation']
-Thc = 30
+Thc = 10
 original_data_file = "../../../../InputData/CompasData/RecidivismData_att_classified.csv"
 att_to_predict = 'is_recid'
 time_limit = 30*60

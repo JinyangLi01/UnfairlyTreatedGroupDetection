@@ -98,9 +98,9 @@ def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes, a
 
 
 selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree',
-                       'decile_score', 'c_days_from_compas_C']
+                       'decile_score']
 data_sizes = [6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000]
-Thc = 30
+Thc = 10
 original_data_file_pathprefix = "../../../../InputData/CompasData/LargerDatasets/"
 att_to_predict = 'is_recid'
 time_limit = 20*60
