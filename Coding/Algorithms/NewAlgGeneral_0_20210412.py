@@ -88,7 +88,7 @@ def Predictive_parity(whole_data, TPdata, FPdata,
     pc_FP = pattern_count.PatternCounter(FPdata, encoded=False)
     pc_FP.parse_data()
     time3 = time.time()
-
+    
     whole_data_frame = whole_data.describe()
     attributes = whole_data_frame.columns.values.tolist()
     denominator = len(TPdata) + len(FPdata)
