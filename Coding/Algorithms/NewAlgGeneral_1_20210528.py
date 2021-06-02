@@ -99,7 +99,7 @@ def Predictive_parity(whole_data, TPdata, FPdata,
     Thf = original_thf + delta_Thf
     # print("Predictive_parity, original_thf = {}, Thf = {}".format(original_thf, Thf))
 
-    num_calculation = 0
+    num_patterns = 0
     root = [-1] * (len(attributes))
     initial_children = GenerateChildren(root, whole_data_frame, attributes)
     S = initial_children
@@ -116,7 +116,7 @@ def Predictive_parity(whole_data, TPdata, FPdata,
         time6 = time.time()
         whole_cardinality = pc_whole_data.pattern_count(st)
         time7 = time.time()
-        num_calculation += 1
+        num_patterns += 1
         if whole_cardinality < Thc:
             # pattern_skipped_whole_c.append(P)
             continue
@@ -124,12 +124,10 @@ def Predictive_parity(whole_data, TPdata, FPdata,
         time8 = time.time()
         tp = pc_TP.pattern_count(st)
         time9 = time.time()
-        num_calculation += 1
         if tp == 0:
             continue
         fp = pc_FP.pattern_count(st)
         correct_positive_prediction = tp / (tp + fp)
-        num_calculation += 1
         time10 = time.time()
         # print(time6-time5, time7-time6, time8-time7, time9-time8, time10-time9)
         if correct_positive_prediction <= Thf:
@@ -142,7 +140,7 @@ def Predictive_parity(whole_data, TPdata, FPdata,
             pattern_with_low_fairness.append(P)
     time2 = time.time()
     # print(duration1, duration2, duration3, duration4, duration5, duration6)
-    return pattern_with_low_fairness, num_calculation, time2 - time1
+    return pattern_with_low_fairness, num_patterns, time2 - time1
 
 
 """
@@ -168,7 +166,7 @@ def False_positive_error_rate_balance(whole_data, FPdata, TNdata,
     Thf = original_thf - delta_Thf
     print("False_positive_error_rate_balance, original_thf = {}, Thf = {}".format(original_thf, Thf))
 
-    num_calculation = 0
+    num_patterns = 0
     root = [-1] * (len(attributes))
     initial_children = GenerateChildren(root, whole_data_frame, attributes)
     S = initial_children
@@ -182,19 +180,17 @@ def False_positive_error_rate_balance(whole_data, FPdata, TNdata,
         st = num2string(P)
 
         whole_cardinality = pc_whole_data.pattern_count(st)
-        num_calculation += 1
+        num_patterns += 1
         if whole_cardinality < Thc:
             # pattern_skipped_whole_c.append(P)
             continue
 
         # time consuming!!
         fp = pc_FP.pattern_count(st)
-        num_calculation += 1
         if fp == 0:
             continue
         tn = pc_TN.pattern_count(st)
         FPR = fp / (fp + tn)
-        num_calculation += 1
 
         if FPR >= Thf:
             children = GenerateChildren(P, whole_data_frame, attributes)
@@ -205,7 +201,7 @@ def False_positive_error_rate_balance(whole_data, FPdata, TNdata,
             pattern_with_low_fairness.append(P)
     time2 = time.time()
     # print(duration1, duration2, duration3, duration4, duration5, duration6)
-    return pattern_with_low_fairness, num_calculation, time2 - time1
+    return pattern_with_low_fairness, num_patterns, time2 - time1
 
 
 """
@@ -231,7 +227,7 @@ def False_negative_error_rate_balance(whole_data, TPdata, FNdata,
     whole_data_frame = whole_data.describe()
     attributes = whole_data_frame.columns.values.tolist()
 
-    num_calculation = 0
+    num_patterns = 0
     root = [-1] * (len(attributes))
     initial_children = GenerateChildren(root, whole_data_frame, attributes)
     S = initial_children
@@ -245,19 +241,17 @@ def False_negative_error_rate_balance(whole_data, TPdata, FNdata,
         st = num2string(P)
 
         whole_cardinality = pc_whole_data.pattern_count(st)
-        num_calculation += 1
+        num_patterns += 1
         if whole_cardinality < Thc:
             # pattern_skipped_whole_c.append(P)
             continue
 
         # time consuming!!
         fn = pc_FN.pattern_count(st)
-        num_calculation += 1
         if fn == 0:
             continue
         tp = pc_TP.pattern_count(st)
         FNR = fn / (fn + tp)
-        num_calculation += 1
 
         if FNR <= Thf:
             children = GenerateChildren(P, whole_data_frame, attributes)
@@ -268,7 +262,7 @@ def False_negative_error_rate_balance(whole_data, TPdata, FNdata,
             pattern_with_low_fairness.append(P)
     time2 = time.time()
     # print(duration1, duration2, duration3, duration4, duration5, duration6)
-    return pattern_with_low_fairness, num_calculation, time2 - time1
+    return pattern_with_low_fairness, num_patterns, time2 - time1
 
 
 """
@@ -301,7 +295,7 @@ def Equalized_odds(whole_data, TPdata, TNdata, FPdata, FNdata,
     print("Equalized_odds, original_thf_FPR = {}, Thf_FPR = {}".format(original_thf_FPR, Thf_FPR))
     print("original_thf_FNR = {}, Thf_FNR = {}".format(original_thf_FNR, Thf_FNR))
 
-    num_calculation = 0
+    num_patterns = 0
     root = [-1] * (len(attributes))
     initial_children = GenerateChildren(root, whole_data_frame, attributes)
     S = initial_children
@@ -315,24 +309,20 @@ def Equalized_odds(whole_data, TPdata, TNdata, FPdata, FNdata,
         st = num2string(P)
 
         whole_cardinality = pc_whole_data.pattern_count(st)
-        num_calculation += 1
+        num_patterns += 1
         if whole_cardinality < Thc:
             # pattern_skipped_whole_c.append(P)
             continue
 
         # time consuming!!
         fp = pc_FP.pattern_count(st)
-        num_calculation += 1
         fn = pc_FN.pattern_count(st)
-        num_calculation += 1
 
         tp = pc_TP.pattern_count(st)
-        num_calculation += 1
         if fn + tp == 0:
             continue
         FNR = fn / (fn + tp)
         tn = pc_TN.pattern_count(st)
-        num_calculation += 1
         if fp + tn == 0:
             continue
         FPR = fp / (fp + tn)
@@ -346,7 +336,7 @@ def Equalized_odds(whole_data, TPdata, TNdata, FPdata, FNdata,
             pattern_with_low_fairness.append(P)
     time2 = time.time()
     # print(duration1, duration2, duration3, duration4, duration5, duration6)
-    return pattern_with_low_fairness, num_calculation, time2 - time1
+    return pattern_with_low_fairness, num_patterns, time2 - time1
 
 
 """
@@ -378,7 +368,7 @@ def Conditional_use_accuracy_equality(whole_data, TPdata, TNdata, FPdata, FNdata
     print("Conditional_use_accuracy_equality, original_thf_FP = {}, Thf_FP = {}".format(original_thf_FP, Thf_FP))
     print("original_thf_FN = {}, Thf_FN = {}".format(original_thf_FN, Thf_FN))
 
-    num_calculation = 0
+    num_patterns = 0
     root = [-1] * (len(attributes))
     initial_children = GenerateChildren(root, whole_data_frame, attributes)
     S = initial_children
@@ -392,25 +382,21 @@ def Conditional_use_accuracy_equality(whole_data, TPdata, TNdata, FPdata, FNdata
         st = num2string(P)
 
         whole_cardinality = pc_whole_data.pattern_count(st)
-        num_calculation += 1
+        num_patterns += 1
         if whole_cardinality < Thc:
             # pattern_skipped_whole_c.append(P)
             continue
 
         # time consuming!!
         tp = pc_TP.pattern_count(st)
-        num_calculation += 1
         tn = pc_TN.pattern_count(st)
-        num_calculation += 1
         fp = pc_FP.pattern_count(st)
-        num_calculation += 1
 
         if tp + fp == 0:
             continue
         positive_prob = tp / (tp + fp)
 
         fn = pc_FN.pattern_count(st)
-        num_calculation += 1
         if tn + fn == 0:
             continue
         negative_prob = tn / (tn + fn)
@@ -424,7 +410,7 @@ def Conditional_use_accuracy_equality(whole_data, TPdata, TNdata, FPdata, FNdata
             pattern_with_low_fairness.append(P)
     time2 = time.time()
     # print(duration1, duration2, duration3, duration4, duration5, duration6)
-    return pattern_with_low_fairness, num_calculation, time2 - time1
+    return pattern_with_low_fairness, num_patterns, time2 - time1
 
 
 """
@@ -451,7 +437,7 @@ def Treatment_equality(whole_data, TPdata, TNdata, FPdata, FNdata,
     whole_data_frame = whole_data.describe()
     attributes = whole_data_frame.columns.values.tolist()
 
-    num_calculation = 0
+    num_patterns = 0
     root = [-1] * (len(attributes))
     initial_children = GenerateChildren(root, whole_data_frame, attributes)
     S = initial_children
@@ -465,16 +451,14 @@ def Treatment_equality(whole_data, TPdata, TNdata, FPdata, FNdata,
         st = num2string(P)
 
         whole_cardinality = pc_whole_data.pattern_count(st)
-        num_calculation += 1
+        num_patterns += 1
         if whole_cardinality < Thc:
             # pattern_skipped_whole_c.append(P)
             continue
 
         # time consuming!!
         fp = pc_FP.pattern_count(st)
-        num_calculation += 1
         fn = pc_FN.pattern_count(st)
-        num_calculation += 1
 
         if fn == 0:
             continue
@@ -489,7 +473,7 @@ def Treatment_equality(whole_data, TPdata, TNdata, FPdata, FNdata,
             pattern_with_low_fairness.append(P)
     time2 = time.time()
     # print(duration1, duration2, duration3, duration4, duration5, duration6)
-    return pattern_with_low_fairness, num_calculation, time2 - time1
+    return pattern_with_low_fairness, num_patterns, time2 - time1
 
 
 """
@@ -553,11 +537,11 @@ def GraphTraverse(whole_data, TPdata, TNdata, FPdata, FNdata,
 # less_attribute_data, TP, TN, FP, FN = predict.PredictWithMLReturnTPTNFPFN(original_data_file,
 #                                                                          selected_attributes,
 #                                                                          att_to_predict)
-# pattern_with_low_fairness, num_calculation, t_ = GraphTraverse(less_attribute_data,
+# pattern_with_low_fairness, num_patterns, t_ = GraphTraverse(less_attribute_data,
 #                                                               TP, TN, FP, FN, delta_thf,
 #                                                               thc, time_limit, 0)
 #
-# print("newalg, time = {} s, num_calculation = {}, num_pattern = {}".format(t_, num_calculation,
+# print("newalg, time = {} s, num_patterns = {}, num_pattern = {}".format(t_, num_patterns,
 #       len(pattern_with_low_fairness)),
 #       "\n",
 #       pattern_with_low_fairness)

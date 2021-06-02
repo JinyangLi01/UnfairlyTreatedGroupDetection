@@ -19,15 +19,15 @@ threshold of minority group accuracy: overall acc - 20
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlg_0_20201128 as newalg
-from Algorithms import NaiveAlg_0_20201111 as naivealg
+from Algorithms import NewAlg_1_20210529 as newalg
+from Algorithms import NaiveAlg_1_20210528 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 SMALL_SIZE = 8
 MEDIUM_SIZE = 10
-BIGGER_SIZE = 16
-plt.rc('figure', figsize=(7.1, 5.6))
+BIGGER_SIZE = 20
+plt.rc('figure', figsize=(7, 5.6))
 
 plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
@@ -58,7 +58,7 @@ def thousands_formatter(x, pos):
 
 
 selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score', 'c_days_from_compas_C']
-Thc_list = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 500, 1000]
+Thc_list = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 original_data_file = "../../../../InputData/CompasData/RecidivismData_att_classified.csv"
 att_to_predict = 'is_recid'
 time_limit = 20*60
@@ -144,30 +144,28 @@ for n in range(len(Thc_list)):
 
 
 
-plt.plot(Thc_list, execution_time1, label="new algorithm", color='blue', linewidth = 3.4)
+plt.plot(Thc_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(Thc_list, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 
 plt.xlabel('threshold of cardinality')
 plt.ylabel('execution time (s)')
-plt.title('CompasDataset')
 plt.xticks(Thc_list)
-plt.xscale("log")
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/thc_time.png")
 plt.show()
 
 
 fig, ax = plt.subplots()
-plt.plot(Thc_list, num_calculation1, label="new algorithm", color='blue', linewidth = 3.4)
+plt.plot(Thc_list, num_calculation1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(Thc_list, num_calculation2, label="naive algorithm", color='orange', linewidth = 3.4)
 plt.xlabel('threshold of cardinality')
-plt.ylabel('number of cardinality calculations (K)')
-plt.title('CompasDataset')
+plt.ylabel('number of nodes visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
 plt.xticks(Thc_list)
-plt.xscale("log")
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/thc_calculations.png")
 plt.show()

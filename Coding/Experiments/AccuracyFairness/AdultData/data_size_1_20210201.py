@@ -23,15 +23,15 @@ threshold of minority group accuracy: overall acc - 20
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlg_0_20201128 as newalg
-from Algorithms import NaiveAlg_0_20201111 as naivealg
+from Algorithms import NewAlg_1_20210529 as newalg
+from Algorithms import NaiveAlg_1_20210528 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 SMALL_SIZE = 8
 MEDIUM_SIZE = 10
-BIGGER_SIZE = 16
-plt.rc('figure', figsize=(7.1, 5.6))
+BIGGER_SIZE = 20
+plt.rc('figure', figsize=(7, 5.6))
 
 plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
@@ -90,7 +90,7 @@ def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes, a
 
 
     if execution_time1 > time_limit:
-        print("new alg exceeds time limit")
+        print("optimized alg exceeds time limit")
     if execution_time2 > time_limit:
         print("naive alg exceeds time limit")
 
@@ -154,7 +154,7 @@ for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], execution_time1[n], execution_time2[n]))
 
 
-output_file.write("\n\nnumber of calculations\n")
+output_file.write("\n\nnumber of patterns visited\n")
 for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], num_patterns_checked1[n], num_patterns_checked2[n]))
 
@@ -162,28 +162,28 @@ for n in range(len(data_sizes)):
 
 
 fig, ax = plt.subplots()
-plt.plot(data_sizes, execution_time1, label="new algorithm", color='blue', linewidth = 3.4)
+plt.plot(data_sizes, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(data_sizes, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 plt.xlabel('data size (K)')
 plt.ylabel('execution time (s)')
-plt.title('AdultDataset')
 plt.xticks([40000, 50000, 60000, 70000, 80000, 90000, 100000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend()
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.savefig("../../../../OutputData/LowAccDetection/AdultDataset/datasize_time.png")
 plt.show()
 
 
 fig, ax = plt.subplots()
-plt.plot(data_sizes, num_patterns_checked1, label="new algorithm", color='blue', linewidth=3.4)
+plt.plot(data_sizes, num_patterns_checked1, label="optimized algorithm", color='blue', linewidth=3.4)
 plt.plot(data_sizes, num_patterns_checked2, label="naive algorithm", color='orange', linewidth=3.4)
 plt.xlabel('data size (K)')
 plt.xticks([40000, 50000, 60000, 70000, 80000, 90000, 100000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-plt.ylabel('number of cardinality calculations (K)')
-plt.title('AdultDataset')
+plt.ylabel('number of nodes visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend()
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.savefig("../../../../OutputData/LowAccDetection/AdultDataset/datasize_calculations.png")
 plt.show()
 

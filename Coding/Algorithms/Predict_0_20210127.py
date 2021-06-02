@@ -94,6 +94,7 @@ def PredictionReturnTPTNFPFN(less_attribute_data, attributes, att_to_predict):
 
 def PredictWithML(original_data_file, selected_attributes, att_to_predict):
     original_data = pd.read_csv(original_data_file)
+    print(len(original_data))
     selected_attributes.append(att_to_predict)
     less_attribute_data = original_data[selected_attributes]
     selected_attributes.remove(att_to_predict)

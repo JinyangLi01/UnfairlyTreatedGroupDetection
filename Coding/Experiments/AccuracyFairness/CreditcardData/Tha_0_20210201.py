@@ -18,16 +18,15 @@ Thc = 10
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlg_0_20201128 as newalg
+from Algorithms import NewAlg_1_20210529 as newalg
+from Algorithms import NaiveAlg_1_20210528 as naivealg
 from Algorithms import Predict_0_20210127 as predict
-from Algorithms import NaiveAlg_0_20201111 as naivealg
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 SMALL_SIZE = 8
 MEDIUM_SIZE = 10
-BIGGER_SIZE = 16
-plt.rc('figure', figsize=(7.1, 5.6))
-
+BIGGER_SIZE = 20
+plt.rc('figure', figsize=(7, 5.6))
 plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
 plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
@@ -46,7 +45,7 @@ selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_
                        'pay_3', 'pay_4', 'pay_5', 'pay_6']
 
 
-diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
+diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3 ]
 original_data_file = "../../../../InputData/CreditcardDataset/credit_card_clients_categorized.csv"
 
 att_to_predict = 'default payment next month'
@@ -62,7 +61,7 @@ num_pattern_skipped_whole_c2 = list()
 num_patterns_found = list()
 patterns_found = list()
 thc = 30
-num_loops = 1
+num_loops = 5
 
 
 
@@ -122,29 +121,29 @@ for n in range(len(diff_acc)):
 
 
 
-plt.plot(diff_acc, execution_time, label="new algorithm", color='blue', linewidth = 3.4)
+plt.plot(diff_acc, execution_time, label="optimized algorithm", color='blue', linewidth = 3.4)
 
 
 plt.xlabel('threshold of accuracy')
 plt.ylabel('execution time (s)')
-plt.title('CreditcardDataset')
 plt.xticks(diff_acc)
-#plt.yscale('log')
+
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/LowAccDetection/CreditcardDataset/tha_time.png")
 plt.show()
 
 
 fig, ax = plt.subplots()
-plt.plot(diff_acc, num_calculations, label="new algorithm", color='blue', linewidth = 3.4)
+plt.plot(diff_acc, num_calculations, label="optimized algorithm", color='blue', linewidth = 3.4)
 
 plt.xlabel('threshold of accuracy')
-plt.ylabel('number of cardinality calculations (K)')
-plt.title('CreditcardDataset')
+plt.ylabel('number of nodes visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
 plt.xticks(diff_acc)
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/LowAccDetection/CreditcardDataset/tha_calculations.png")
 plt.show()

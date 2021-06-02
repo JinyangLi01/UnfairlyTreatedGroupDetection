@@ -18,11 +18,24 @@ threshold of minority group accuracy: overall acc - 20
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgGeneral_0_20210412 as newalg
-from Algorithms import NaiveAlgGeneral_0_20210515 as naivealg
+from Algorithms import NewAlgGeneral_1_20210528 as newalg
+from Algorithms import NaiveAlgGeneral_1_202105258 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
+SMALL_SIZE = 8
+MEDIUM_SIZE = 10
+BIGGER_SIZE = 20
+plt.rc('figure', figsize=(7, 5.6))
+
+plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=BIGGER_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
 
 def ComparePatternSets(set1, set2):
     len1 = len(set1)
@@ -45,8 +58,7 @@ def thousands_formatter(x, pos):
 
 
 selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score', 'c_days_from_compas_C']
-
-Thc_list = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 500, 1000]
+Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 original_data_file = "../../../../InputData/CompasData/RecidivismData_att_classified.csv"
 att_to_predict = 'is_recid'
 time_limit = 20*60
@@ -96,6 +108,10 @@ for thc in Thc_list:
 
         if ComparePatternSets(pattern_with_low_fairness1, pattern_with_low_fairness2) is False:
             print("sanity check fails!")
+        if t1_ > time_limit:
+            print("new alg exceeds time limit")
+        if t2_ > time_limit:
+            print("naive alg exceeds time limit")
 
         if l == 0:
             result_cardinality = len(pattern_with_low_fairness1)
@@ -137,30 +153,28 @@ for n in range(len(Thc_list)):
 
 
 
-plt.plot(Thc_list, execution_time1, label="new algorithm", color='blue', linewidth = 3.4)
+plt.plot(Thc_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(Thc_list, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 
 plt.xlabel('threshold of cardinality')
 plt.ylabel('execution time (s)')
-plt.title('CompasDataset')
 plt.xticks(Thc_list)
-plt.xscale("log")
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/General/CompasDataset/thc_time.png")
 plt.show()
 
 
 fig, ax = plt.subplots()
-plt.plot(Thc_list, num_calculation1, label="new algorithm", color='blue', linewidth = 3.4)
+plt.plot(Thc_list, num_calculation1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(Thc_list, num_calculation2, label="naive algorithm", color='orange', linewidth = 3.4)
 plt.xlabel('threshold of cardinality')
-plt.ylabel('number of cardinality calculations (K)')
-plt.title('CompasDataset')
+plt.ylabel('number of nodes visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
 plt.xticks(Thc_list)
-plt.xscale("log")
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/General/CompasDataset/thc_calculations.png")
 plt.show()

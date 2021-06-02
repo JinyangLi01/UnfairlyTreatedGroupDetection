@@ -23,15 +23,15 @@ threshold of minority group accuracy: overall acc - 20
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlg_0_20201128 as newalg
-from Algorithms import NaiveAlg_0_20201111 as naivealg
+from Algorithms import NewAlg_1_20210529 as newalg
+from Algorithms import NaiveAlg_1_20210528 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 SMALL_SIZE = 8
 MEDIUM_SIZE = 10
-BIGGER_SIZE = 16
-plt.rc('figure', figsize=(7.1, 5.6))
+BIGGER_SIZE = 20
+plt.rc('figure', figsize=(7, 5.6))
 
 plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
@@ -164,27 +164,27 @@ for n in range(len(data_sizes)):
 
 
 fig, ax = plt.subplots()
-plt.plot(data_sizes, execution_time1, label="new algorithm", color='blue', linewidth = 3.4)
+plt.plot(data_sizes, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(data_sizes, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 plt.xlabel('data size (K)')
 plt.ylabel('execution time (s)')
-plt.title('CompasDataset')
 plt.xticks([6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/datasize_time.png")
 plt.show()
 
 
 fig, ax = plt.subplots()
-plt.plot(data_sizes, num_patterns_checked1, label="new algorithm", color='blue', linewidth=3.4)
+plt.plot(data_sizes, num_patterns_checked1, label="optimized algorithm", color='blue', linewidth=3.4)
 plt.plot(data_sizes, num_patterns_checked2, label="naive algorithm", color='orange', linewidth=3.4)
 plt.xlabel('data size (K)')
 plt.xticks([6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-plt.ylabel('number of cardinality calculations (K)')
-plt.title('CompasDataset')
+plt.ylabel('number of nodes visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/datasize_calculations.png")
 plt.show()

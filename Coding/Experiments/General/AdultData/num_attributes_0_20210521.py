@@ -16,11 +16,25 @@ threshold of minority group accuracy: overall acc - 20
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgGeneral_0_20210412 as newalg
-from Algorithms import NaiveAlgGeneral_0_20210515 as naivealg
+from Algorithms import NewAlgGeneral_1_20210528 as newalg
+from Algorithms import NaiveAlgGeneral_1_202105258 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
+SMALL_SIZE = 8
+MEDIUM_SIZE = 10
+BIGGER_SIZE = 20
+plt.rc('figure', figsize=(7, 5.6))
+
+plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=BIGGER_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
+
 
 def ComparePatternSets(set1, set2):
     len1 = len(set1)
@@ -97,7 +111,7 @@ time_limit = 60*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
 # so for naive alg, we only do when number of attributes <= 7
 # when there are 6 att, naive alg runs faster than new alg with 13 att
-num_att_max_naive = 8
+num_att_max_naive = 7 # if it's 8, naive out of time
 num_att_min = 3
 num_att_max = 14
 execution_time1 = list()
@@ -195,30 +209,30 @@ x_new = list(range(num_att_min, num_att_max))
 x_naive = list(range(num_att_min, num_att_max_naive))
 
 
-plt.plot(x_new, execution_time1, label="new algorithm", color='blue', linewidth = 3.4)
+plt.plot(x_new, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(x_naive, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 
 plt.xlabel('number of attributes')
 plt.ylabel('execution time (s)')
-plt.title('AdultDataset')
 plt.xticks(x_new)
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/General/AdultDataset/num_att_time_7.png")
+plt.savefig("../../../../OutputData/General/AdultDataset/num_att_time.png")
 plt.show()
 
 
 fig, ax = plt.subplots()
-plt.plot(x_new, num_calculation1, label="new algorithm", color='blue', linewidth = 3.4)
+plt.plot(x_new, num_calculation1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(x_naive, num_calculation2, label="naive algorithm", color='orange', linewidth = 3.4)
 plt.xlabel('number of attributes')
-plt.ylabel('number of cardinality calculations (K)')
-plt.title('AdultDataset')
+plt.ylabel('number of nodes visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
 plt.xticks(x_new)
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/General/AdultDataset/num_att_calculations_7.png")
+plt.savefig("../../../../OutputData/General/AdultDataset/num_att_calculations.png")
 plt.show()
 
 plt.close()

@@ -21,15 +21,15 @@ Thc = 30
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlg_0_20201128 as newalg
+from Algorithms import NewAlg_1_20210529 as newalg
+from Algorithms import NaiveAlg_1_20210528 as naivealg
 from Algorithms import Predict_0_20210127 as predict
-from Algorithms import NaiveAlg_0_20201111 as naivealg
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 SMALL_SIZE = 8
 MEDIUM_SIZE = 10
-BIGGER_SIZE = 16
-plt.rc('figure', figsize=(7.1, 5.6))
+BIGGER_SIZE = 20
+plt.rc('figure', figsize=(7, 5.6))
 
 plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
@@ -49,7 +49,7 @@ selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charg
                        'decile_score', 'c_days_from_compas_C', 'juv_fel_count_C', 'juv_misd_count_C',
                        'juv_other_count_C']
 
-diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
+diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
 original_data_file = "../../../../InputData/CompasData/RecidivismData_att_classified.csv"
 att_to_predict = 'is_recid'
 time_limit = 20*60
@@ -122,29 +122,29 @@ for n in range(len(diff_acc)):
 
 
 
-plt.plot(diff_acc, execution_time, label="new algorithm", color='blue', linewidth = 3.4)
+plt.plot(diff_acc, execution_time, label="optimized algorithm", color='blue', linewidth = 3.4)
 
 
 plt.xlabel('threshold of accuracy')
 plt.ylabel('execution time (s)')
-plt.title('CompasDataset')
 plt.xticks(diff_acc)
-#plt.yscale('log')
+
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/tha_time.png")
 plt.show()
 
 
 fig, ax = plt.subplots()
-plt.plot(diff_acc, num_calculations, label="new algorithm", color='blue', linewidth = 3.4)
+plt.plot(diff_acc, num_calculations, label="optimized algorithm", color='blue', linewidth = 3.4)
 
 plt.xlabel('threshold of accuracy')
-plt.ylabel('number of cardinality calculations (K)')
-plt.title('CompasDataset')
+plt.ylabel('number of nodes visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
 plt.xticks(diff_acc)
+plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/tha_calculations.png")
 plt.show()
