@@ -1,4 +1,4 @@
-## 2021.05.30 working
+# 2021.05.30 working
 ### Explanations for figures
 #### Low acc
 
@@ -53,6 +53,29 @@
 
 - Compas data
     - datasize: werid, running
-    - num att: set num_att_max_naive to 8, running. 7 is good.
+    - num att: ok
     - tha: running
     - thc: werid, running
+    
+
+- Creditcard data
+    - datasize: running
+    - num att: ok
+    - tha: running
+    - thc: werid, running
+    
+
+
+# 2021.06.02 meeting with Yuval
+
+### Things I want to discuss:
+1. Tha problem
+2. ranking alg
+
+
+### Tasks! DDL of the paper is July 2nd.
+1. Have the result of new ranking alg by next week.
+2. 
+
+
+

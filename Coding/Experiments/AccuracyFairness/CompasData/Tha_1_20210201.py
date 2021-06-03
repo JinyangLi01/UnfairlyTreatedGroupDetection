@@ -63,7 +63,7 @@ num_pattern_skipped_whole_c2 = list()
 num_patterns_found = list()
 patterns_found = list()
 thc = 10
-num_loops = 5
+num_loops = 1
 
 
 less_attribute_data, mis_class_data, overall_acc = predict.PredictWithML(original_data_file,
