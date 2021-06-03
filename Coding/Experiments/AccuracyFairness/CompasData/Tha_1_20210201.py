@@ -63,14 +63,12 @@ num_pattern_skipped_whole_c2 = list()
 num_patterns_found = list()
 patterns_found = list()
 thc = 10
-num_loops = 1
+num_loops = 10
 
 
 less_attribute_data, mis_class_data, overall_acc = predict.PredictWithML(original_data_file,
                                                                          selected_attributes,
                                                                          att_to_predict)
-
-
 
 
 
@@ -99,7 +97,6 @@ for dif in diff_acc:
 
 
 
-
 output_path = r'../../../../OutputData/LowAccDetection/CompasDataset/tha.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time)
@@ -117,7 +114,6 @@ for n in range(len(diff_acc)):
 output_file.write("\n\nnumber of patterns found\n")
 for n in range(len(diff_acc)):
     output_file.write('{} {} \n {}\n'.format(diff_acc[n], num_patterns_found[n], patterns_found[n]))
-
 
 
 
@@ -148,7 +144,6 @@ plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/tha_calculations.png")
 plt.show()
-
 
 
 plt.close()

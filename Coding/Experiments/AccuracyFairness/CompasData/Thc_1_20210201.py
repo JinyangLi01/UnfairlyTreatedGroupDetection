@@ -58,7 +58,7 @@ def thousands_formatter(x, pos):
 
 
 selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score', 'c_days_from_compas_C']
-Thc_list = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 original_data_file = "../../../../InputData/CompasData/RecidivismData_att_classified.csv"
 att_to_predict = 'is_recid'
 time_limit = 20*60

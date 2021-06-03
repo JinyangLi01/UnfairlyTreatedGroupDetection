@@ -197,7 +197,7 @@ for n in range(num_att_max_naive, num_att_max):
 
 
 output_file.write("\n\nnumber of patterns found\n")
-for n in range(num_att_min, num_att_max_naive):
+for n in range(num_att_min, num_att_max):
     output_file.write('{} {} \n {}\n'.format(n, num_patterns_found[n], patterns_found[n]))
 
 

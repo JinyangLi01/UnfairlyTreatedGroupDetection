@@ -104,6 +104,9 @@ def Predictive_parity(whole_data, TPdata, FPdata,
     initial_children = GenerateChildren(root, whole_data_frame, attributes)
     S = initial_children
     pattern_with_low_fairness = []
+    num_patterns_skipped_by_size = 0
+    num_patterns_skipped_by_tp = 0
+    num_patterns_generate_children = 0
 
     time4 = time.time()
     while len(S) > 0:
@@ -118,13 +121,14 @@ def Predictive_parity(whole_data, TPdata, FPdata,
         time7 = time.time()
         num_patterns += 1
         if whole_cardinality < Thc:
-            # pattern_skipped_whole_c.append(P)
+            num_patterns_skipped_by_size += 1
             continue
 
         time8 = time.time()
         tp = pc_TP.pattern_count(st)
         time9 = time.time()
         if tp == 0:
+            num_patterns_skipped_by_tp += 1
             continue
         fp = pc_FP.pattern_count(st)
         correct_positive_prediction = tp / (tp + fp)
@@ -133,13 +137,16 @@ def Predictive_parity(whole_data, TPdata, FPdata,
         if correct_positive_prediction <= Thf:
             children = GenerateChildren(P, whole_data_frame, attributes)
             S = S + children
+            num_patterns_generate_children += 1
             continue
 
         if PDominatedByM(P, pattern_with_low_fairness)[0] is False:
             # print("whole_cardinality={}, tp={}, fp={}, correct_positive_prediction={}".format(whole_cardinality, tp, fp, correct_positive_prediction))
             pattern_with_low_fairness.append(P)
     time2 = time.time()
-    # print(duration1, duration2, duration3, duration4, duration5, duration6)
+    print("num_patterns_skipped_by_size = {}, num_patterns_skipped_by_tp = {}, "
+          "num_patterns_generate_children = {}".format(num_patterns_skipped_by_size,
+          num_patterns_skipped_by_tp, num_patterns_generate_children))
     return pattern_with_low_fairness, num_patterns, time2 - time1
 
 

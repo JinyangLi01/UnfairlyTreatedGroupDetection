@@ -79,6 +79,7 @@ Tha: threshold of accuracy
 Thc: threshold of cardinality
 """
 def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
+    print("start new alg")
     print("(1-Tha) * Thc = {}".format((1-Tha) * Thc))
     time1 = time.time()
 
@@ -94,7 +95,9 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
     root = [-1] * (len(attributes))
     S = [root]
     pattern_with_low_accuracy = []
-
+    num_patterns_skipped_by_misclassified = 0
+    num_patterns_skipped_by_size = 0
+    num_patterns_with_2size_check = 0
 
     while len(S) > 0:
         if time.time() - time1 > time_limit:
@@ -108,15 +111,15 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
         mis_class_cardinality = pc_mis_class.pattern_count(st)
 
         if mis_class_cardinality < (1 - Tha) * Thc:
-            # pattern_skipped_mis_c.append(P)
+            num_patterns_skipped_by_misclassified += 1
             continue
 
         whole_cardinality = pc_whole_data.pattern_count(st)
 
         if whole_cardinality < Thc:
-            # pattern_skipped_whole_c.append(P)
+            num_patterns_skipped_by_size += 1
             continue
-
+        num_patterns_with_2size_check += 1
         accuracy = (whole_cardinality - mis_class_cardinality) / whole_cardinality
 
         if accuracy >= Tha:
@@ -127,7 +130,9 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
         if PDominatedByM(P, pattern_with_low_accuracy)[0] is False:
             pattern_with_low_accuracy.append(P)
     time2 = time.time()
-    # print(duration1, duration2, duration3, duration4, duration5, duration6)
+    print("num_patterns_skipped_by_misclassified = {}, num_patterns_skipped_by_size = {}, "
+          "num_patterns_with_2size_check = {}".format(num_patterns_skipped_by_misclassified,
+          num_patterns_skipped_by_size, num_patterns_with_2size_check))
     return pattern_with_low_accuracy, num_patterns, time2-time1
 
 

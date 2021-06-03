@@ -4,7 +4,7 @@
 
 - Adult data
     - datasize: running
-    - num att: running
+    - num att: ok
     - tha: ok.
       There are two points decided by Tha whether to go deeper or not.
         1.
@@ -23,20 +23,20 @@
       
         These two points are competing against each other so the result is a trade off.
       
-    - thc: running
+    - thc:  need explanation, so I run again
+        
         The naive alg is getting faster and faster since when thc increase, some nodes are excluded early.
       
 - Compas data
     - datasize: ok
     - num att: ok
-    - tha: Same reason
-      
-    - thc: running
+    - tha: Need explanation, so rerunning
+    - thc: how to explain the time? It's always 10-13s.
     
       
 - creditcard data
     - datasize: doesn't make sense, running again
-    - num att: increase num_att_max_naive to 9, running
+    - num att: ok
     - tha: too werid, running again
       
     - thc: running
@@ -44,10 +44,13 @@
 
 #### General case
 
+1. How to explain datasize and thc??????
+
 - Adult data
-    - datasize: werid, running
-    - num att: set num_att_max_naive to 7, running
-    - tha: running
+    - datasize: werid, and maybe shouldn't have this figure.
+    - num att: ok
+    - tha: # of nodes always increase, but time increase then decrease
+      Other datasets are the same, so print more info and rerun
     - thc: werid, running
     
 
