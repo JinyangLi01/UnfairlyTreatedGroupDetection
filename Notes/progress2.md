@@ -3,7 +3,7 @@
 #### Low acc
 
 - Adult data
-    - datasize: running
+    - datasize: why??
     - num att: ok
     - tha: ok.
       There are two points decided by Tha whether to go deeper or not.

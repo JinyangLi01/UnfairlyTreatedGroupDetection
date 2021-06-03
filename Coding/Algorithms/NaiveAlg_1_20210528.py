@@ -123,6 +123,7 @@ def NaiveAlg(whole_data, mis_class_data, Tha, Thc, time_limit):
     num_patterns = 0
     pattern_with_low_accuracy = []
     num_patterns_skipped_by_size = 0
+    num_patterns_computed_acc = 0
     for num_att in range(1, NumAttribute + 1):
         # print("----------------------------------------------------  num_att = ", num_att)
         comb_num_att = list(combinations(index_list, num_att))  # list of combinations of attribute index, length num_att
@@ -141,6 +142,7 @@ def NaiveAlg(whole_data, mis_class_data, Tha, Thc, time_limit):
                     continue
                 mis_class_cardinality = pc_mis_class.pattern_count(p_)
                 accuracy = (whole_cardinality - mis_class_cardinality) / whole_cardinality
+                num_patterns_computed_acc += 1
                 if accuracy < Tha:
                     if PDominatedByM(p, pattern_with_low_accuracy)[0] is False:
                         # allDominatedByCurrentCandidateSet = False
@@ -155,8 +157,7 @@ def NaiveAlg(whole_data, mis_class_data, Tha, Thc, time_limit):
         """
     time2 = time.time()
     execution_time = time2 - time1
-    # print("execution time = %s seconds" % execution_time)
-    # print(len(pattern_with_low_accuracy))
-    print("num_patterns_skipped_by_size = ", num_patterns_skipped_by_size)
+    print("num_patterns_skipped_by_size = {}, num_patterns_computed_acc = {}".format(num_patterns_skipped_by_size,
+                                                                                     num_patterns_computed_acc))
     return pattern_with_low_accuracy, num_patterns, execution_time
 
