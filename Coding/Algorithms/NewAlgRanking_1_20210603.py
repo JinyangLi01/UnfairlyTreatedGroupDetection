@@ -21,6 +21,7 @@ def P1DominatedByP2(P1, P2):
                 return False
     return True
 
+
 def PatternEqual(m, P):
     length = len(m)
     if len(P) != length:
@@ -35,18 +36,17 @@ def GenerateChildren(P, whole_data_frame, attributes):
     children = []
     length = len(P)
     i = 0
-    for i in range(length-1, -1, -1):
+    for i in range(length - 1, -1, -1):
         if P[i] != -1:
             break
     if P[i] == -1:
         i -= 1
-    for j in range(i+1, length, 1):
-        for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max'])+1):
+    for j in range(i + 1, length, 1):
+        for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max']) + 1):
             s = P.copy()
             s[j] = a
             children.append(s)
     return children
-
 
 
 def num2string(pattern):
@@ -70,13 +70,14 @@ def PDominatedByM(P, M):
     return False, None
 
 
-
 """
 whole_data: the original data file 
 mis_class_data: file containing mis-classified tuples
 Tha: threshold of accuracy 
 Thc: threshold of cardinality
 """
+
+
 def GraphTraverse(whole_data, ranked_data, Thc, Lowerbounds, Upperbounds, k_min, k_max, time_limit):
     time1 = time.time()
 
@@ -90,42 +91,87 @@ def GraphTraverse(whole_data, ranked_data, Thc, Lowerbounds, Upperbounds, k_min,
     root = [-1] * (len(attributes))
     S = [root]
     pattern_treated_unfairly = []
-    patterns_top_k = []
-    for k in range(k_min, k_max + 1):
-        patterns_top_k[k-k_min] = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
-
+    patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k_min], encoded=False)
+    patterns_size_topk = dict()
+    patterns_size_whole = dict()
+    k = k_min
     while len(S) > 0:
         if time.time() - time1 > time_limit:
             print("newalg overtime")
             break
         P = S.pop()
         st = num2string(P)
-
         num_patterns += 1
 
         whole_cardinality = pc_whole_data.pattern_count(st)
+        patterns_size_whole[P] = whole_cardinality
         if whole_cardinality < Thc:
             continue
 
-        treated_unfairly = False
-        for k in range(k_min, k_max+1):
-            num_top_k = patterns_top_k[k-k_min].pattern_count(st)
-            if num_top_k < Lowerbounds[k-k_min] or num_top_k > Upperbounds[k-k_min]:
-                if PDominatedByM(P, pattern_treated_unfairly)[0] is False:
-                    pattern_treated_unfairly.append(P)
-                    treated_unfairly = True
-                    break
-
-        if not treated_unfairly:
+        num_top_k = patterns_top_kmin.pattern_count(st)
+        patterns_size_topk[P] = num_top_k
+        if num_top_k < Lowerbounds[k - k_min] or num_top_k > Upperbounds[k - k_min]:
+            if PDominatedByM(P, pattern_treated_unfairly)[0] is False:
+                pattern_treated_unfairly.append(P)
+        else:
             children = GenerateChildren(P, whole_data_frame, attributes)
             S = S + children
             continue
+
+    for k in range(k_min + 1, k_max + 1):
+        if time.time() - time1 > time_limit:
+            print("newalg overtime")
+            break
+        new_tuple = ranked_data[k - 1]
+        AddNewTuple(new_tuple, Thc, pattern_treated_unfairly, patterns_top_kmin, k, k_min, pc_whole_data,
+                    patterns_size_topk, patterns_size_whole, Lowerbounds, Upperbounds)
+
     time2 = time.time()
     # print(duration1, duration2, duration3, duration4, duration5, duration6)
-    return pattern_treated_unfairly, num_patterns, time2-time1
+    return pattern_treated_unfairly, num_patterns, time2 - time1
 
 
+def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly, patterns_top_kmin, k, k_min, pc_whole_data,
+                patterns_size_topk, patterns_size_whole, Lowerbounds, Upperbounds):
+    tuple_len = len(new_tuple)
+    tuple = new_tuple.copy()
+    st = num2string(tuple)
+    if tuple in patterns_size_whole:
+        whole_cardinality = patterns_size_whole[tuple]
+    else:
+        whole_cardinality = pc_whole_data.pattern_count(st)
+    if whole_cardinality >= Thc:
+        if tuple in patterns_size_topk:
+            patterns_size_topk[tuple] += 1
+        else:
+            patterns_size_topk[tuple] = patterns_top_kmin.pattern_count(st) + 1
+        if patterns_size_topk[tuple] < Lowerbounds[k - k_min] or patterns_size_topk[tuple] > Upperbounds[k - k_min]:
+            if PDominatedByM(tuple, pattern_treated_unfairly)[0] is False:
+                pattern_treated_unfairly.append(tuple)
+        elif tuple in pattern_treated_unfairly:
+            pattern_treated_unfairly.remove(tuple)
+    elif tuple in pattern_treated_unfairly:
+        pattern_treated_unfairly.remove(tuple)
 
+    for i in range(tuple_len - 1, 0, -1):
+        tuple[i] = -1
+        st = num2string(tuple)
+        if tuple in patterns_size_whole:
+            whole_cardinality = patterns_size_whole[tuple]
+        else:
+            whole_cardinality = pc_whole_data.pattern_count(st)
+        if whole_cardinality >= Thc:
+            if tuple in patterns_size_topk:
+                patterns_size_topk[tuple] += 1
+            else:
+                patterns_size_topk[tuple] = patterns_top_kmin.pattern_count(st) + 1
+            if patterns_size_topk[tuple] < Lowerbounds[k - k_min] or patterns_size_topk[tuple] > Upperbounds[k - k_min]:
+                if PDominatedByM(tuple, pattern_treated_unfairly)[0] is False:
+                    pattern_treated_unfairly.append(tuple)
+            elif tuple in pattern_treated_unfairly:
+                pattern_treated_unfairly.remove(tuple)
+        elif tuple in pattern_treated_unfairly:
+            pattern_treated_unfairly.remove(tuple)
 
 
 # # age,workclass,education,educational-num,marital-status
