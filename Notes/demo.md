@@ -4,8 +4,13 @@
 2. 
 
 # outline in 10 points
-1. machine learning suffers from fairness issues
-2. for example, ... (NYT example)
+1. motivation: machine learning suffers from fairness issues
+2. for example, ... 
 3. we design a system to find out patterns treated unfairly
-
-
+4. concept of pattern and count, and what we output
+5. run the system, select or upload dataset, fairness definition, classifier
+6. choose our own parameters: threshold
+7. output contains ...
+8. The two patterns in the output imply these two groups people are treated unfairly
+9. change parameters, we get different results
+10. The different results imply that ... eg, group A's size is larger than 10 but smaller than 30, so it only appears in the second experiment
