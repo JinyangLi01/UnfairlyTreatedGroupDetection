@@ -1,8 +1,6 @@
 """
-New algorithm for minority group detection in general case
-Search the graph top-down, generate children using the method in coverage paper to avoid redundancy.
-Stop point 1: when finding a pattern satisfying the requirements
-Stop point 2: when the cardinality is too small
+naive alg for ranking
+
 """
 
 from itertools import combinations
@@ -87,6 +85,7 @@ def PDominatedByM(P, M):
         if PatternEqual(m, P):
             continue
         if P1DominatedByP2(P, m):
+            # print(P, "domintated by", m)
             return True, m
     return False, None
 
@@ -118,88 +117,82 @@ Tha: threshold of accuracy
 Thc: threshold of cardinality
 """
 
-def NaiveAlg(whole_data, TPdata, TNdata, FPdata, FNdata,
-                  delta_thf, Thc, time_limit, fairness_definition = 0):
+def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_max, time_limit):
     time1 = time.time()
 
-    pc_whole_data = pattern_count.PatternCounter(whole_data, encoded=False)
+    pc_whole_data = pattern_count.PatternCounter(ranked_data, encoded=False)
     pc_whole_data.parse_data()
-    pc_TP = pattern_count.PatternCounter(TPdata, encoded=False)
-    pc_TP.parse_data()
-    pc_FP = pattern_count.PatternCounter(FPdata, encoded=False)
-    pc_FP.parse_data()
-    pc_TN = pattern_count.PatternCounter(TNdata, encoded=False)
-    pc_TN.parse_data()
-    pc_FN = pattern_count.PatternCounter(FNdata, encoded=False)
-    pc_FN.parse_data()
 
-    if fairness_definition == 0:
-        return Predictive_parity(whole_data, TPdata, FPdata,
-                  delta_thf, Thc, time_limit)
-    elif fairness_definition == 1:
-        return False_positive_error_rate_balance(whole_data, FPdata, TNdata,
-                  delta_thf, Thc, time_limit)
-    elif fairness_definition == 2:
-        return False_negative_error_rate_balance(whole_data, TPdata, FNdata,
-                  delta_thf, Thc, time_limit)
-    elif fairness_definition == 3:
-        return Equalized_odds(whole_data, TPdata, TNdata, FPdata, FNdata,
-                  delta_thf, Thc, time_limit)
-    elif fairness_definition == 4:
-        return Conditional_use_accuracy_equality(whole_data, TPdata, TNdata, FPdata, FNdata,
-                  delta_thf, Thc, time_limit)
-    elif fairness_definition == 5:
-        return Treatment_equality(whole_data, TPdata, TNdata, FPdata, FNdata,
-                  delta_thf, Thc, time_limit)
+    whole_data_frame = ranked_data.describe(include='all')
+    num_patterns_visited = 0
+    pattern_treated_unfairly = []
+    pattern_treated_unfairly_with_k = []
+
+    for k in range(k_min, k_max):
+        root = [-1] * (len(attributes))
+        S = GenerateChildren(root, whole_data_frame, attributes)
+        patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
+        patterns_top_kmin.parse_data()
+
+        while len(S) > 0:
+            if time.time() - time1 > time_limit:
+                print("newalg overtime")
+                break
+            P = S.pop()
+            st = num2string(P)
+
+            num_patterns_visited += 1
+
+            whole_cardinality = pc_whole_data.pattern_count(st)
+            if whole_cardinality < Thc:
+                continue
+            num_top_k = patterns_top_kmin.pattern_count(st)
+            if num_top_k < Lowerbounds[k - k_min] or num_top_k > Upperbounds[k - k_min]:
+                if PDominatedByM(P, pattern_treated_unfairly)[0] is False:
+                    if P not in pattern_treated_unfairly:
+                        pattern_treated_unfairly_with_k.append((P, k))
+                        pattern_treated_unfairly.append(P)
+            else:
+                children = GenerateChildren(P, whole_data_frame, attributes)
+                S = S + children
+                continue
+    for p in pattern_treated_unfairly:
+        if PDominatedByM(p, pattern_treated_unfairly)[0]:
+            pattern_treated_unfairly.remove(p)
+    time2 = time.time()
+    return pattern_treated_unfairly, num_patterns_visited, time2 - time1
 
 
+
 #
-# # age,workclass,education,educational-num,marital-status
-# selected_attributes = ['age', 'workclass', 'education', 'educational-num', 'marital-status']
-# original_data_file = "../../InputData/AdultDataset/CleanAdult2.csv"
+# selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
 #
-# att_to_predict = 'income'
-# time_limit = 20*60
+# original_file = r"../../InputData/CompasData/ForRanking/SmallDataset/CompasData_ranked_5att_100.csv"
+# ranked_data = pd.read_csv(original_file)
+# ranked_data = ranked_data.drop('rank', axis=1)
 #
-# fairness_definition = 0
-# delta_thf = 0.1
-# thc = 3
-#
-# less_attribute_data, TP, TN, FP, FN = predict.PredictWithMLReturnTPTNFPFN(original_data_file,
-#                                                                          selected_attributes,
-#                                                                          att_to_predict)
+# # def GraphTraverse(ranked_data, Thc, Lowerbounds, Upperbounds, k_min, k_max, time_limit):
 #
 #
-# pattern_with_low_fairness1, num_calculation1, t1_ = NaiveAlg(less_attribute_data,
-#                                                           TP, TN, FP, FN, delta_thf,
-#                                                           thc, time_limit, 5)
+# time_limit = 20 * 60
+# k_min = 10
+# k_max = 20
+# Thc = 5
+# Lowerbounds = [1, 1, 2, 2, 2, 3, 3, 3, 3, 4]
+# Upperbounds = [3, 3, 4, 4, 4, 5, 5, 5, 5, 6]
 #
-# print(len(pattern_with_low_fairness1))
-# print("time = {} s, num_calculation = {}".format(t1_, num_calculation1), "\n", pattern_with_low_fairness1)
+# print(ranked_data[:k_max])
 #
-# pattern_with_low_fairness2, num_calculation2, t2_ = newalggeneral.GraphTraverse(less_attribute_data,
-#                                                           TP, TN, FP, FN, delta_thf,
-#                                                           thc, time_limit, 5)
+# pattern_treated_unfairly, num_patterns, running_time = NaiveAlg(ranked_data, selected_attributes, Thc,
+#                                                                      Lowerbounds, Upperbounds,
+#                                                                      k_min, k_max, time_limit)
 #
-# print(len(pattern_with_low_fairness2))
-# print("time = {} s, num_calculation = {}".format(t2_, num_calculation2), "\n", pattern_with_low_fairness2)
+# print(num_patterns)
+# print("time = {} s, num of patterns = {} ".format(running_time, len(pattern_treated_unfairly)), "\n", "patterns:\n",
+#       pattern_treated_unfairly)
 #
-# print("1 in 2")
-# for p in pattern_with_low_fairness1:
-#     flag = False
-#     for q in pattern_with_low_fairness2:
-#         if PatternEqual(p, q):
-#             flag = True
-#     if not flag:
-#         print(p)
-#
-# print("2 in 1")
-# for p in pattern_with_low_fairness2:
-#     flag = False
-#     for q in pattern_with_low_fairness1:
-#         if PatternEqual(p, q):
-#             flag = True
-#     if not flag:
-#         print(p)
-#
-#
+# # print("dominated by pattern_treated_unfairly:")
+# # for p in pattern_treated_unfairly:
+# #     if PDominatedByM(p, pattern_treated_unfairly)[0]:
+# #         print(p)
+# #
