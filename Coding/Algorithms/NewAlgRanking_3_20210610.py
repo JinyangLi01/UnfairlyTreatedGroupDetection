@@ -225,8 +225,8 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level, root, pa
         child = p
         parent = findParent(p, num_att)
         if PatternEqual(parent, root):
-                CheckDominationAndAdd(child, pattern_treated_unfairly)
-                patterns_searched_lowest_level.remove(child)
+            CheckDominationAndAdd(child, pattern_treated_unfairly)
+            patterns_searched_lowest_level.remove(child)
 
         while PatternEqual(parent, root) is False:
             num_patterns_visited += 1
