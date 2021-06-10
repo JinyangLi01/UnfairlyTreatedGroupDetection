@@ -139,6 +139,8 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
                 print("newalg overtime")
                 break
             P = S.pop()
+            # if PatternEqual(P, [-1, -1, 1, 1]):
+            #     print("pattern equal ".format(P))
             st = num2string(P)
 
             num_patterns_visited += 1
