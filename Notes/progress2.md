@@ -78,7 +78,11 @@
 
 ### Tasks! DDL of the paper is July 2nd.
 1. Have the result of new ranking alg by next week.
-2. 
+2. Complexity
+
+
+# 2021.06.11 meeting with Yuval, Jag
+1. 
 
 
 
