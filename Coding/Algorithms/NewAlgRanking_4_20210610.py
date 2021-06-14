@@ -125,8 +125,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
     num_patterns_visited = 0
     num_att = len(attributes)
     root = [-1] * num_att
-    children = GenerateChildren(root, whole_data_frame, attributes)
-    S = children
+    S = GenerateChildren(root, whole_data_frame, attributes)
     pattern_treated_unfairly_lowerbound = []
     pattern_treated_unfairly_upperbound = []
     patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k_min], encoded=False)
@@ -144,7 +143,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
             print("newalg overtime")
             break
         P = S.pop()
-        # if PatternEqual(P, [-1, -1, 2, 1]):
+        # if PatternEqual(P, [-1, -1, 0, 1]):
         #     print("pattern equal ".format(P))
         st = num2string(P)
         num_patterns_visited += 1
@@ -158,7 +157,6 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
             if PatternEqual(parent, root) is False:
                 patterns_searched_lowest_level_lowerbound.append(parent)
                 patterns_searched_lowest_level_upperbound.append(parent)
-                # TODO : upper bound ??
             continue
 
         num_top_k = patterns_top_kmin.pattern_count(st)
@@ -167,11 +165,14 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
             parent = findParent(P, num_att)
             if PatternEqual(parent, root) is False:
                 patterns_searched_lowest_level_lowerbound.append(parent)
-            pattern_treated_unfairly_lowerbound.append(P)
+            CheckDominationAndAddForLowerbound(P, pattern_treated_unfairly_lowerbound)
         elif num_top_k > Upperbounds[k - k_min]:
             parent_candidate_for_upperbound = P
             children = GenerateChildren(P, whole_data_frame, attributes)
             S = children + S
+            if len(children) == 0:
+                CheckDominationAndAddForUpperbound(P, pattern_treated_unfairly_upperbound)
+                parent_candidate_for_upperbound = []
         else: # generate children for lower bound
             children = GenerateChildren(P, whole_data_frame, attributes)
             if len(children) == 0:
@@ -189,8 +190,8 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
             break
         new_tuple = ranked_data.iloc[[k - 1]].values.flatten().tolist()
         # top down for related patterns
-        ancestors = AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound,
-                                whole_data_frame, patterns_top_kmin, k, k_min, pc_whole_data,
+        ancestors, num_patterns_visited = AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound,
+                                whole_data_frame, patterns_top_kmin, k, k_min, pc_whole_data, num_patterns_visited,
                     patterns_size_topk, patterns_size_whole, Lowerbounds, Upperbounds, num_att, attributes)
         # suppose Lowerbounds and Upperbounds monotonically increases
         if Lowerbounds[k-k_min] > Lowerbounds[k-1-k_min] or Upperbounds[k-k_min] > Upperbounds[k-1-k_min]:
@@ -279,7 +280,7 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
                 break
 
     for p in patterns_searched_lowest_level_upperbound:
-        # if PatternEqual(p, [0, 0, 0, 0]):
+        # if PatternEqual(p, [0, 1, -1, 1]):
         #     print("pattern equal ".format(p))
         num_patterns_visited += 1
         if p in ancestors or p in pattern_treated_unfairly_upperbound:
@@ -324,7 +325,7 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
 
 # search top-down
 def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound,
-                whole_data_frame, patterns_top_kmin, k, k_min, pc_whole_data,
+                whole_data_frame, patterns_top_kmin, k, k_min, pc_whole_data, num_patterns_visited,
                 patterns_size_topk, patterns_size_whole, Lowerbounds, Upperbounds, num_att, attributes):
     ancestors = []
     root = [-1] * num_att
@@ -334,6 +335,7 @@ def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_tre
     while len(S) > 0:
         P = S.pop()
         st = num2string(P)
+        num_patterns_visited += 1
         if st in patterns_size_whole:
             whole_cardinality = patterns_size_whole[st]
         else:
@@ -360,26 +362,32 @@ def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_tre
                         parent_candidate_for_upperbound = []
                     S = children + S
                     ancestors = ancestors + children
-    return ancestors
+    return ancestors, num_patterns_visited
 
 
 selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
 
-original_file = r"../../InputData/CompasData/ForRanking/SmallDataset/CompasData_ranked_5att_100.csv"
+original_file = r"../../InputData/CompasData/ForRanking/CompasData_ranked_5att.csv"
 ranked_data = pd.read_csv(original_file)
 ranked_data = ranked_data.drop('rank', axis=1)
 
-# def GraphTraverse(ranked_data, Thc, Lowerbounds, Upperbounds, k_min, k_max, time_limit):
 
+time_limit = 5 * 60
+k_min = 5
+k_max = 30
+Thc = 10
 
-time_limit = 20 * 60
-k_min = 40
-k_max = 50
-Thc = 8
-Lowerbounds = [1, 1, 2, 2, 2, 3, 3, 3, 3, 4]
-Upperbounds = [8,8,8,9,9, 10,10,11,11, 12, 12]
+List_k = list(range(k_min, k_max))
 
-# print(ranked_data[:k_max])
+def lowerbound(x):
+    return int((x-7)/3)
+
+def upperbound(x):
+    return int(x*5/7)
+
+Lowerbounds = [lowerbound(x) for x in List_k]
+Upperbounds = [upperbound(x) for x in List_k]
+
 
 pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, running_time = GraphTraverse(ranked_data, selected_attributes, Thc,
                                                                      Lowerbounds, Upperbounds,

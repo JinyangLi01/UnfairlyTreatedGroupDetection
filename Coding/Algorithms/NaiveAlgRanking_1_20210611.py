@@ -171,6 +171,8 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
                 print("newalg overtime")
                 break
             P = S.pop()
+            # if PatternEqual(P, [-1, -1, 0, 1]):
+            #     print("pattern equal ".format(P))
             st = num2string(P)
             num_patterns_visited += 1
             whole_cardinality = pc_whole_data.pattern_count(st)
@@ -191,7 +193,7 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
                 print("newalg overtime")
                 break
             P = S.pop()
-            # if PatternEqual(P, [-1, 0, 0, 0]):
+            # if PatternEqual(P, [0, 1, -1, 1]):
             #     print("pattern equal ".format(P))
             st = num2string(P)
             num_patterns_visited += 1
@@ -216,10 +218,10 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
 
 
 
-#
+
 # selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
 #
-# original_file = r"../../InputData/CompasData/ForRanking/SmallDataset/CompasData_ranked_5att_100.csv"
+# original_file = r"../../InputData/CompasData/ForRanking/SmallDataset/CompasData_ranked_5att_1000.csv"
 # ranked_data = pd.read_csv(original_file)
 # ranked_data = ranked_data.drop('rank', axis=1)
 #
@@ -227,11 +229,11 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
 #
 #
 # time_limit = 20 * 60
-# k_min = 10
-# k_max = 20
-# Thc = 5
+# k_min = 40
+# k_max = 50
+# Thc = 10
 # Lowerbounds = [1, 1, 2, 2, 2, 3, 3, 3, 3, 4]
-# Upperbounds = [3, 4, 4, 5, 5, 6, 7, 8, 9, 10]
+# Upperbounds = [5,5,6,7,8, 9,10,11,11, 12, 12]
 #
 # print(ranked_data[:k_max])
 #
