@@ -153,6 +153,12 @@ Thc: threshold of cardinality
 """
 
 def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_max, time_limit):
+    # print(ranked_data[:10])
+    # patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:10], encoded=False)
+    # patterns_top_kmin.parse_data()
+    # P = [1, -1, -1, -1]
+    # st = num2string(P)
+    # print("num = ", patterns_top_kmin.pattern_count(st))
     time1 = time.time()
     pc_whole_data = pattern_count.PatternCounter(ranked_data, encoded=False)
     pc_whole_data.parse_data()
@@ -171,8 +177,7 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
                 print("newalg overtime")
                 break
             P = S.pop()
-            # if PatternEqual(P, [-1, -1, 0, 1]):
-            #     print("pattern equal ".format(P))
+
             st = num2string(P)
             num_patterns_visited += 1
             whole_cardinality = pc_whole_data.pattern_count(st)
@@ -180,6 +185,8 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
                 continue
             num_top_k = patterns_top_kmin.pattern_count(st)
             if num_top_k < Lowerbounds[k - k_min]:
+                # if PatternEqual(P, [-1, -1, -1, 1]):
+                #     print("k={}, pattern equal = {}, num_top_k = {}".format(k, P, num_top_k))
                 CheckDominationAndAddForLowerBound(P, pattern_treated_unfairly_lowerbound)
             else:
                 children = GenerateChildren(P, whole_data_frame, attributes)
@@ -193,11 +200,8 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
                 print("newalg overtime")
                 break
             P = S.pop()
-            # if PatternEqual(P, [0, 1, -1, 1]):
-            #     print("pattern equal ".format(P))
             st = num2string(P)
             num_patterns_visited += 1
-
             whole_cardinality = pc_whole_data.pattern_count(st)
             if whole_cardinality < Thc:
                 continue
