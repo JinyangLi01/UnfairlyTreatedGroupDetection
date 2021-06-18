@@ -153,12 +153,6 @@ Thc: threshold of cardinality
 """
 
 def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_max, time_limit):
-    # print(ranked_data[:10])
-    # patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:10], encoded=False)
-    # patterns_top_kmin.parse_data()
-    # P = [1, -1, -1, -1]
-    # st = num2string(P)
-    # print("num = ", patterns_top_kmin.pattern_count(st))
     time1 = time.time()
     pc_whole_data = pattern_count.PatternCounter(ranked_data, encoded=False)
     pc_whole_data.parse_data()
@@ -184,7 +178,7 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
                 continue
             num_top_k = patterns_top_kmin.pattern_count(st)
             if num_top_k < Lowerbounds[k - k_min]:
-                # if PatternEqual(P, [-1, -1, -1, 1, -1, -1, 3, -1]):
+                # if PatternEqual(P, [-1, 1, -1, -1, -1, 1, -1]):
                 #     print("k={}, pattern equal = {}, num_top_k = {}".format(k, P, num_top_k))
                 CheckDominationAndAddForLowerBound(P, pattern_treated_unfairly_lowerbound)
             else:
@@ -203,8 +197,13 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
             num_patterns_visited += 1
             whole_cardinality = pc_whole_data.pattern_count(st)
             if whole_cardinality < Thc:
+                if len(parent_candidate_for_upperbound) > 0:
+                    CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, pattern_treated_unfairly_upperbound)
+                    parent_candidate_for_upperbound = []
                 continue
             num_top_k = patterns_top_kmin.pattern_count(st)
+            # if PatternEqual(P, [-1, -1, 1, 0, -1, -1]):
+            #     print("k={}, pattern equal = {}, num_top_k = {}".format(k, P, num_top_k))
             if num_top_k > Upperbounds[k - k_min]:
                 parent_candidate_for_upperbound = P
                 children = GenerateChildren(P, whole_data_frame, attributes)
@@ -219,7 +218,10 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
     time2 = time.time()
     return pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, time2 - time1
 
-
+"""
+p in pattern_treated_unfairly_upperbound2 but not in pattern_treated_unfairly_upperbound:
+[-1, -1, 1, 0, -1, -1]
+"""
 
 
 # selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
