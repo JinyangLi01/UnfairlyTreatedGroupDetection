@@ -184,7 +184,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
                 parent_candidate_for_upperbound = []
 
     for k in range(k_min + 1, k_max):
-        if k == 202:
+        if k == 19:
             print("k={}".format(k))
         if time.time() - time1 > time_limit:
             print("newalg overtime")
@@ -251,8 +251,8 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
                                 Lowerbounds, Upperbounds, num_att, whole_data_frame,
                                 attributes, num_patterns_visited, Thc):
     for p in patterns_searched_lowest_level_lowerbound:
-        # if PatternEqual(p, [1, -1, -1, -1]):
-        #     print("pattern equal ".format(p))
+        if PatternEqual(p, [-1, -1, -1, 1, -1, -1, 3, -1]):
+            print("pattern equal ".format(p))
         num_patterns_visited += 1
         if p in ancestors or p in pattern_treated_unfairly_lowerbound:
             continue
@@ -365,7 +365,7 @@ def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_tre
     parent_candidate_for_upperbound = []
     while len(S) > 0:
         P = S.pop(0)
-        # if PatternEqual(P, [1, 1, -1, 1]):
+        # if PatternEqual(P, [0, 1, 0, 0, -1]):
         #     print("k={}, pattern equal = {}".format(k, P))
         st = num2string(P)
         num_patterns_visited += 1
@@ -402,18 +402,21 @@ def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_tre
                     parent_candidate_for_upperbound = []
     return ancestors, num_patterns_visited
 
-
-# selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
 #
-# original_file = r"../../InputData/CompasData/ForRanking/CompasData_ranked_5att.csv"
+# # selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
+# # selected_attributes = ["school", "sex", "age_binary", "address", "famsize", "Pstatus", "Medu", "Fedu", "Mjob", "Fjob"]
+# selected_attributes = ["school", "sex", "age_binary", "address", "famsize", "Pstatus", "Medu", "Fedu"]
+#
+# original_file = r"../../InputData/StudentDataset/ForRanking/student-mat_selected_8att.csv"
+#
 # ranked_data = pd.read_csv(original_file)
 # ranked_data = ranked_data.drop('rank', axis=1)
 #
 #
 # time_limit = 5 * 60
-# k_min = 200
-# k_max = 300
-# Thc = 200
+# k_min = 10
+# k_max = 20
+# Thc = 20
 #
 # List_k = list(range(k_min, k_max))
 #
