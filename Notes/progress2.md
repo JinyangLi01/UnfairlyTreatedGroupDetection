@@ -82,7 +82,20 @@
 
 
 # 2021.06.11 meeting with Yuval, Jag
-1. 
+1. New experiment: 50 datasets on UCI, show that they all have unfairness
+
+
+# 2021.06.18 meeting with Yuval
+1. Can change grades, but keep the true positives ...
+2. better not change failures
+3. Figure 11/12 b should decrease?
+4. case study: compas, bad for black. 
+black have higher false negative
+hispanic female higher error
+   
+all definition: accuracy, false positive, ranking
+find 
+
 
 
 

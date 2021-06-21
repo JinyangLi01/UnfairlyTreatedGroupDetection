@@ -178,7 +178,7 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
                 continue
             num_top_k = patterns_top_kmin.pattern_count(st)
             if num_top_k < Lowerbounds[k - k_min]:
-                # if PatternEqual(P, [-1, 1, -1, -1, -1, 1, -1]):
+                # if PatternEqual(P, [-1, -1, 1, -1]):
                 #     print("k={}, pattern equal = {}, num_top_k = {}".format(k, P, num_top_k))
                 CheckDominationAndAddForLowerBound(P, pattern_treated_unfairly_lowerbound)
             else:

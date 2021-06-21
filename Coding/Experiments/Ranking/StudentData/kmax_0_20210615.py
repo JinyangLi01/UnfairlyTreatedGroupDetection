@@ -57,12 +57,12 @@ def thousands_formatter(x, pos):
     return int(x/1000)
 
 
-selected_attributes = ["school", "sex", "age_binary", "address", "famsize", "Pstatus"]
+selected_attributes = ["school", "sex", "age_binary", "address", "famsize", "Pstatus", "Medu", "Fedu"]
 
 Thc = 20
 k_min = 10
 k_max_list = [50, 100, 150, 200, 250, 300, 350]
-original_data_file = r"../../../../InputData/StudentDataset/ForRanking/student-mat_selected_6att.csv"
+original_data_file = r"../../../../InputData/StudentDataset/ForRanking/student-mat_selected_8att.csv"
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data.drop('rank', axis=1)
 time_limit = 5*60

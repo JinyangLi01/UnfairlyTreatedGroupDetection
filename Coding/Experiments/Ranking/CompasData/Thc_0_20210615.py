@@ -59,7 +59,8 @@ def thousands_formatter(x, pos):
 
 
 selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
-Thc_list = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
+Thc_list = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1300, 1400, 1500]
+
 k_min = 10
 k_max = 50
 original_data_file = r"../../../../InputData/CompasData/ForRanking/CompasData_ranked_5att.csv"
@@ -198,7 +199,7 @@ plt.plot(Thc_list, execution_time2, label="naive algorithm", color='orange', lin
 
 plt.xlabel('threshold of cardinality')
 plt.ylabel('execution time (s)')
-plt.xticks([100, 500, 1000, 1500, 2000])
+plt.xticks([100, 500, 1000, 1500])
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/Ranking/CompasData/thc_time.png")
@@ -213,7 +214,7 @@ plt.ylabel('number of nodes visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
-plt.xticks([100, 500, 1000, 1500, 2000])
+plt.xticks([100, 500, 1000, 1500])
 
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
