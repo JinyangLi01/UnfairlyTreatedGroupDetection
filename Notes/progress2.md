@@ -97,5 +97,13 @@ all definition: accuracy, false positive, ranking
 find 
 
 
+# 2021.06.22 meeting with Yuval
+1. Finish the example in section 5. Yuval will change bullets to pseudocode.
+2. Proof, second part, s_D >= n-m-1 !!! It's incorrect now
+3. threshold of size: [10, 100]
+4. experiments, run again and explain.
 
+# 2021.06.23
+1. proof of the two proposition
+2. new experiments and results
 

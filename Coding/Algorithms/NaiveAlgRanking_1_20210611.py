@@ -153,7 +153,7 @@ Thc: threshold of cardinality
 """
 
 def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_max, time_limit):
-    time1 = time.time()
+    time0 = time.time()
     pc_whole_data = pattern_count.PatternCounter(ranked_data, encoded=False)
     pc_whole_data.parse_data()
     whole_data_frame = ranked_data.describe(include='all')
@@ -161,13 +161,14 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
     pattern_treated_unfairly_lowerbound = []
     pattern_treated_unfairly_upperbound = []
     for k in range(k_min, k_max):
+        # time2 = time.time()
         root = [-1] * (len(attributes))
         S = GenerateChildren(root, whole_data_frame, attributes)
         patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_kmin.parse_data()
         # lower bound
         while len(S) > 0:
-            if time.time() - time1 > time_limit:
+            if time.time() - time0 > time_limit:
                 print("newalg overtime")
                 break
             P = S.pop(0)
@@ -189,7 +190,7 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
         S = GenerateChildren(root, whole_data_frame, attributes)
         parent_candidate_for_upperbound = []
         while len(S) > 0:
-            if time.time() - time1 > time_limit:
+            if time.time() - time0 > time_limit:
                 print("newalg overtime")
                 break
             P = S.pop(0)
@@ -215,8 +216,10 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
                 if len(parent_candidate_for_upperbound) > 0:
                     CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, pattern_treated_unfairly_upperbound)
                     parent_candidate_for_upperbound = []
-    time2 = time.time()
-    return pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, time2 - time1
+        # time3 = time.time()
+        # print("k={}, time = {}".format(k, time3-time2))
+    time1 = time.time()
+    return pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, time1 - time0
 
 """
 p in pattern_treated_unfairly_upperbound2 but not in pattern_treated_unfairly_upperbound:

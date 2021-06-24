@@ -18,7 +18,7 @@ threshold of minority group accuracy: overall acc - 20
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_4_20210610 as newalg
+from Algorithms import NewAlgRanking_5_20210624 as newalg
 from Algorithms import NaiveAlgRanking_1_20210611 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
@@ -60,7 +60,7 @@ def thousands_formatter(x, pos):
 
 selected_attributes = ["school", "sex", "age_binary", "address", "famsize", "Pstatus", "Medu", "Fedu"]
 
-Thc_list = [ 20, 40, 60, 80, 100]
+Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 k_min = 10
 k_max = 50
 original_data_file = r"../../../../InputData/StudentDataset/ForRanking/student-mat_selected_8att.csv"
