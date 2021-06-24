@@ -349,7 +349,7 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
     for st in patterns_searched_lowest_level_lowerbound: # st is a string
         num_patterns_visited += 1
         p = string2num(st)
-        if p in ancestors or p in pattern_treated_unfairly_lowerbound: # TODO ??
+        if p in ancestors or p in pattern_treated_unfairly_lowerbound:
             continue
         if st in patterns_size_whole:
             whole_cardinality = patterns_size_whole[st]
@@ -403,7 +403,7 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
     to_remove = set()
     to_append = set()
     for st in patterns_searched_lowest_level_upperbound:
-        p = string2num(st) # TODO: string to num ??
+        p = string2num(st) #
         num_patterns_visited += 1
         if p in ancestors or p in pattern_treated_unfairly_upperbound:
             continue
