@@ -18,7 +18,7 @@ threshold of minority group accuracy: overall acc - 20
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_4_20210610 as newalg
+from Algorithms import NewAlgRanking_5_20210624 as newalg
 from Algorithms import NaiveAlgRanking_1_20210611 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
@@ -59,10 +59,10 @@ def thousands_formatter(x, pos):
 
 
 selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
-Thc_list = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1300, 1400, 1500]
-
+Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 k_min = 10
 k_max = 50
+
 original_data_file = r"../../../../InputData/CompasData/ForRanking/CompasData_ranked_5att.csv"
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data.drop('rank', axis=1)
@@ -199,7 +199,7 @@ plt.plot(Thc_list, execution_time2, label="naive algorithm", color='orange', lin
 
 plt.xlabel('threshold of cardinality')
 plt.ylabel('execution time (s)')
-plt.xticks([100, 500, 1000, 1500])
+plt.xticks(Thc_list)
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/Ranking/CompasData/thc_time.png")
@@ -214,7 +214,7 @@ plt.ylabel('number of nodes visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
-plt.xticks([100, 500, 1000, 1500])
+plt.xticks(Thc_list)
 
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
@@ -224,50 +224,3 @@ plt.show()
 plt.close()
 plt.clf()
 
-"""
-pattern [0, 0, 0, 0] top-5 = 3 
-pattern [0, 0, 0, 0] top-6 = 4 
-pattern [0, 0, 0, 0] top-7 = 4 
-pattern [0, 0, 0, 0] top-8 = 5 
-pattern [0, 0, 0, 0] top-9 = 6 
-pattern [0, 0, 0, 0] top-10 = 6 
-pattern [0, 0, 0, 0] top-11 = 7 
-pattern [0, 0, 0, 0] top-12 = 8 
-pattern [0, 0, 0, 0] top-13 = 8 
-pattern [0, 0, 0, 0] top-14 = 9 
-pattern [0, 0, 0, 0] top-15 = 9 
-pattern [0, 0, 0, 0] top-16 = 9 
-pattern [0, 0, 0, 0] top-17 = 10 
-pattern [0, 0, 0, 0] top-18 = 10 
-pattern [0, 0, 0, 0] top-19 = 10 
-pattern [0, 0, 0, 0] top-20 = 10 
-pattern [0, 0, 0, 0] top-21 = 11 
-pattern [0, 0, 0, 0] top-22 = 11 
-pattern [0, 0, 0, 0] top-23 = 11 
-pattern [0, 0, 0, 0] top-24 = 12 
-pattern [0, 0, 0, 0] top-25 = 13 
-pattern [0, 0, 0, 0] top-26 = 14 
-pattern [0, 0, 0, 0] top-27 = 15 
-pattern [0, 0, 0, 0] top-28 = 16 
-pattern [0, 0, 0, 0] top-29 = 16 
-pattern [0, 0, 0, 0] top-30 = 16 
-pattern [0, 0, 0, 0] top-31 = 16 
-pattern [0, 0, 0, 0] top-32 = 16 
-pattern [0, 0, 0, 0] top-33 = 16 
-pattern [0, 0, 0, 0] top-34 = 16 
-pattern [0, 0, 0, 0] top-35 = 16 
-pattern [0, 0, 0, 0] top-36 = 17 
-pattern [0, 0, 0, 0] top-37 = 17 
-pattern [0, 0, 0, 0] top-38 = 18 
-pattern [0, 0, 0, 0] top-39 = 18 
-pattern [0, 0, 0, 0] top-40 = 19 
-pattern [0, 0, 0, 0] top-41 = 20 
-pattern [0, 0, 0, 0] top-42 = 20 
-pattern [0, 0, 0, 0] top-43 = 20 
-pattern [0, 0, 0, 0] top-44 = 21 
-pattern [0, 0, 0, 0] top-45 = 21 
-pattern [0, 0, 0, 0] top-46 = 21 
-pattern [0, 0, 0, 0] top-47 = 21 
-pattern [0, 0, 0, 0] top-48 = 21 
-pattern [0, 0, 0, 0] top-49 = 21 
-"""

@@ -221,11 +221,6 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
     time1 = time.time()
     return pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, time1 - time0
 
-"""
-p in pattern_treated_unfairly_upperbound2 but not in pattern_treated_unfairly_upperbound:
-[-1, -1, 1, 0, -1, -1]
-"""
-
 
 # selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
 #

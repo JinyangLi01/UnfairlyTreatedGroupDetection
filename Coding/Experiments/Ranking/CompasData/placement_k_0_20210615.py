@@ -18,7 +18,7 @@ threshold of minority group accuracy: overall acc - 20
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_4_20210610 as newalg
+from Algorithms import NewAlgRanking_5_20210624 as newalg
 from Algorithms import NaiveAlgRanking_1_20210611 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
@@ -59,8 +59,8 @@ def thousands_formatter(x, pos):
 
 
 selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
-Thc = 200
-num_k = 100
+Thc = 100
+num_k = 50
 k_min_list = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
 original_data_file = r"../../../../InputData/CompasData/ForRanking/CompasData_ranked_5att.csv"
 ranked_data = pd.read_csv(original_data_file)
@@ -93,6 +93,7 @@ num_loops = 1
 
 
 for k_min in k_min_list:
+    print(k_min)
     k_max = k_min + num_k
     List_k = list(range(k_min, k_max))
 

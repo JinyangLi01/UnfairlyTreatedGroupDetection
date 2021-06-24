@@ -150,9 +150,10 @@ def findParentForStr(child):
     while i > -1:
         if child[i] == '|':
             start = i
-            break
+            parent = child[:start+1] + child[end:]
+            return parent
         i -= 1
-    parent = child[:start+1] + child[end:]
+    parent = child[end:]
     return parent
 
 def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_max, time_limit):
@@ -345,7 +346,7 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
                                 attributes, num_patterns_visited, Thc):
     to_remove = set()
     to_append = set()
-    for st in patterns_searched_lowest_level_lowerbound: # p is a string
+    for st in patterns_searched_lowest_level_lowerbound: # st is a string
         num_patterns_visited += 1
         p = string2num(st)
         if p in ancestors or p in pattern_treated_unfairly_lowerbound: # TODO ??
