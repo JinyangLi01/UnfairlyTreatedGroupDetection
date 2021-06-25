@@ -1,0 +1,15 @@
+attributes: ['age_binary', 'age_bucketized', 'sex_binary', 'race_C', 'MarriageStatus_C']
+k_min=5, k_max=10, thc=50
+Lower bounds = [0, 0, 1, 1, 1]
+Upper bounds = [3, 3, 4, 4, 4]
+num of pattern_treated_unfairly_lowerbound = 8
+[-1, -1, -1, 0, 6] [race = African-American, Divorced]
+[-1, -1, -1, -1, 2] [Separated]
+[-1, -1, -1, -1, 1] [Married]
+[-1, -1, -1, 2, -1] [race = else (not black, not caucasian)]
+[-1, -1, 1, -1, -1] [sex = F]
+[-1, -1, -1, -1, 4] [Widowed]
+[1, -1, -1, 1, 0] [age > 35, race = caucasian, single]
+[-1, 1, -1, 1, 0] [30<age<=40, race = caucasian, single]
+num of pattern_treated_unfairly_upperbound = 1
+[0, 0, 0, 0, 0] [age<=35, age<=30, sex=M, race = African-American, single]

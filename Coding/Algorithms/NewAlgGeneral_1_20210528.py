@@ -74,6 +74,7 @@ def PDominatedByM(P, M):
 Predictive parity:The fraction of correct positive prediction 
 TP/(TP+FP) <= 1 should be similar for all groups.
 The higher, the more unfairly treated
+The lower, the higher FP
 original_thf = 0.6778772657785542
 """
 def Predictive_parity(whole_data, TPdata, FPdata,
@@ -154,6 +155,8 @@ def Predictive_parity(whole_data, TPdata, FPdata,
 False positive error rate balance (predictive equality)
 The probability of a subject in the actual negative class to have a positive
 predictive value FPR = FP/(FP+TN) is similar for all groups.
+the higher, the preferred
+the smaller, the more unfairly treated
 """
 def False_positive_error_rate_balance(whole_data, FPdata, TNdata,
                                       delta_Thf, Thc, time_limit):

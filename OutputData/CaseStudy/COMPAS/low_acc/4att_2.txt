@@ -1,0 +1,8 @@
+selected_attributes: ['age_binary', 'sex_binary', 'race_C', 'MarriageStatus_C', 'juv_fel_count_C', 'juv_misd_count_C', 'juv_other_count_C', 'priors_count_C']
+att_to_predict: is_recid
+overall_acc = 0.6177068214804065, thc = 10, tha = 0.5177068214804065
+newalg, time = 0.27359580993652344 s, num_calculation = 9900
+num of patterns detected = 3
+[-1, -1, 0, 3, -1, -1, -1, -1]
+[1, -1, 2, -1, -1, -1, -1, 1]
+[1, -1, 1, -1, -1, -1, -1, 2]

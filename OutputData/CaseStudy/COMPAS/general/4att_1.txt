@@ -1,0 +1,6 @@
+selected_attributes: ['age_binary', 'sex_binary', 'race_C', 'MarriageStatus_C']
+att_to_predict: is_recid
+fairness_definition = 0, thc = 5, delta_thf = 0.2
+newalg, time = 0.05757904052734375 s, num_calculation = 178
+num of patterns detected = 1
+[-1, -1, 1, 3]
