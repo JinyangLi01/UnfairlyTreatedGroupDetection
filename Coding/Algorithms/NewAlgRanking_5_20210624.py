@@ -182,10 +182,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
 
     parent_candidate_for_upperbound = []
 
-    time_for_lowerbound = 0
-    time_for_upperbound = 0
-    time_for_thc_check = 0
-    # time2 = time.time()
+
     # DFS
     # this part is the main time consumption
     while len(S) > 0:
@@ -197,44 +194,21 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
         #     print("k={}, pattern equal = {}".format(k, P))
         st = num2string(P)
         num_patterns_visited += 1
-        # time_pc_1 = time.time()
         whole_cardinality = pc_whole_data.pattern_count(st)
-        # time_pc_2 = time.time()
         patterns_size_whole[st] = whole_cardinality
-        # time_pc_3 = time.time()
-        # print("time_pc: {}, {}".format(time_pc_2-time_pc_1, time_pc_3-time_pc_2))
-        # time_thc_1 = time.time()
         if whole_cardinality < Thc:
-            # t1 = time.time()
             if len(parent_candidate_for_upperbound) > 0:
                 CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, pattern_treated_unfairly_upperbound)
                 parent_candidate_for_upperbound = []
-            # t2 = time.time()
             parent = findParent(P, num_att)
-            # t3 = time.time()
             # patterns in patterns_searched_lowest_level all have valid whole cardinality
             # and are not in pattern_treated_unfairly
             # ================== time consuming =============
             if PatternEqual(parent, root) is False:
                 parent_str = num2string(parent)
-                # t4 = time.time()
                 patterns_searched_lowest_level_lowerbound.add(parent_str)
-                # CheckRepeatingAndAppend(parent, patterns_searched_lowest_level_lowerbound)
-                # t5 = time.time()
                 patterns_searched_lowest_level_upperbound.add(parent_str)
-                # CheckRepeatingAndAppend(parent, patterns_searched_lowest_level_upperbound)
-                # t6 = time.time()
-                # print("add parent: {}, {}, {}".format(t4-t3, t5-t4, t6-t5))
-            # ================== time consuming =============
-            # time_thc_2 = time.time()
-            # time_for_thc_check += time_thc_2 - time_thc_1
-            # print("{}, {}, {}".format(t2-t1, t3-t2, time_thc_2 - t3))
-            # print("whole_cardinality < Thc time = {}".format(time_thc_2-time_thc_1))
             continue
-        # time_thc_2 = time.time()
-        # time_for_thc_check += time_thc_2 - time_thc_1
-        #
-        # time_lb_1 = time.time()
         num_top_k = patterns_top_kmin.pattern_count(st)
         patterns_size_topk[st] = num_top_k
         if num_top_k < Lowerbounds[k - k_min]:
@@ -242,19 +216,12 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
             parent_str = num2string(parent)
             if parent_str != root_str:
                 patterns_searched_lowest_level_lowerbound.add(parent_str)
-                # CheckRepeatingAndAppend(parent, patterns_searched_lowest_level_lowerbound)
             CheckDominationAndAddForLowerbound(P, pattern_treated_unfairly_lowerbound)
         else:
             children = GenerateChildren(P, whole_data_frame, attributes)
             if len(children) == 0:
                 patterns_searched_lowest_level_lowerbound.add(st)
-                # CheckRepeatingAndAppend(P, patterns_searched_lowest_level_lowerbound)
             S = children + S
-        # time_lb_2 = time.time()
-        # # print("time lowerbound = {}".format((time_lb_2-time_lb_1) * 100000))
-        # time_for_lowerbound += time_lb_2 - time_lb_1
-        #
-        # time_ub_1 = time.time()
         if num_top_k > Upperbounds[k - k_min]:
             parent_candidate_for_upperbound = P
             children = GenerateChildren(P, whole_data_frame, attributes)
@@ -266,18 +233,8 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
             if len(parent_candidate_for_upperbound) > 0:
                 CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, pattern_treated_unfairly_upperbound)
                 parent_candidate_for_upperbound = []
-    #     time_ub_2 = time.time()
-    #     # print("time upperbound = {}".format((time_ub_2 - time_ub_1) * 100000))
-    #     time_for_upperbound += time_ub_2 - time_ub_1
-    #
-    # time3 = time.time()
-    # time_k_min = time3-time2
-    # # print("time for k_min = {}".format(time_k_min))
-    # # print("time_for_thc_check = {}, time_for_lowerbound = {}, time_for_upperbound = {}".format(time_for_thc_check,
-    #                                                                                            time_for_lowerbound,
-    #                                                                                            time_for_upperbound))
+
     for k in range(k_min + 1, k_max):
-        # time4 = time.time()
         if time.time() - time0 > time_limit:
             print("newalg overtime")
             break
@@ -286,7 +243,6 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
         ancestors, num_patterns_visited = AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound,
                                 whole_data_frame, patterns_top_kmin, k, k_min, pc_whole_data, num_patterns_visited,
                     patterns_size_topk, patterns_size_whole, Lowerbounds, Upperbounds, num_att, attributes)
-        # time5 = time.time()
         # suppose Lowerbounds and Upperbounds monotonically increases
         if Lowerbounds[k-k_min] > Lowerbounds[k-1-k_min] or Upperbounds[k-k_min] > Upperbounds[k-1-k_min]:
             num_patterns_visited, patterns_searched_lowest_level_lowerbound, patterns_searched_lowest_level_upperbound \
@@ -297,8 +253,6 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
                                                             k_min, pc_whole_data, patterns_size_topk, patterns_size_whole,
                                                             Lowerbounds, Upperbounds, num_att, whole_data_frame,
                                                             attributes, num_patterns_visited, Thc)
-        # time6 = time.time()
-        # print("k={}, ancestor time = {}, time to check bounds = {}".format(k, time5-time4, time6-time5))
     time1 = time.time()
     return pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, time1 - time0
 
@@ -369,7 +323,6 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
         parent_str = findParentForStr(child_str)
         child = string2num(child_str)
         if parent_str == root_str:
-            # print("st = {}, child_str = {}, child = {}".format(st, child_str, child))
             CheckDominationAndAddForLowerbound(child, pattern_treated_unfairly_lowerbound)
             to_remove.add(child_str)
             continue
@@ -385,19 +338,15 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
                 child_str = parent_str
                 parent_str = findParentForStr(child_str)
             else:
-                # print("st = {}, child_str = {}, child = {}".format(st, child_str, child))
                 CheckDominationAndAddForLowerbound(child, pattern_treated_unfairly_lowerbound)
                 to_remove.add(st)
                 to_append.add(parent_str)
                 break
         if parent_str == root_str:
-            # print("st = {}, child_str = {}, child = {}".format(st, child_str, child))
             CheckDominationAndAddForLowerbound(child, pattern_treated_unfairly_lowerbound)
             continue
     for p_str in to_remove:
         patterns_searched_lowest_level_lowerbound.remove(p_str)
-    # for p in to_append:
-    #     CheckRepeatingAndAppend(p, patterns_searched_lowest_level_upperbound)
     patterns_searched_lowest_level_lowerbound = patterns_searched_lowest_level_lowerbound | to_append
 
     to_remove = set()
