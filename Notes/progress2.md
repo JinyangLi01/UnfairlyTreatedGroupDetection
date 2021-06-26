@@ -107,3 +107,12 @@ find
 1. proof of the two proposition
 2. new experiments and results
 
+1. remove figure 12, repeat for 10, 11, with constant lower bound/upper bound
+2. case study: same preprocessing as coverage/propublica
+need to show black have high FN, white have high FP
+report other groups is good, but need to have what they find
+3. Eg 5.2. Keep the order of attributes. Add the number of failures.
+
+
+
+

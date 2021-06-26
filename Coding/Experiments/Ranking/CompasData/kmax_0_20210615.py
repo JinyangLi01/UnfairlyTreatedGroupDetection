@@ -58,21 +58,25 @@ def thousands_formatter(x, pos):
 
 
 
-selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
+selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized", "MarriageStatus_C"]
 Thc = 200
 k_min = 10
 k_max_list = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
-original_data_file = r"../../../../InputData/CompasData/ForRanking/CompasData_ranked_5att.csv"
+# original_data_file = r"../../../../InputData/CompasData/ForRanking/CompasData_ranked_5att.csv"
+original_data_file = r"../../../../InputData/CompasData/general/compas_data_cat_necessary_att_ranked.csv"
 ranked_data = pd.read_csv(original_data_file)
-ranked_data = ranked_data.drop('rank', axis=1)
+ranked_data = ranked_data[selected_attributes]
+# ranked_data = ranked_data.drop('rank', axis=1)
 time_limit = 5*60
 
 
 def lowerbound(x):
-    return int((x-3)/4)
+    # return int((x-3)/4)
+    return 10
 
 def upperbound(x):
-    return int(3+(x-k_min+1)/3)
+    # return int(3+(x-k_min+1)/3)
+    return 50
 
 
 execution_time1 = list()
@@ -220,50 +224,3 @@ plt.show()
 plt.close()
 plt.clf()
 
-"""
-pattern [0, 0, 0, 0] top-5 = 3 
-pattern [0, 0, 0, 0] top-6 = 4 
-pattern [0, 0, 0, 0] top-7 = 4 
-pattern [0, 0, 0, 0] top-8 = 5 
-pattern [0, 0, 0, 0] top-9 = 6 
-pattern [0, 0, 0, 0] top-10 = 6 
-pattern [0, 0, 0, 0] top-11 = 7 
-pattern [0, 0, 0, 0] top-12 = 8 
-pattern [0, 0, 0, 0] top-13 = 8 
-pattern [0, 0, 0, 0] top-14 = 9 
-pattern [0, 0, 0, 0] top-15 = 9 
-pattern [0, 0, 0, 0] top-16 = 9 
-pattern [0, 0, 0, 0] top-17 = 10 
-pattern [0, 0, 0, 0] top-18 = 10 
-pattern [0, 0, 0, 0] top-19 = 10 
-pattern [0, 0, 0, 0] top-20 = 10 
-pattern [0, 0, 0, 0] top-21 = 11 
-pattern [0, 0, 0, 0] top-22 = 11 
-pattern [0, 0, 0, 0] top-23 = 11 
-pattern [0, 0, 0, 0] top-24 = 12 
-pattern [0, 0, 0, 0] top-25 = 13 
-pattern [0, 0, 0, 0] top-26 = 14 
-pattern [0, 0, 0, 0] top-27 = 15 
-pattern [0, 0, 0, 0] top-28 = 16 
-pattern [0, 0, 0, 0] top-29 = 16 
-pattern [0, 0, 0, 0] top-30 = 16 
-pattern [0, 0, 0, 0] top-31 = 16 
-pattern [0, 0, 0, 0] top-32 = 16 
-pattern [0, 0, 0, 0] top-33 = 16 
-pattern [0, 0, 0, 0] top-34 = 16 
-pattern [0, 0, 0, 0] top-35 = 16 
-pattern [0, 0, 0, 0] top-36 = 17 
-pattern [0, 0, 0, 0] top-37 = 17 
-pattern [0, 0, 0, 0] top-38 = 18 
-pattern [0, 0, 0, 0] top-39 = 18 
-pattern [0, 0, 0, 0] top-40 = 19 
-pattern [0, 0, 0, 0] top-41 = 20 
-pattern [0, 0, 0, 0] top-42 = 20 
-pattern [0, 0, 0, 0] top-43 = 20 
-pattern [0, 0, 0, 0] top-44 = 21 
-pattern [0, 0, 0, 0] top-45 = 21 
-pattern [0, 0, 0, 0] top-46 = 21 
-pattern [0, 0, 0, 0] top-47 = 21 
-pattern [0, 0, 0, 0] top-48 = 21 
-pattern [0, 0, 0, 0] top-49 = 21 
-"""

@@ -30,7 +30,7 @@ ranked_data = ranked_data[selected_attributes]
 
 
 
-output_path = r'../../../../OutputData/CaseStudy/COMPAS/general/4att_1.txt'
+output_path = r'../../../../OutputData/CaseStudy/COMPAS/general/4att_2.txt'
 output_file = open(output_path, "w")
 
 output_file.write("selected_attributes: {}\n".format(selected_attributes))
@@ -46,8 +46,8 @@ less_attribute_data, TP, TN, FP, FN = predict.PredictWithMLReturnTPTNFPFN(origin
 
 thc = 5
 time_limit = 5 * 60
-fairness_definition = 0
-delta_thf = 0.2
+fairness_definition = 3
+delta_thf = 0.1, 0.1
 
 
 

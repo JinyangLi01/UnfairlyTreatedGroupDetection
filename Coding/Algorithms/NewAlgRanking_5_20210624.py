@@ -43,6 +43,18 @@ def PatternEqual(m, P):
             return False
     return True
 
+# increase size by 1 for children, and children's children
+def AddSizeTopKMinOfChildren(children, patterns_top_kmin, patterns_size_topk, new_tuple):
+    while len(children) > 0:
+        child = children.pop(0)
+        st = num2string(child)
+        if st in patterns_size_topk:
+            patterns_size_topk[st] += 1
+        else:
+            patterns_size_topk[st] = patterns_top_kmin.pattern_count(st) + 1
+        new_children = GenerateChildrenRelatedToTuple(child, new_tuple)
+        children = children + new_children
+
 
 def GenerateChildrenRelatedToTuple(P, new_tuple):
     children = []
@@ -238,6 +250,16 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
         if time.time() - time0 > time_limit:
             print("newalg overtime")
             break
+        # if k == 24:
+        #     print("k={}".format(k))
+        #     st = num2string([-1, 0, 1, 0, 0])
+        #     if st in patterns_size_topk:
+        #         num_top_k = patterns_size_topk[st]
+        #     else:
+        #         num_top_k = patterns_top_kmin.pattern_count(st)
+        #         patterns_size_topk[st] = num_top_k
+        #     print("num = {}".format(num_top_k))
+
         new_tuple = ranked_data.iloc[[k - 1]].values.flatten().tolist()
         # top down for related patterns
         ancestors, num_patterns_visited = AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound,
@@ -349,69 +371,69 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
         patterns_searched_lowest_level_lowerbound.remove(p_str)
     patterns_searched_lowest_level_lowerbound = patterns_searched_lowest_level_lowerbound | to_append
 
-    to_remove = set()
-    to_append = set()
-    for st in patterns_searched_lowest_level_upperbound:
-        p = string2num(st) #
-        num_patterns_visited += 1
-        if p in ancestors or p in pattern_treated_unfairly_upperbound:
-            continue
-        if st in patterns_size_whole:
-            whole_cardinality = patterns_size_whole[st]
-        else:
-            whole_cardinality = pc_whole_data.pattern_count(st)
-        if whole_cardinality < Thc:
-            continue
-        if st in patterns_size_topk:
-            pattern_size_in_topk = patterns_size_topk[st]
-        else:
-            pattern_size_in_topk = patterns_top_kmin.pattern_count(st)
-            patterns_size_topk[st] = pattern_size_in_topk
-        if pattern_size_in_topk <= Upperbounds[k - k_min]:
-            continue
-
-        parent_str = st
-        to_remove.add(parent_str)
-        children = GenerateChildren(p, whole_data_frame, attributes)
-        parent = []
-        if len(children) == 0:
-            parent = string2num(parent_str)
-            CheckDominationAndAddForUpperbound(parent, pattern_treated_unfairly_upperbound)
-        add_for_upper_bound = False
-        while len(children) != 0:
-            child = children.pop(0)
-            num_patterns_visited += 1
-            child_str = num2string(child)
-            if child_str in patterns_size_whole:
-                whole_cardinality = patterns_size_whole[child_str]
-            else:
-                whole_cardinality = pc_whole_data.pattern_count(child_str)
-            if whole_cardinality < Thc:
-                continue
-            if child_str in patterns_size_topk:
-                pattern_size_in_topk = patterns_size_topk[child_str]
-            else:
-                pattern_size_in_topk = patterns_top_kmin.pattern_count(child_str)
-                patterns_size_topk[child_str] = pattern_size_in_topk
-            if pattern_size_in_topk > Upperbounds[k - k_min]:
-                parent = child
-                children_new = GenerateChildren(parent, whole_data_frame, attributes)
-                children = children_new + children
-                if len(children_new) == 0:
-                    add_for_upper_bound = True
-                    CheckDominationAndAddForUpperbound(parent, pattern_treated_unfairly_upperbound)
-                    parent = []
-            else:
-                if len(parent) > 0:
-                    add_for_upper_bound = True
-                    CheckDominationAndAddForUpperbound(parent, pattern_treated_unfairly_upperbound)
-                    to_append.add(child_str)
-                    parent = []
-        if not add_for_upper_bound:
-            CheckDominationAndAddForUpperbound(p, pattern_treated_unfairly_upperbound)
-    for p_str in to_remove:
-        patterns_searched_lowest_level_upperbound.remove(p_str)
-    patterns_searched_lowest_level_upperbound = patterns_searched_lowest_level_upperbound | to_append
+    # to_remove = set()
+    # to_append = set()
+    # for st in patterns_searched_lowest_level_upperbound:
+    #     p = string2num(st) #
+    #     num_patterns_visited += 1
+    #     if p in ancestors or p in pattern_treated_unfairly_upperbound:
+    #         continue
+    #     if st in patterns_size_whole:
+    #         whole_cardinality = patterns_size_whole[st]
+    #     else:
+    #         whole_cardinality = pc_whole_data.pattern_count(st)
+    #     if whole_cardinality < Thc:
+    #         continue
+    #     if st in patterns_size_topk:
+    #         pattern_size_in_topk = patterns_size_topk[st]
+    #     else:
+    #         pattern_size_in_topk = patterns_top_kmin.pattern_count(st)
+    #         patterns_size_topk[st] = pattern_size_in_topk
+    #     if pattern_size_in_topk <= Upperbounds[k - k_min]:
+    #         continue
+    #
+    #     parent_str = st
+    #     to_remove.add(parent_str)
+    #     children = GenerateChildren(p, whole_data_frame, attributes)
+    #     parent = []
+    #     if len(children) == 0:
+    #         parent = string2num(parent_str)
+    #         CheckDominationAndAddForUpperbound(parent, pattern_treated_unfairly_upperbound)
+    #     add_for_upper_bound = False
+    #     while len(children) != 0:
+    #         child = children.pop(0)
+    #         num_patterns_visited += 1
+    #         child_str = num2string(child)
+    #         if child_str in patterns_size_whole:
+    #             whole_cardinality = patterns_size_whole[child_str]
+    #         else:
+    #             whole_cardinality = pc_whole_data.pattern_count(child_str)
+    #         if whole_cardinality < Thc:
+    #             continue
+    #         if child_str in patterns_size_topk:
+    #             pattern_size_in_topk = patterns_size_topk[child_str]
+    #         else:
+    #             pattern_size_in_topk = patterns_top_kmin.pattern_count(child_str)
+    #             patterns_size_topk[child_str] = pattern_size_in_topk
+    #         if pattern_size_in_topk > Upperbounds[k - k_min]:
+    #             parent = child
+    #             children_new = GenerateChildren(parent, whole_data_frame, attributes)
+    #             children = children_new + children
+    #             if len(children_new) == 0:
+    #                 add_for_upper_bound = True
+    #                 CheckDominationAndAddForUpperbound(parent, pattern_treated_unfairly_upperbound)
+    #                 parent = []
+    #         else:
+    #             if len(parent) > 0:
+    #                 add_for_upper_bound = True
+    #                 CheckDominationAndAddForUpperbound(parent, pattern_treated_unfairly_upperbound)
+    #                 to_append.add(child_str)
+    #                 parent = []
+    #     if not add_for_upper_bound:
+    #         CheckDominationAndAddForUpperbound(p, pattern_treated_unfairly_upperbound)
+    # for p_str in to_remove:
+    #     patterns_searched_lowest_level_upperbound.remove(p_str)
+    # patterns_searched_lowest_level_upperbound = patterns_searched_lowest_level_upperbound | to_append
 
     return num_patterns_visited, patterns_searched_lowest_level_lowerbound, patterns_searched_lowest_level_upperbound
 
@@ -427,11 +449,13 @@ def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_tre
     parent_candidate_for_upperbound = []
     while len(S) > 0:
         P = S.pop(0)
-        # if PatternEqual(P, [0, 1, 0, 0, -1]):
-        #     print("k={}, pattern equal = {}".format(k, P))
         st = num2string(P)
+        # if PatternEqual(P, [-1, 0, 1, 0, 0]):
+        #     print("k={}, pattern equal = {}".format(k, P))
+            # print("patterns_size_topk[st] + 1 = {}".format(patterns_size_topk[st] + 1))
         num_patterns_visited += 1
         add_children = False
+        children = GenerateChildrenRelatedToTuple(P, new_tuple)
         if st in patterns_size_whole:
             whole_cardinality = patterns_size_whole[st]
         else:
@@ -448,14 +472,12 @@ def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_tre
             if patterns_size_topk[st] < Lowerbounds[k - k_min]:
                 CheckDominationAndAddForLowerbound(new_tuple, pattern_treated_unfairly_lowerbound)
             else:
-                children = GenerateChildrenRelatedToTuple(P, new_tuple)
                 S = children + S
                 ancestors = ancestors + children
                 add_children = True
             if patterns_size_topk[st] > Upperbounds[k - k_min]:
                 parent_candidate_for_upperbound = P
                 if not add_children:
-                    children = GenerateChildrenRelatedToTuple(P, new_tuple)
                     S = children + S
                     ancestors = ancestors + children
                     add_children = True
@@ -466,37 +488,67 @@ def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_tre
                 if len(parent_candidate_for_upperbound) > 0:
                     CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, pattern_treated_unfairly_upperbound)
                     parent_candidate_for_upperbound = []
+            if not add_children:
+                AddSizeTopKMinOfChildren(children, patterns_top_kmin, patterns_size_topk, new_tuple)
+
     return ancestors, num_patterns_visited
 
 #
-# # selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
+# selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized", "MarriageStatus_C"]
 # # original_data_file = r"../../InputData/CompasData/ForRanking/CompasData_ranked_5att.csv"
+# original_data_file = r"../../InputData/CompasData/general/compas_data_cat_necessary_att_ranked.csv"
 #
 # # selected_attributes = ["school", "sex", "age_binary", "address"]
-# selected_attributes = ["school", "sex", "age_binary", "address", "famsize", "Pstatus", "Medu", "Fedu"]
-# original_data_file = r"../../InputData/StudentDataset/ForRanking/student-mat_selected_8att.csv"
+# # selected_attributes = ["school", "sex", "age_binary", "address", "famsize", "Pstatus", "Medu", "Fedu"]
+# # original_data_file = r"../../InputData/StudentDataset/ForRanking/student-mat_selected_8att.csv"
 #
 # ranked_data = pd.read_csv(original_data_file)
-# ranked_data = ranked_data.drop('rank', axis=1)
+# ranked_data = ranked_data[selected_attributes]
 #
 #
 # time_limit = 5 * 60
 # k_min = 10
-# k_max = 30
-# Thc = 10
+# k_max = 300
+# Thc = 200
 #
 # List_k = list(range(k_min, k_max))
 #
 # def lowerbound(x):
-#     return int((x-3)/4)
+#     return 10 # int((x-3)/4)
 #
 # def upperbound(x):
-#     return int(3+(x-k_min+1)/3)
+#     return 50 # int(3+(x-k_min+1)/3)
 #
 # Lowerbounds = [lowerbound(x) for x in List_k]
 # Upperbounds = [upperbound(x) for x in List_k]
 #
 # print(Lowerbounds, "\n", Upperbounds)
+#
+#
+#
+#
+#
+#
+#
+#
+# pattern_treated_unfairly_lowerbound2, pattern_treated_unfairly_upperbound2, \
+# num_patterns_visited2, running_time2 = naiveranking.NaiveAlg(ranked_data, selected_attributes, Thc,
+#                                                                      Lowerbounds, Upperbounds,
+#                                                                      k_min, k_max, time_limit)
+#
+#
+# print("num_patterns_visited = {}".format(num_patterns_visited2))
+# print("time = {} s, num of pattern_treated_unfairly_lowerbound = {}, num of pattern_treated_unfairly_upperbound = {} ".format(running_time2,
+#         len(pattern_treated_unfairly_lowerbound2), len(pattern_treated_unfairly_upperbound2)), "\n", "patterns:\n",
+#       pattern_treated_unfairly_lowerbound2, "\n", pattern_treated_unfairly_upperbound2)
+#
+#
+#
+#
+#
+#
+#
+#
 #
 # pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, running_time = GraphTraverse(ranked_data, selected_attributes, Thc,
 #                                                                      Lowerbounds, Upperbounds,
@@ -512,18 +564,6 @@ def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_tre
 #     if PDominatedByM(p, pattern_treated_unfairly_lowerbound)[0]:
 #         print(p)
 #
-#
-#
-# pattern_treated_unfairly_lowerbound2, pattern_treated_unfairly_upperbound2, \
-# num_patterns_visited2, running_time2 = naiveranking.NaiveAlg(ranked_data, selected_attributes, Thc,
-#                                                                      Lowerbounds, Upperbounds,
-#                                                                      k_min, k_max, time_limit)
-#
-#
-# print("num_patterns_visited = {}".format(num_patterns_visited2))
-# print("time = {} s, num of pattern_treated_unfairly_lowerbound = {}, num of pattern_treated_unfairly_upperbound = {} ".format(running_time2,
-#         len(pattern_treated_unfairly_lowerbound2), len(pattern_treated_unfairly_upperbound2)), "\n", "patterns:\n",
-#       pattern_treated_unfairly_lowerbound2, "\n", pattern_treated_unfairly_upperbound2)
 #
 #
 # print("dominated by pattern_treated_unfairly2:")
