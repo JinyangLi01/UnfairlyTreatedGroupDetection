@@ -74,10 +74,10 @@ List_k = list(range(k_min, k_max))
 [0,0,0,0]: num_top_5 = 3, num_top_6 = 4, size = 2024
 """
 def lowerbound(x):
-    return int((x-3)/4)
+    return 10 # int((x-3)/4)
 
 def upperbound(x):
-    return int(3+(x-k_min+1)/3)
+    return 50 # int(3+(x-k_min+1)/3)
 
 Lowerbounds = [lowerbound(x) for x in List_k]
 Upperbounds = [upperbound(x) for x in List_k]

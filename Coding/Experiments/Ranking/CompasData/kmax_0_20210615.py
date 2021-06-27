@@ -58,12 +58,13 @@ def thousands_formatter(x, pos):
 
 
 
-selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized", "MarriageStatus_C"]
-Thc = 200
+selected_attributes = ["sex", "age_cat", "race_factor"]
+Thc = 50
 k_min = 10
-k_max_list = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
-# original_data_file = r"../../../../InputData/CompasData/ForRanking/CompasData_ranked_5att.csv"
-original_data_file = r"../../../../InputData/CompasData/general/compas_data_cat_necessary_att_ranked.csv"
+k_max_list = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+
+original_data_file = r"../../../../InputData/COMPAS_republica/compas-analysis-master/categorize_cox_parsed_filtered/cox-parsed-filtered-cat-ranked.csv"
+
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data[selected_attributes]
 # ranked_data = ranked_data.drop('rank', axis=1)
@@ -199,7 +200,7 @@ plt.plot(k_max_list, execution_time2, label="naive algorithm", color='orange', l
 
 plt.xlabel('k_max')
 plt.ylabel('execution time (s)')
-plt.xticks([100, 500, 1000, 1500, 2000])
+plt.xticks([200, 400, 600, 800, 1000])
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/Ranking/CompasData/kmax_time.png")
@@ -214,7 +215,7 @@ plt.ylabel('number of nodes visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
-plt.xticks([100, 500, 1000, 1500, 2000])
+plt.xticks([200, 400, 600, 800, 1000])
 
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()

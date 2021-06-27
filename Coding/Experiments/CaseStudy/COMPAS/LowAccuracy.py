@@ -20,10 +20,11 @@ from Algorithms import Predict_0_20210127 as predict
 #                         "juv_misd_count_C", "juv_other_count_C", "priors_count_C"
 #                        ]
 
-selected_attributes = ["age_binary", "sex_binary", "race_C"]
+selected_attributes = ["sex", "age_cat", "race_factor"]
 
 
-original_data_file = r"../../../../InputData/CompasData/general/compas_data_cat_necessary_att_ranked.csv"
+original_data_file = r"../../../../InputData/COMPAS_republica/compas-analysis-master/categorize_cox_parsed_filtered/cox-parsed-filtered-cat-ranked.csv"
+
 att_to_predict = 'is_recid'
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data[selected_attributes]

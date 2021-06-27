@@ -1,3 +1,27 @@
+"""
+
+result:
+output_path = r'../../../../OutputData/CaseStudy/COMPAS/ranking/4att_3.txt'
+
+attributes: ['sex', 'age_cat', 'race_factor']
+k_min=10, k_max=15, thc=50
+Lower bounds = [2, 2, 2, 2, 2]
+Upper bounds = [8, 8, 8, 8, 8]
+num of pattern_treated_unfairly_lowerbound = 6
+[1, -1, -1][female]
+[-1, 2, -1][>45]
+[-1, -1, 1][Asian]
+[-1, -1, 2][Caucasian]
+[-1, -1, 3][Hispanic]
+[-1, -1, 5][Other]
+num of pattern_treated_unfairly_upperbound = 2
+[0, 1, -1][male, 25-45]
+[0, -1, 0][male, African-American]
+
+
+"""
+
+
 import pandas as pd
 
 from itertools import combinations
@@ -18,10 +42,10 @@ from Algorithms import NewAlgRanking_5_20210624 as newranking
 # selected_attributes = ["age_binary", "age_bucketized", "sex_binary", "race_C", "MarriageStatus_C", "juv_fel_count_C",
 #                   "decile_score_C"]
 
-selected_attributes = ["age_binary", "sex_binary", "race_C", "MarriageStatus_C"]
+selected_attributes = ["sex", "age_cat", "race_factor"]
 
 
-original_data_file = r"../../../../InputData/CompasData/general/compas_data_cat_necessary_att_ranked.csv"
+original_data_file = r"../../../../InputData/COMPAS_republica/compas-analysis-master/categorize_cox_parsed_filtered/cox-parsed-filtered-cat-ranked.csv"
 
 
 ranked_data = pd.read_csv(original_data_file)
@@ -32,22 +56,22 @@ ranked_data = ranked_data[selected_attributes]
 time_limit = 5 * 60
 k_min = 10
 k_max = 15
-Thc = 200
+Thc = 50
 
 List_k = list(range(k_min, k_max))
 
 def lowerbound(x):
-    return int((x-2)/4)
+    return 2 # int((x-2)/4)
 
 def upperbound(x):
-    return int(5+(x-k_min+5)/2)
+    return 8 # int(5+(x-k_min+5)/2)
 
 Lowerbounds = [lowerbound(x) for x in List_k]
 Upperbounds = [upperbound(x) for x in List_k]
 
 print(Lowerbounds, "\n", Upperbounds)
 
-output_path = r'../../../../OutputData/CaseStudy/COMPAS/ranking/4att_2.txt'
+output_path = r'../../../../OutputData/CaseStudy/COMPAS/ranking/4att_3.txt'
 output_file = open(output_path, "w")
 
 output_file.write("attributes: {}\n".format(selected_attributes))

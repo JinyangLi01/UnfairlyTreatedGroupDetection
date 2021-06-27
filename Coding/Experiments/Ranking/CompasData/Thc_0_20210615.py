@@ -58,14 +58,17 @@ def thousands_formatter(x, pos):
 
 
 
-selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
+selected_attributes = ["sex", "age_cat", "race_factor"]
+
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 k_min = 10
 k_max = 50
 
-original_data_file = r"../../../../InputData/CompasData/ForRanking/CompasData_ranked_5att.csv"
+original_data_file = r"../../../../InputData/COMPAS_republica/compas-analysis-master/categorize_cox_parsed_filtered/cox-parsed-filtered-cat-ranked.csv"
+
+
 ranked_data = pd.read_csv(original_data_file)
-ranked_data = ranked_data.drop('rank', axis=1)
+ranked_data = ranked_data[selected_attributes]
 time_limit = 5*60
 
 
@@ -97,7 +100,7 @@ num_patterns_found_upperbound = list()
 num_patterns_found_lowerbound = list()
 patterns_found_upperbound = list()
 patterns_found_lowerbound = list()
-num_loops = 5
+num_loops = 20
 
 
 

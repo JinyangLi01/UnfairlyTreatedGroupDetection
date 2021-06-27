@@ -59,7 +59,7 @@ def thousands_formatter(x, pos):
 
 selected_attributes = ["school", "sex", "age_binary", "address", "famsize", "Pstatus", "Medu", "Fedu"]
 
-Thc = 20
+Thc = 50
 k_min = 10
 k_max_list = [50, 100, 150, 200, 250, 300, 350]
 original_data_file = r"../../../../InputData/StudentDataset/ForRanking/student-mat_selected_8att.csv"
@@ -69,10 +69,10 @@ time_limit = 5*60
 
 
 def lowerbound(x):
-    return int((x-3)/4)
+    return 10 # int((x-3)/4)
 
 def upperbound(x):
-    return int(3+(x-k_min+1)/3)
+    return 50 # int(3+(x-k_min+1)/3)
 
 
 execution_time1 = list()

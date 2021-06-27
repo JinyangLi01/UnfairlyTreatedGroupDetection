@@ -1,5 +1,5 @@
-selected_attributes: ['age_binary', 'sex_binary', 'race_C']
+selected_attributes: ['sex', 'age_cat', 'race_factor']
 att_to_predict: is_recid
-overall_acc = 0.6087082728592162, thc = 5, tha = 0.5587082728592162
-newalg, time = 0.04546618461608887 s, num_calculation = 36
+overall_acc = 0.6596858638743455, thc = 5, tha = 0.6096858638743454
+newalg, time = 0.06676101684570312 s, num_calculation = 84
 num of patterns detected = 0
