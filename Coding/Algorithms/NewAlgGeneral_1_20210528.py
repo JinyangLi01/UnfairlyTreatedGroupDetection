@@ -158,7 +158,68 @@ predictive value FPR = FP/(FP+TN) is similar for all groups.
 the higher, the preferred
 the smaller, the more unfairly treated
 """
-def False_positive_error_rate_balance(whole_data, FPdata, TNdata,
+def False_positive_error_rate_balance_greater_than(whole_data, FPdata, TNdata,
+                                      delta_Thf, Thc, time_limit):
+    time1 = time.time()
+
+    pc_whole_data = pattern_count.PatternCounter(whole_data, encoded=False)
+    pc_whole_data.parse_data()
+    pc_FP = pattern_count.PatternCounter(FPdata, encoded=False)
+    pc_FP.parse_data()
+    pc_TN = pattern_count.PatternCounter(TNdata, encoded=False)
+    pc_TN.parse_data()
+
+    whole_data_frame = whole_data.describe()
+    attributes = whole_data_frame.columns.values.tolist()
+
+    original_thf = len(FPdata) / (len(FPdata) + len(TNdata))
+    Thf = original_thf + delta_Thf
+    print("False_positive_error_rate_balance, original_thf = {}, Thf = {}".format(original_thf, Thf))
+
+    num_patterns = 0
+    root = [-1] * (len(attributes))
+    initial_children = GenerateChildren(root, whole_data_frame, attributes)
+    S = initial_children
+    pattern_with_low_fairness = []
+
+    while len(S) > 0:
+        if time.time() - time1 > time_limit:
+            print("newalg overtime")
+            break
+        P = S.pop()
+        st = num2string(P)
+
+        # if P == [-1, -1, 0]:
+        #     print(P)
+
+        whole_cardinality = pc_whole_data.pattern_count(st)
+        num_patterns += 1
+        if whole_cardinality < Thc:
+            # pattern_skipped_whole_c.append(P)
+            continue
+
+        # time consuming!!
+        fp = pc_FP.pattern_count(st)
+        if fp == 0:
+            continue
+        tn = pc_TN.pattern_count(st)
+        FPR = fp / (fp + tn)
+
+        if FPR <= Thf:
+            children = GenerateChildren(P, whole_data_frame, attributes)
+            S = S + children
+            continue
+
+        if PDominatedByM(P, pattern_with_low_fairness)[0] is False:
+            pattern_with_low_fairness.append(P)
+    time2 = time.time()
+    # print(duration1, duration2, duration3, duration4, duration5, duration6)
+    return pattern_with_low_fairness, num_patterns, time2 - time1
+
+
+
+
+def False_positive_error_rate_balance_less_than(whole_data, FPdata, TNdata,
                                       delta_Thf, Thc, time_limit):
     time1 = time.time()
 
@@ -212,7 +273,6 @@ def False_positive_error_rate_balance(whole_data, FPdata, TNdata,
     time2 = time.time()
     # print(duration1, duration2, duration3, duration4, duration5, duration6)
     return pattern_with_low_fairness, num_patterns, time2 - time1
-
 
 """
 False negative error rate balance (equal opportunity) 
@@ -511,8 +571,11 @@ def GraphTraverse(whole_data, TPdata, TNdata, FPdata, FNdata,
     if fairness_definition == 0:
         return Predictive_parity(whole_data, TPdata, FPdata,
                   delta_thf, Thc, time_limit)
-    elif fairness_definition == 1:
-        return False_positive_error_rate_balance(whole_data, FPdata, TNdata,
+    elif fairness_definition == 10:
+        return False_positive_error_rate_balance_less_than(whole_data, FPdata, TNdata,
+                  delta_thf, Thc, time_limit)
+    elif fairness_definition == 11:
+        return False_positive_error_rate_balance_greater_than(whole_data, FPdata, TNdata,
                   delta_thf, Thc, time_limit)
     elif fairness_definition == 2:
         return False_negative_error_rate_balance(whole_data, TPdata, FNdata,

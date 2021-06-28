@@ -8,50 +8,22 @@ library(ggplot2)
 library(survival)
 library(ggfortify)
 
-data <- filter(filter(read.csv("./cox-parsed.csv"), score_text != "N/A"), end > start) %>%
-  mutate(race_factor = factor(race,
-                              labels = c("African-American", 
-                                         "Asian",
-                                         "Caucasian", 
-                                         "Hispanic", 
-                                         "Native American",
-                                         "Other"))) %>%
-  within(race_factor <- relevel(race_factor, ref = 3)) %>%
-  mutate(score_factor = factor(score_text)) %>%
-  within(score_factor <- relevel(score_factor, ref=2))
+from truth_tables import PeekyReader, Person, table, is_race, count, vtable, hightable, vhightable
+from csv import DictReader
 
-grp <- data[!duplicated(data$id),]
-nrow(grp)
+people = []
+with open("./cox-parsed.csv") as f:
+  reader = PeekyReader(DictReader(f))
+try:
+  while True:
+  p = Person(reader)
+if p.valid:
+  people.append(p)
+except StopIteration:
+  pass
 
-
-
-# write filtered data to file
-
-
-write.csv(grp,"cox-parsed-filtered.csv")
-
-
-
-
-
-violent_data <- filter(filter(read.csv("./cox-violent-parsed.csv"), score_text != "N/A"), end > start) %>%
-  mutate(race_factor = factor(race,
-                              labels = c("African-American", 
-                                         "Asian",
-                                         "Caucasian", 
-                                         "Hispanic", 
-                                         "Native American",
-                                         "Other"))) %>%
-  within(race_factor <- relevel(race_factor, ref = 3)) %>%
-  mutate(score_factor = factor(score_text)) %>%
-  within(score_factor <- relevel(score_factor, ref=2))
-
-
-vf <- Surv(start, end, event, type="counting") ~ score_factor
-vmodel <- coxph(vf, data=violent_data)
-vgrp <- violent_data[!duplicated(violent_data$id),]
-print(nrow(vgrp))
-summary(vmodel)
-
-write.csv(vgrp,"cox-violent-parsed-filtered.csv")
-
+pop = list(filter(lambda i: ((i.recidivist == True and i.lifetime <= 730) or
+                             i.lifetime > 730), list(filter(lambda x: x.score_valid, people))))
+recid = list(filter(lambda i: i.recidivist == True and i.lifetime <= 730, pop))
+rset = set(recid)
+surv = [i for i in pop if i not in rset]
