@@ -61,7 +61,7 @@ selected_attributes = ["school", "sex", "age_binary", "address", "famsize", "Pst
 
 Thc = 50
 k_min = 10
-k_max_list = [50, 100, 150, 200, 250, 300, 350]
+range_k_list = [40, 90, 140, 190, 240, 290, 340]
 original_data_file = r"../../../../InputData/StudentDataset/ForRanking/student-mat_selected_8att.csv"
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data.drop('rank', axis=1)
@@ -92,7 +92,8 @@ num_loops = 1
 
 
 
-for k_max in k_max_list:
+for range_k in range_k_list:
+    k_max = k_min + range_k
     List_k = list(range(k_min, k_max))
 
     Lowerbounds = [lowerbound(x) for x in List_k]
@@ -165,47 +166,47 @@ for k_max in k_max_list:
 
 
 
-output_path = r'../../../../OutputData/Ranking/StudentData/kmax.txt'
+output_path = r'../../../../OutputData/Ranking/StudentData/num_k.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
 output_file.write("execution time\n")
-for n in range(len(k_max_list)):
-    output_file.write('{} {} {}\n'.format(k_max_list[n], execution_time1[n], execution_time2[n]))
+for n in range(len(range_k_list)):
+    output_file.write('{} {} {}\n'.format(range_k_list[n], execution_time1[n], execution_time2[n]))
 
 
 output_file.write("\n\nnumber of patterns visited\n")
-for n in range(len(k_max_list)):
-    output_file.write('{} {} {}\n'.format(k_max_list[n], num_patterns_visited1[n], num_patterns_visited2[n]))
+for n in range(len(range_k_list)):
+    output_file.write('{} {} {}\n'.format(range_k_list[n], num_patterns_visited1[n], num_patterns_visited2[n]))
 
 
 output_file.write("\n\nnumber of patterns found, lowerbound\n")
-for n in range(len(k_max_list)):
-    output_file.write('{} {} \n {}\n'.format(k_max_list[n], num_patterns_found_lowerbound[n], patterns_found_lowerbound[n]))
+for n in range(len(range_k_list)):
+    output_file.write('{} {} \n {}\n'.format(range_k_list[n], num_patterns_found_lowerbound[n], patterns_found_lowerbound[n]))
 
 
 output_file.write("\n\nnumber of patterns found, upperbound\n")
-for n in range(len(k_max_list)):
-    output_file.write('{} {} \n {}\n'.format(k_max_list[n], num_patterns_found_upperbound[n], patterns_found_upperbound[n]))
+for n in range(len(range_k_list)):
+    output_file.write('{} {} \n {}\n'.format(range_k_list[n], num_patterns_found_upperbound[n], patterns_found_upperbound[n]))
 
 
 
-plt.plot(k_max_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
-plt.plot(k_max_list, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
+plt.plot(range_k_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
+plt.plot(range_k_list, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 
-plt.xlabel('k_max')
+plt.xlabel('number of k')
 plt.ylabel('execution time (s)')
 plt.xticks([100, 200, 300, 350])
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/Ranking/StudentData/kmax_time.png")
+plt.savefig("../../../../OutputData/Ranking/StudentData/num_k_time.png")
 plt.show()
 
 
 fig, ax = plt.subplots()
-plt.plot(k_max_list, num_patterns_visited1, label="optimized algorithm", color='blue', linewidth = 3.4)
-plt.plot(k_max_list, num_patterns_visited2, label="naive algorithm", color='orange', linewidth = 3.4)
-plt.xlabel('k_max')
+plt.plot(range_k_list, num_patterns_visited1, label="optimized algorithm", color='blue', linewidth = 3.4)
+plt.plot(range_k_list, num_patterns_visited2, label="naive algorithm", color='orange', linewidth = 3.4)
+plt.xlabel('number of k')
 plt.ylabel('number of nodes visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
@@ -214,7 +215,7 @@ plt.xticks([100, 200, 300, 350])
 
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/Ranking/StudentData/kmax_calculations.png")
+plt.savefig("../../../../OutputData/Ranking/StudentData/num_k_calculations.png")
 plt.show()
 
 plt.close()
