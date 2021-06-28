@@ -31,7 +31,7 @@ FN_data_file = r"../../../../../InputData/Compas_republica/compas-analysis-maste
 
 
 
-output_path = r'../../../../../OutputData/CaseStudy/ProPublica/fp_greater_than.txt'
+output_path = r'../../../../../OutputData/CaseStudy/ProPublica/fn_greater_than.txt'
 output_file = open(output_path, "w")
 
 output_file.write("selected_attributes: {}\n".format(selected_attributes))
@@ -56,8 +56,8 @@ thc = 20
 time_limit = 5 * 60
 # fairness_definition = 1 # FPR = FP/(FP+TN) False_positive_error_rate_balance
 
-fairness_definition = 1 # FPR = FP/(FP+TN) False_positive_error_rate_balance, but for those treated too well
-delta_thf = 0.05
+fairness_definition = 2 # FNR = FP/(FP+TN) False_positive_error_rate_balance, but for those treated too well
+delta_thf = 0.1
 
 
 

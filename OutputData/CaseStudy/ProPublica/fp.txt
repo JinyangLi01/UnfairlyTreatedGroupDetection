@@ -1,7 +1,0 @@
-selected_attributes: ['sex', 'age_cat', 'race']
-fairness_definition = 1, thc = 5, delta_thf = 0.1
-newalg, time = 0.04216814041137695 s, num_calculation = 83
-num of patterns detected = 3
-[-1, -1, 1]
-[-1, 0, 5]
-[1, 2, 3]
