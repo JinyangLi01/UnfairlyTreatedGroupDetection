@@ -63,17 +63,19 @@ def classify(data, datafile_prefix):
     FNdata.to_csv(datafile_prefix + "_FN.csv")
 
 
+#
+#
+# for i in range(30000, 60000, 5000):
+#     datafile_prefix = str(i)
+#     data = pd.read_csv(datafile_prefix + ".csv")
+#     classify(data, datafile_prefix)
+#
+#
+#
 
-
-for i in range(30000, 60000, 5000):
-    datafile_prefix = str(i)
-    data = pd.read_csv(datafile_prefix + ".csv")
-    classify(data, datafile_prefix)
-
-
-
-
-
+datafile_prefix = "60000"
+data = pd.read_csv(datafile_prefix + ".csv")
+classify(data, datafile_prefix)
 
 
 

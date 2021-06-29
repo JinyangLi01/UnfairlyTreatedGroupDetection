@@ -64,7 +64,7 @@ def classify(data, datafile_prefix):
 
 
 
-for i in range(6000, 20000, 2000):
+for i in range(6000, 22000, 2000):
     datafile_prefix = str(i)
     data = pd.read_csv(datafile_prefix + ".csv")
     classify(data, datafile_prefix)

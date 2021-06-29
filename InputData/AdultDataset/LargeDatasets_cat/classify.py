@@ -68,10 +68,10 @@ def classify(data, datafile_prefix):
 
 
 
-for i in range(50000, 100000, 5000):
-    datafile_prefix = str(i)
-    data = pd.read_csv(datafile_prefix + ".csv")
-    classify(data, datafile_prefix)
+
+datafile_prefix = "100000"
+data = pd.read_csv(datafile_prefix + ".csv")
+classify(data, datafile_prefix)
 
 
 
