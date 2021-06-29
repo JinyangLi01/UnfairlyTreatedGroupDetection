@@ -62,14 +62,25 @@ def ComparePatternSets(set1, set2):
 def thousands_formatter(x, pos):
     return int(x/1000)
 
-def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes, att_to_predict):
-    original_data_file = original_data_file_pathpre + str(datasize) + ".csv"
-    fairness_definition = 0
-    delta_thf = 0.2
 
-    less_attribute_data, TP, TN, FP, FN = predict.PredictWithMLReturnTPTNFPFN(original_data_file,
-                                                                              selected_attributes,
-                                                                              att_to_predict)
+def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes):
+    original_data_file = original_data_file_pathpre + str(datasize) + ".csv"
+    less_attribute_data = pd.read_csv(original_data_file)[selected_attributes]
+    FP_data_file = original_data_file_pathpre + str(datasize) + "_FP.csv"
+    FP = pd.read_csv(FP_data_file)[selected_attributes]
+    FN_data_file = original_data_file_pathpre + str(datasize) + "_FN.csv"
+    FN = pd.read_csv(FN_data_file)[selected_attributes]
+    TP_data_file = original_data_file_pathpre + str(datasize) + "_TP.csv"
+    TP = pd.read_csv(TP_data_file)[selected_attributes]
+    TN_data_file = original_data_file_pathpre + str(datasize) + "_TN.csv"
+    TN = pd.read_csv(TN_data_file)[selected_attributes]
+
+
+    original_thf_FPR = len(FP) / (len(FP) + len(TN))
+
+    delta_thf = 0.2
+    fairness_definition = 1
+
 
     pattern_with_low_fairness1, num_calculation1, execution_time1 = newalg.GraphTraverse(less_attribute_data,
                                                                                 TP, TN, FP, FN, delta_thf,
@@ -100,14 +111,13 @@ def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes, a
     return execution_time1, num_calculation1, execution_time2, num_calculation2, pattern_with_low_fairness1
 
 
-selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship',
-                       'occupation', 'educational-num', 'capital-gain']
+selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass']
 
-data_sizes = [40000, 45000, 50000, 55000, 60000, 65000, 70000, 75000, 80000, 85000, 90000, 95000, 100000]
-Thc = 500
-original_data_file_pathprefix = "../../../../InputData/AdultDataset/LargerDatasets/"
-att_to_predict = 'income'
-time_limit = 20*60
+data_sizes = [50000, 55000, 60000, 65000, 70000, 75000, 80000, 85000, 90000, 95000, 100000]
+Thc = 50
+original_data_file_pathprefix = "../../../../InputData/AdultDataset/LargeDatasets_cat/"
+
+time_limit = 5*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
 # so for naive alg, we only do when number of attributes <= 7
 execution_time1 = list()
@@ -125,7 +135,7 @@ for datasize in data_sizes:
     result_cardinality = 0
     for l in range(num_loops):
         t1_, calculation1_, t2_, calculation2_, result = \
-            GridSearch(original_data_file_pathprefix, datasize, Thc, selected_attributes, att_to_predict)
+            GridSearch(original_data_file_pathprefix, datasize, Thc, selected_attributes)
         t1 += t1_
         t2 += t2_
         calculation1 += calculation1_
@@ -151,6 +161,8 @@ output_path = r'../../../../OutputData/General/AdultDataset/data_size.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
+
+
 output_file.write("execution time\n")
 for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], execution_time1[n], execution_time2[n]))
@@ -166,7 +178,7 @@ plt.plot(data_sizes, execution_time1, label="optimized algorithm", color='blue',
 plt.plot(data_sizes, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 plt.xlabel('data size (K)')
 plt.ylabel('execution time (s)')
-plt.xticks([40000, 50000, 60000, 70000, 80000, 90000, 100000])
+plt.xticks([50000, 60000, 70000, 80000, 90000, 100000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
@@ -178,7 +190,7 @@ fig, ax = plt.subplots()
 plt.plot(data_sizes, num_patterns_checked1, label="optimized algorithm", color='blue', linewidth=3.4)
 plt.plot(data_sizes, num_patterns_checked2, label="naive algorithm", color='orange', linewidth=3.4)
 plt.xlabel('data size (K)')
-plt.xticks([40000, 50000, 60000, 70000, 80000, 90000, 100000])
+plt.xticks([50000, 60000, 70000, 80000, 90000, 100000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.ylabel('number of nodes visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))

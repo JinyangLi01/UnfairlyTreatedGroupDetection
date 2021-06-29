@@ -63,14 +63,23 @@ def ComparePatternSets(set1, set2):
 def thousands_formatter(x, pos):
     return int(x/1000)
 
-def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes, att_to_predict):
+def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes):
     original_data_file = original_data_file_pathpre + str(datasize) + ".csv"
-    fairness_definition = 0
-    delta_thf = 0.2
+    less_attribute_data = pd.read_csv(original_data_file)[selected_attributes]
+    FP_data_file = original_data_file_pathpre + str(datasize) + "_FP.csv"
+    FP = pd.read_csv(FP_data_file)[selected_attributes]
+    FN_data_file = original_data_file_pathpre + str(datasize) + "_FN.csv"
+    FN = pd.read_csv(FN_data_file)[selected_attributes]
+    TP_data_file = original_data_file_pathpre + str(datasize) + "_TP.csv"
+    TP = pd.read_csv(TP_data_file)[selected_attributes]
+    TN_data_file = original_data_file_pathpre + str(datasize) + "_TN.csv"
+    TN = pd.read_csv(TN_data_file)[selected_attributes]
 
-    less_attribute_data, TP, TN, FP, FN = predict.PredictWithMLReturnTPTNFPFN(original_data_file,
-                                                                              selected_attributes,
-                                                                              att_to_predict)
+    original_thf_FPR = len(FP) / (len(FP) + len(TN))
+
+    delta_thf = 0.2
+    fairness_definition = 1
+
 
     pattern_with_low_fairness1, num_calculation1, execution_time1 = newalg.GraphTraverse(less_attribute_data,
                                                                                 TP, TN, FP, FN, delta_thf,
@@ -103,12 +112,13 @@ def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes, a
 
 
 selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree',
-                       'decile_score', 'c_days_from_compas_C']
+                       'decile_score']
 data_sizes = [6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000]
-Thc = 300
+Thc = 50
 original_data_file_pathprefix = "../../../../InputData/CompasData/LargerDatasets/"
-att_to_predict = 'is_recid'
-time_limit = 20*60
+
+
+time_limit = 5*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
 # so for naive alg, we only do when number of attributes <= 7
 execution_time1 = list()
@@ -126,7 +136,7 @@ for datasize in data_sizes:
     result_cardinality = 0
     for l in range(num_loops):
         t1_, calculation1_, t2_, calculation2_, result = \
-            GridSearch(original_data_file_pathprefix, datasize, Thc, selected_attributes, att_to_predict)
+            GridSearch(original_data_file_pathprefix, datasize, Thc, selected_attributes)
         t1 += t1_
         t2 += t2_
         calculation1 += calculation1_

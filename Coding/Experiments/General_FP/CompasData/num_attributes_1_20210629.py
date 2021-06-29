@@ -54,17 +54,26 @@ def ComparePatternSets(set1, set2):
 def thousands_formatter(x, pos):
     return int(x/1000)
 
-def GridSearch(original_data_file, thc, num_attributes, time_limit, att_to_predict, only_new_alg=False):
-    original_data = pd.read_csv(original_data_file)
-    selected_attributes = original_data.columns.tolist()[1:num_attributes+1]
-    print("selected_attributes:", selected_attributes)
+def GridSearch(original_data, TP, TN, FP, FN, all_attributes, thc, number_attributes, time_limit, only_new_alg=False):
+    selected_attributes = all_attributes[:number_attributes]
+    print("{} attributes: {}".format(number_attributes, selected_attributes))
+
+    less_attribute_data = original_data[selected_attributes]
+    FP = FP[selected_attributes]
+    TN = TN[selected_attributes]
+    FN = FN[selected_attributes]
+    TP = TP[selected_attributes]
+
+    original_thf_FPR = len(FP) / (len(FP) + len(TN))
+
     delta_thf = 0.2
-    fairness_definition = 0
+    fairness_definition = 1
+
+    print("original_thf_FPR = {}, delta_thf = {}, fairness_definition = {}".format(original_thf_FPR, delta_thf,
+                                                                                   fairness_definition))
+
 
     if only_new_alg:
-        less_attribute_data, TP, TN, FP, FN = predict.PredictWithMLReturnTPTNFPFN(original_data_file,
-                                                                                  selected_attributes,
-                                                                                  att_to_predict)
 
         pattern_with_low_fairness1, num_calculation1, execution_time1 = newalg.GraphTraverse(less_attribute_data,
                                                                                 TP, TN, FP, FN, delta_thf,
@@ -73,9 +82,6 @@ def GridSearch(original_data_file, thc, num_attributes, time_limit, att_to_predi
         print("{} patterns with low accuracy: \n {}".format(len(pattern_with_low_fairness1), pattern_with_low_fairness1))
         return execution_time1, num_calculation1, 0, 0, pattern_with_low_fairness1
 
-    less_attribute_data, TP, TN, FP, FN = predict.PredictWithMLReturnTPTNFPFN(original_data_file,
-                                                                              selected_attributes,
-                                                                              att_to_predict)
 
     pattern_with_low_fairness1, num_calculation1, execution_time1 = newalg.GraphTraverse(less_attribute_data,
                                                                                          TP, TN, FP, FN, delta_thf,
@@ -103,11 +109,26 @@ def GridSearch(original_data_file, thc, num_attributes, time_limit, att_to_predi
     return execution_time1, num_calculation1, execution_time2, num_calculation2, \
            pattern_with_low_fairness1
 
-# selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship', 'occupation']
-Thc = 300
-original_data_file = "../../../../InputData/CompasData/RecidivismData_att_classified.csv"
-att_to_predict = 'is_recid'
-time_limit = 30*60
+all_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score',
+                'c_days_from_compas_C',
+                'juv_fel_count_C', 'juv_misd_count_C', 'juv_other_count_C']
+thc = 50
+
+original_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified.csv"
+original_data = pd.read_csv(original_data_file)
+FP_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_FP.csv"
+FP = pd.read_csv(FP_data_file)
+TP_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_TP.csv"
+TP = pd.read_csv(TP_data_file)
+FN_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_FN.csv"
+FN = pd.read_csv(FN_data_file)
+TN_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_TN.csv"
+TN = pd.read_csv(TN_data_file)
+
+overall_FPR = len(FP) / (len(FP) + len(TN))
+
+time_limit = 10*60
+
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
 # so for naive alg, we only do when number of attributes <= 7
 # when there are 6 att, naive alg runs faster than new alg with 13 att
@@ -134,7 +155,7 @@ for number_attributes in range(num_att_min, num_att_max_naive):
     result_cardinality = 0
     for l in range(num_loops):
         t1_, calculation1_,  t2_, calculation2_, result = \
-            GridSearch(original_data_file, Thc, number_attributes, time_limit, att_to_predict)
+            GridSearch(original_data, TP, TN, FP, FN, all_attributes, thc, number_attributes, time_limit)
         t1 += t1_
         t2 += t2_
         calculation1 += calculation1_
@@ -161,7 +182,7 @@ for number_attributes in range(num_att_max_naive, num_att_max):
     result_cardinality = 0
     for l in range(num_loops):
         t1_, calculation1_,  _, _, result = \
-            GridSearch(original_data_file, Thc, number_attributes, time_limit, att_to_predict, True)
+            GridSearch(original_data, TP, TN, FP, FN, all_attributes, thc, number_attributes, time_limit, True)
         t1 += t1_
         calculation1 += calculation1_
         if l == 0:
@@ -180,6 +201,8 @@ for number_attributes in range(num_att_max_naive, num_att_max):
 output_path = r'../../../../OutputData/General/CompasDataset/num_attribute.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
+
+output_file.write("overall FPR: {}\n".format(overall_FPR))
 
 output_file.write("execution time\n")
 for n in range(num_att_min, num_att_max_naive):

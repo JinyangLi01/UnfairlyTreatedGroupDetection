@@ -57,7 +57,7 @@ def thousands_formatter(x, pos):
 
 
 
-selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_0']
+selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_0', 'pay_2']
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
