@@ -60,7 +60,7 @@ def thousands_formatter(x, pos):
 selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship']
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
-original_data_file = "../../../../InputData/AdultDataset/ForClassification/CleanAdult_numerical_cat.csv"
+original_data_file = "../../../../InputData/AdultDataset/ForClassification/CleanAdult_numerical_testdata_cat.csv"
 original_data = pd.read_csv(original_data_file)
 mis_data_file = "../../../../InputData/AdultDataset/ForClassification/CleanAdult_numerical_mis_cat.csv"
 mis_data = pd.read_csv(mis_data_file)

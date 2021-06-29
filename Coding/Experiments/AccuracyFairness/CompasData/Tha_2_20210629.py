@@ -50,9 +50,9 @@ selected_attributes =['sexC', 'ageC','raceC', 'MC', 'priors_count_C', 'c_charge_
 
 diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
 
-original_data_file = "../../../../InputData/CompasData/RecidivismData_13att_classified.csv"
+original_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_testdata.csv"
 original_data = pd.read_csv(original_data_file)
-mis_data_file = "../../../../InputData/CompasData/RecidivismData_13att_classified_mis.csv"
+mis_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_mis.csv"
 mis_data = pd.read_csv(mis_data_file)
 
 time_limit = 20*60

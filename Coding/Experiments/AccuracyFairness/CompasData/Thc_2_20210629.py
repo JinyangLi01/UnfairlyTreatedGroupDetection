@@ -64,9 +64,9 @@ selected_attributes =['sexC', 'ageC','raceC', 'MC', 'priors_count_C', 'c_charge_
 #  'juv_fel_count_C', 'juv_misd_count_C', 'juv_other_count_C']
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-original_data_file = "../../../../InputData/CompasData/RecidivismData_13att_classified.csv"
+original_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_testdata.csv"
 original_data = pd.read_csv(original_data_file)
-mis_data_file = "../../../../InputData/CompasData/RecidivismData_13att_classified_mis.csv"
+mis_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_mis.csv"
 mis_data = pd.read_csv(mis_data_file)
 
 

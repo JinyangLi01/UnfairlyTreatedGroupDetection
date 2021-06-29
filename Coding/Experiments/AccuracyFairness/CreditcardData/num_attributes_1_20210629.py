@@ -100,7 +100,7 @@ def GridSearch(original_data, mis_data, all_attributes, thc, number_attributes, 
 
 # selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_0']
 Thc = 50
-original_data_file = "../../../../InputData/CreditcardDataset/ForClassification/credit_card_clients_categorized.csv"
+original_data_file = "../../../../InputData/CreditcardDataset/ForClassification/credit_card_clients_categorized_testdata.csv"
 original_data = pd.read_csv(original_data_file)
 mis_data_file = "../../../../InputData/CreditcardDataset/ForClassification/credit_card_clients_cat_mis.csv"
 mis_data = pd.read_csv(mis_data_file)

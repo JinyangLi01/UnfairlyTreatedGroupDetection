@@ -63,7 +63,7 @@ def thousands_formatter(x, pos):
     return int(x/1000)
 
 def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes):
-    original_data_file = original_data_file_pathpre + str(datasize) + ".csv"
+    original_data_file = original_data_file_pathpre + str(datasize) + "_testdata.csv"
     mis_data_file = original_data_file_pathpre + str(datasize) + "_mis.csv"
 
     original_data = pd.read_csv(original_data_file)
@@ -103,7 +103,7 @@ def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes):
     return execution_time1, num_calculation1, execution_time2, num_calculation2, pattern_with_low_accuracy1
 
 
-selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_0', 'pay_2']
+selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_0']
 data_sizes = [30000, 35000, 40000, 45000, 50000, 55000, 60000]
 Thc = 50
 original_data_file_pathprefix = "../../../../InputData/CreditcardDataset/LargeDatasets_cat/"

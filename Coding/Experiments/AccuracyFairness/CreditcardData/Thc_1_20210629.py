@@ -57,9 +57,9 @@ def thousands_formatter(x, pos):
 
 
 
-selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_0', 'pay_2', 'pay_3']
+selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_0', 'pay_2']
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-original_data_file = "../../../../InputData/CreditcardDataset/ForClassification/credit_card_clients_categorized.csv"
+original_data_file = "../../../../InputData/CreditcardDataset/ForClassification/credit_card_clients_categorized_testdata.csv"
 original_data = pd.read_csv(original_data_file)
 mis_data_file = "../../../../InputData/CreditcardDataset/ForClassification/credit_card_clients_cat_mis.csv"
 mis_data = pd.read_csv(mis_data_file)

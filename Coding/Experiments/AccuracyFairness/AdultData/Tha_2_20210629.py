@@ -54,7 +54,7 @@ selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', '
 
 diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
 
-original_data_file = "../../../../InputData/AdultDataset/ForClassification/CleanAdult_numerical_cat.csv"
+original_data_file = "../../../../InputData/AdultDataset/ForClassification/CleanAdult_numerical_testdata_cat.csv"
 original_data = pd.read_csv(original_data_file)
 mis_data_file = "../../../../InputData/AdultDataset/ForClassification/CleanAdult_numerical_mis_cat.csv"
 mis_data = pd.read_csv(mis_data_file)

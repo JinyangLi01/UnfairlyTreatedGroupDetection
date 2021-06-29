@@ -105,9 +105,9 @@ all_attributes =['sexC', 'ageC','raceC', 'MC', 'priors_count_C', 'c_charge_degre
 
 Thc = 50
 
-original_data_file = "../../../../InputData/CompasData/RecidivismData_13att_classified.csv"
+original_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_testdata.csv"
 original_data = pd.read_csv(original_data_file)
-mis_data_file = "../../../../InputData/CompasData/RecidivismData_13att_classified_mis.csv"
+mis_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_mis.csv"
 mis_data = pd.read_csv(mis_data_file)
 
 overall_acc = 1 - len(mis_data) / len(original_data)
