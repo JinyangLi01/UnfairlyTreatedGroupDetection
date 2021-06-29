@@ -101,7 +101,7 @@ def GridSearch(original_data, mis_data, all_attributes, thc, number_attributes, 
 
 Thc = 50
 
-original_data_file = "../../../../InputData/AdultDataset/ForClassification/CleanAdult_numerical_cat.csv"
+original_data_file = "../../../../InputData/AdultDataset/ForClassification/CleanAdult_numerical_testdata_cat.csv"
 original_data = pd.read_csv(original_data_file)
 mis_data_file = "../../../../InputData/AdultDataset/ForClassification/CleanAdult_numerical_mis_cat.csv"
 mis_data = pd.read_csv(mis_data_file)

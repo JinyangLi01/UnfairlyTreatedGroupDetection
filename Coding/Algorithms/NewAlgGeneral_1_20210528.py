@@ -189,7 +189,7 @@ def False_positive_error_rate_balance_greater_than(whole_data, FPdata, TNdata,
         P = S.pop()
         st = num2string(P)
 
-        # if P == [-1, -1, 0]:
+        # if P == [-1, -1, 5]:
         #     print(P)
 
         whole_cardinality = pc_whole_data.pattern_count(st)

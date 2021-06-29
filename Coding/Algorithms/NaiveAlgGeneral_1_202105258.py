@@ -190,7 +190,7 @@ False positive error rate balance (predictive equality)
 The probability of a subject in the actual negative class to have a positive
 predictive value FPR = FP/(FP+TN) is similar for all groups.
 """
-def False_positive_error_rate_balance(whole_data, FPdata, TNdata,
+def False_positive_error_rate_balance_greater_than(whole_data, FPdata, TNdata,
                                       delta_Thf, Thc, time_limit):
     time1 = time.time()
 
@@ -202,7 +202,7 @@ def False_positive_error_rate_balance(whole_data, FPdata, TNdata,
     pc_TN.parse_data()
     
     original_thf = len(FPdata) / (len(FPdata) + len(TNdata))
-    Thf = original_thf - delta_Thf
+    Thf = original_thf + delta_Thf
     print("False_positive_error_rate_balance, original_thf = {}, Thf = {}".format(original_thf, Thf))
 
     whole_data_frame = whole_data.describe()
@@ -235,7 +235,7 @@ def False_positive_error_rate_balance(whole_data, FPdata, TNdata,
                     continue
                 FPR = fp / (fp + tn)
 
-                if FPR < Thf:
+                if FPR > Thf:
                     if PDominatedByM(p, pattern_with_low_accuracy)[0] is False:
                         # allDominatedByCurrentCandidateSet = False
                         pattern_with_low_accuracy.append(p)
@@ -262,7 +262,7 @@ subject in the positive class as negative FNR = FN/(TP+FN)
 """
 
 
-def False_negative_error_rate_balance(whole_data, TPdata, FNdata,
+def False_negative_error_rate_balance_greater_than(whole_data, TPdata, FNdata,
                                       delta_Thf, Thc, time_limit):
     time1 = time.time()
 
@@ -590,10 +590,10 @@ def NaiveAlg(whole_data, TPdata, TNdata, FPdata, FNdata,
         return Predictive_parity(whole_data, TPdata, FPdata,
                   delta_thf, Thc, time_limit)
     elif fairness_definition == 1:
-        return False_positive_error_rate_balance(whole_data, FPdata, TNdata,
+        return False_positive_error_rate_balance_greater_than(whole_data, FPdata, TNdata,
                   delta_thf, Thc, time_limit)
     elif fairness_definition == 2:
-        return False_negative_error_rate_balance(whole_data, TPdata, FNdata,
+        return False_negative_error_rate_balance_greater_than(whole_data, TPdata, FNdata,
                   delta_thf, Thc, time_limit)
     elif fairness_definition == 3:
         return Equalized_odds(whole_data, TPdata, TNdata, FPdata, FNdata,
