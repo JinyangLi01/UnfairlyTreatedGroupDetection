@@ -1,6 +1,6 @@
-selected_attributes: ['age_binary', 'sex_binary', 'race_C', 'MarriageStatus_C']
-att_to_predict: is_recid
-overall_acc = 0.6043541364296081, thc = 10, tha = 0.5043541364296081
-newalg, time = 0.0697777271270752 s, num_calculation = 288
+selected_attributes: ['sexC', 'ageC', 'raceC', 'MC']
+overall_acc = 0.6359941944847605, thc = 20, tha = 0.43599419448476046
+newalg, time = 0.03562498092651367 s, num_calculation = 403
 num of patterns detected = 1
-[-1, -1, 0, 3]
+[-1, -1, 1, 4]
+
