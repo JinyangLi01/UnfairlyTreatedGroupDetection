@@ -46,7 +46,7 @@ selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_
 
 
 diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3 ]
-original_data_file = "../../../../InputData/CreditcardDataset/credit_card_clients_categorized.csv"
+original_data_file = "../../../../InputData/CreditcardDataset/ForClassification/credit_card_clients_categorized.csv"
 
 att_to_predict = 'default payment next month'
 

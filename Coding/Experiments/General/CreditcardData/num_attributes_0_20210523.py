@@ -105,7 +105,7 @@ def GridSearch(original_data_file, thc, num_attributes, time_limit, att_to_predi
 
 # selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship', 'occupation']
 Thc = 300
-original_data_file = "../../../../InputData/CreditcardDataset/credit_card_clients_categorized.csv"
+original_data_file = "../../../../InputData/CreditcardDataset/ForClassification/credit_card_clients_categorized.csv"
 att_to_predict = 'default payment next month'
 
 time_limit = 60*60
