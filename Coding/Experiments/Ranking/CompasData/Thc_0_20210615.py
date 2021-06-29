@@ -64,7 +64,7 @@ Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 k_min = 10
 k_max = 50
 
-original_data_file = r"../../../../InputData/COMPAS_republica/compas-analysis-master/categorize_cox_parsed_filtered/cox-parsed-filtered-cat-ranked.csv"
+original_data_file = r"../../../../InputData/COMPAS_ProPublica/compas-analysis-master/categorize_cox_parsed_filtered/cox-parsed-filtered-cat-ranked.csv"
 
 
 ranked_data = pd.read_csv(original_data_file)

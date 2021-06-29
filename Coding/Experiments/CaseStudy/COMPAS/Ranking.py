@@ -45,7 +45,7 @@ from Algorithms import NewAlgRanking_5_20210624 as newranking
 selected_attributes = ["sex", "age_cat", "race_factor"]
 
 
-original_data_file = r"../../../../InputData/COMPAS_republica/compas-analysis-master/categorize_cox_parsed_filtered/cox-parsed-filtered-cat-ranked.csv"
+original_data_file = r"../../../../InputData/COMPAS_ProPublica/compas-analysis-master/categorize_cox_parsed_filtered/cox-parsed-filtered-cat-ranked.csv"
 
 
 ranked_data = pd.read_csv(original_data_file)
