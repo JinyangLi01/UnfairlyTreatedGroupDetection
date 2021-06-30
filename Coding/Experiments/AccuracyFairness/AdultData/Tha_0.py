@@ -107,7 +107,7 @@ for n in range(len(diff_acc)):
 plt.plot(diff_acc, execution_time, label="new algorithm", color='blue', linewidth = 3.4)
 
 
-plt.xlabel('threshold of accuracy')
+plt.xlabel('delta fairness value')
 plt.ylabel('execution time (s)')
 plt.title('AdultDataset')
 plt.xticks(diff_acc)
@@ -120,7 +120,7 @@ plt.show()
 fig, ax = plt.subplots()
 plt.plot(diff_acc, num_calculations, label="new algorithm", color='blue', linewidth = 3.4)
 
-plt.xlabel('threshold of accuracy')
+plt.xlabel('delta fairness value')
 plt.ylabel('number of cardinality calculations (K)')
 plt.title('AdultDataset')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))

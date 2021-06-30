@@ -123,7 +123,7 @@ for n in range(len(diff_acc)):
 plt.plot(diff_acc, execution_time, label="optimized algorithm", color='blue', linewidth = 3.4)
 
 
-plt.xlabel('threshold of accuracy')
+plt.xlabel('delta fairness value')
 plt.ylabel('execution time (s)')
 
 plt.xticks(diff_acc)
@@ -138,8 +138,8 @@ fig, ax = plt.subplots()
 plt.plot(diff_acc, num_calculations, label="optimized algorithm", color='blue', linewidth = 3.4)
 
 
-plt.xlabel('threshold of accuracy')
-plt.ylabel('number of nodes visited (K)')
+plt.xlabel('delta fairness value')
+plt.ylabel('number of patterns visited (K)')
 
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
