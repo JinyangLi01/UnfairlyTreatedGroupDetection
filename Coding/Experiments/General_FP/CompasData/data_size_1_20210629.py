@@ -14,7 +14,7 @@ x axis: data sizes: 100, 500, 1000, 5000, 10000, 40000
 
 Other parameters:
 selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass']
-threshold of cardinality Thc = 30
+size threshold Thc = 30
 threshold of minority group accuracy: overall acc - 20
 
 """
@@ -111,8 +111,8 @@ def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes):
 
 
 
-selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree',
-                       'decile_score']
+selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree']
+
 data_sizes = [6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000]
 Thc = 50
 original_data_file_pathprefix = "../../../../InputData/CompasData/LargerDatasets/"
@@ -191,7 +191,7 @@ plt.plot(data_sizes, num_patterns_checked2, label="naive algorithm", color='oran
 plt.xlabel('data size (K)')
 plt.xticks([6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-plt.ylabel('number of nodes visited (K)')
+plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
