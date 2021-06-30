@@ -45,8 +45,7 @@ def thousands_formatter(x, pos):
 
 
 
-selected_attributes =['sexC', 'ageC','raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score', 'c_days_from_compas_C',
- 'juv_fel_count_C', 'juv_misd_count_C', 'juv_other_count_C']
+selected_attributes =['sexC', 'ageC','raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score']
 
 diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
 
@@ -132,7 +131,7 @@ for n in range(len(diff_acc)):
 plt.plot(diff_acc, execution_time, label="optimized algorithm", color='blue', linewidth = 3.4)
 
 
-plt.xlabel('threshold of accuracy')
+plt.xlabel('delta fairness value')
 plt.ylabel('execution time (s)')
 plt.xticks(diff_acc)
 
@@ -145,8 +144,8 @@ plt.show()
 fig, ax = plt.subplots()
 plt.plot(diff_acc, num_calculations, label="optimized algorithm", color='blue', linewidth = 3.4)
 
-plt.xlabel('threshold of accuracy')
-plt.ylabel('number of nodes visited (K)')
+plt.xlabel('delta fairness value')
+plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
