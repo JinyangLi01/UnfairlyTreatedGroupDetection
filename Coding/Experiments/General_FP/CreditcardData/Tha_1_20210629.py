@@ -40,8 +40,7 @@ def thousands_formatter(x, pos):
     return int(x/1000)
 
 
-selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_0', 'pay_2',
-                       'pay_3', 'pay_4']
+selected_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_0', 'pay_2']
 
 diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
 
@@ -146,7 +145,7 @@ fig, ax = plt.subplots()
 plt.plot(diff_acc, num_calculations, label="optimized algorithm", color='blue', linewidth = 3.4)
 
 plt.xlabel('delta fairness value')
-plt.ylabel('number of nodes visited (K)')
+plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
