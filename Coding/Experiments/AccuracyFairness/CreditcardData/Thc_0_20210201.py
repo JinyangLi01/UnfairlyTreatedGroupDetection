@@ -148,7 +148,7 @@ for n in range(len(Thc_list)):
 plt.plot(Thc_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(Thc_list, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 
-plt.xlabel('threshold of cardinality')
+plt.xlabel('size threshold')
 plt.ylabel('execution time (s)')
 plt.xticks(Thc_list)
 
@@ -161,8 +161,8 @@ plt.show()
 fig, ax = plt.subplots()
 plt.plot(Thc_list, num_calculation1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(Thc_list, num_calculation2, label="naive algorithm", color='orange', linewidth = 3.4)
-plt.xlabel('threshold of cardinality')
-plt.ylabel('number of nodes visited (K)')
+plt.xlabel('size threshold')
+plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
