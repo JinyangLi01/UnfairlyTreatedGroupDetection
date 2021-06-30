@@ -14,7 +14,7 @@ x axis: data sizes: 100, 500, 1000, 2000, 3000, 4000, 5000, 6000
 
 Other parameters:
 selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree']
-threshold of cardinality Thc = 30
+size threshold Thc = 30
 threshold of minority group accuracy: overall acc - 20
 
 """
@@ -182,7 +182,7 @@ plt.plot(data_sizes, num_patterns_checked2, label="naive algorithm", color='oran
 plt.xlabel('data size (K)')
 plt.xticks([6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-plt.ylabel('number of nodes visited (K)')
+plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
