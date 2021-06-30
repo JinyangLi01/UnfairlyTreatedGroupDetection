@@ -8,7 +8,7 @@ x axis: the number of attributes, from 2 to 13.
 
 other parameters:
 RecidivismData_att_classified.txt: 6889 rows
-threshold of cardinality Thc = 30
+size threshold Thc = 30
 threshold of minority group accuracy: overall acc - 20
 """
 
