@@ -57,13 +57,24 @@ def thousands_formatter(x, pos):
     return int(x/1000)
 
 
+all_attributes = ["age_binary","sex_binary","race_C","MarriageStatus_C","juv_fel_count_C","decile_score_C",
+                  "juv_misd_count_C","juv_other_count_C","priors_count_C","days_b_screening_arrest_C",
+                  "c_days_from_compas_C","c_charge_degree_C","v_decile_score_C","start_C","end_C","event_C"    ]
 
-selected_attributes = ["sex", "age_cat", "race_factor"]
+
+
+
+selected_attributes = ["age_binary","sex_binary","race_C","MarriageStatus_C","juv_fel_count_C","decile_score_C",
+                  "juv_misd_count_C"]
+
 Thc = 50
 k_min = 10
 range_k_list = [40, 90, 190, 290, 390, 490, 590, 690, 790, 890, 990]
 
-original_data_file = r"../../../../InputData/COMPAS_ProPublica/compas-analysis-master/categorize_cox_parsed_filtered/cox-parsed-filtered-cat-ranked.csv"
+# original_data_file = r"../../../../InputData/COMPAS_ProPublica/compas-analysis-master/categorize_cox_parsed_filtered/cox-parsed-filtered-cat-ranked.csv"
+
+original_data_file = r"../../../../InputData/CompasData/general/compas_data_cat_necessary_att_ranked.csv"
+
 
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data[selected_attributes]
@@ -171,7 +182,7 @@ for range_k in range_k_list:
 
 
 
-output_path = r'../../../../OutputData/Ranking/CompasData/num_k.txt'
+output_path = r'../../../../OutputData/Ranking2/CompasData/num_k.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -204,7 +215,7 @@ plt.ylabel('execution time (s)')
 plt.xticks([200, 400, 600, 800, 1000])
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/Ranking/CompasData/num_k_time.png")
+plt.savefig("../../../../OutputData/Ranking2/CompasData/num_k_time.png")
 plt.show()
 
 
@@ -220,7 +231,7 @@ plt.xticks([200, 400, 600, 800, 1000])
 
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/Ranking/CompasData/num_k_calculations.png")
+plt.savefig("../../../../OutputData/Ranking2/CompasData/num_k_calculations.png")
 plt.show()
 
 plt.close()
