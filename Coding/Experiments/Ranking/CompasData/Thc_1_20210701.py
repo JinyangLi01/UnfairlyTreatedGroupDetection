@@ -58,13 +58,15 @@ def thousands_formatter(x, pos):
 
 
 
-selected_attributes = ["sex", "age_cat", "race_factor"]
+
+selected_attributes = ["age_binary","sex_binary","race_C","MarriageStatus_C","juv_fel_count_C","decile_score_C",
+                  "juv_misd_count_C"]
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 k_min = 10
 k_max = 50
 
-original_data_file = r"../../../../InputData/COMPAS_ProPublica/compas-analysis-master/categorize_cox_parsed_filtered/cox-parsed-filtered-cat-ranked.csv"
+original_data_file = r"../../../../InputData/CompasData/general/compas_data_cat_necessary_att_ranked.csv"
 
 
 ranked_data = pd.read_csv(original_data_file)
@@ -100,7 +102,7 @@ num_patterns_found_upperbound = list()
 num_patterns_found_lowerbound = list()
 patterns_found_upperbound = list()
 patterns_found_lowerbound = list()
-num_loops = 20
+num_loops = 1
 
 
 
@@ -172,7 +174,7 @@ for Thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/Ranking/CompasData/thc.txt'
+output_path = r'../../../../OutputData/Ranking2/CompasData/thc.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -205,7 +207,7 @@ plt.ylabel('execution time (s)')
 plt.xticks(Thc_list)
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/Ranking/CompasData/thc_time.png")
+plt.savefig("../../../../OutputData/Ranking2/CompasData/thc_time.png")
 plt.show()
 
 
@@ -221,7 +223,7 @@ plt.xticks(Thc_list)
 
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/Ranking/CompasData/thc_calculations.png")
+plt.savefig("../../../../OutputData/Ranking2/CompasData/thc_calculations.png")
 plt.show()
 
 plt.close()
