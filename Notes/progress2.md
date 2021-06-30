@@ -115,4 +115,8 @@ report other groups is good, but need to have what they find
 
 
 
+# 2021.06.30
+1. related work
+2. exp figures, default setting
+3. figures for ranking, num att, data size
 
