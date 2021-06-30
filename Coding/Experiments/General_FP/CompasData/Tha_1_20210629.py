@@ -42,21 +42,25 @@ def thousands_formatter(x, pos):
 
 
 
-all_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score',
-                'c_days_from_compas_C',
-                'juv_fel_count_C', 'juv_misd_count_C', 'juv_other_count_C']
+# all_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score',
+#                 'c_days_from_compas_C',
+#                 'juv_fel_count_C', 'juv_misd_count_C', 'juv_other_count_C']
+
+
+selected_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score']
+
 thc = 50
 
 original_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified.csv"
-less_attribute_data = pd.read_csv(original_data_file)[all_attributes]
+less_attribute_data = pd.read_csv(original_data_file)[selected_attributes]
 FP_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_FP.csv"
-FP = pd.read_csv(FP_data_file)[all_attributes]
+FP = pd.read_csv(FP_data_file)[selected_attributes]
 TP_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_TP.csv"
-TP = pd.read_csv(TP_data_file)[all_attributes]
+TP = pd.read_csv(TP_data_file)[selected_attributes]
 FN_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_FN.csv"
-FN = pd.read_csv(FN_data_file)[all_attributes]
+FN = pd.read_csv(FN_data_file)[selected_attributes]
 TN_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_TN.csv"
-TN = pd.read_csv(TN_data_file)[all_attributes]
+TN = pd.read_csv(TN_data_file)[selected_attributes]
 
 overall_FPR = len(FP) / (len(FP) + len(TN))
 
@@ -154,7 +158,7 @@ fig, ax = plt.subplots()
 plt.plot(diff_acc, num_calculations, label="optimized algorithm", color='blue', linewidth = 3.4)
 
 plt.xlabel('delta fairness value')
-plt.ylabel('number of nodes visited (K)')
+plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
