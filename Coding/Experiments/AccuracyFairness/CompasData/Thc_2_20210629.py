@@ -58,7 +58,7 @@ def thousands_formatter(x, pos):
 
 
 
-selected_attributes =['sexC', 'ageC','raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score', 'c_days_from_compas_C']
+selected_attributes =['sexC', 'ageC','raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score']
 
 # all_attributes =['sexC', 'ageC','raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score', 'c_days_from_compas_C',
 #  'juv_fel_count_C', 'juv_misd_count_C', 'juv_other_count_C']
@@ -162,7 +162,7 @@ for n in range(len(Thc_list)):
 plt.plot(Thc_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(Thc_list, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 
-plt.xlabel('threshold of cardinality')
+plt.xlabel('size threshold')
 plt.ylabel('execution time (s)')
 plt.xticks(Thc_list)
 plt.subplots_adjust(bottom=0.15, left=0.18)
@@ -174,8 +174,8 @@ plt.show()
 fig, ax = plt.subplots()
 plt.plot(Thc_list, num_calculation1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(Thc_list, num_calculation2, label="naive algorithm", color='orange', linewidth = 3.4)
-plt.xlabel('threshold of cardinality')
-plt.ylabel('number of nodes visited (K)')
+plt.xlabel('size threshold')
+plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
