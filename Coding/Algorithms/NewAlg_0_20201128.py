@@ -72,8 +72,8 @@ def PDominatedByM(P, M):
 """
 whole_data: the original data file 
 mis_class_data: file containing mis-classified tuples
-Tha: threshold of accuracy 
-Thc: threshold of cardinality
+Tha: delta fairness value 
+Thc: size threshold
 """
 def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
     print("(1-Tha) * Thc = {}".format((1-Tha) * Thc))

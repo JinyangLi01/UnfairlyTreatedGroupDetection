@@ -6,7 +6,7 @@ In each for loop, enumerate all kinds of combinations, and all possible attribut
 Stop condition: when there are x definied attributes in a pattern, but all patterns satisfying cardinality and accuracy
     condition are dominated by the current answer set, then, stop searching.
 
-Difference from NaiveAlg_0: calculate the number of nodes visited instead of number of calculations
+Difference from NaiveAlg_0: calculate the number of patterns visited instead of number of calculations
 
 """
 

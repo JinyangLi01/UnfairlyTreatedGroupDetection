@@ -495,8 +495,8 @@ def Treatment_equality(whole_data, TPdata, TNdata, FPdata, FNdata,
 """
 whole_data: the original data file 
 mis_class_data: file containing mis-classified tuples
-Tha: threshold of accuracy 
-Thc: threshold of cardinality
+Tha: delta fairness value 
+Thc: size threshold
 """
 def GraphTraverse(whole_data, TPdata, TNdata, FPdata, FNdata,
                   delta_thf, Thc, time_limit, fairness_definition = 0):

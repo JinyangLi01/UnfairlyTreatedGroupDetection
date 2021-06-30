@@ -101,8 +101,8 @@ def PDominatedByM(P, M):
 """
 whole_data: the original data file 
 mis_class_data: file containing mis-classified tuples
-Tha: threshold of accuracy 
-Thc: threshold of cardinality
+Tha: delta fairness value 
+Thc: size threshold
 """
 
 def findParent(child, length):

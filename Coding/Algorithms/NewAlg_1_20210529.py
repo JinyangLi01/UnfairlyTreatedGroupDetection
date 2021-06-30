@@ -4,7 +4,7 @@ Search the graph top-down, generate children using the method in coverage paper 
 Stop point 1: when finding a pattern satisfying the requirements
 Stop point 2: when the cardinality is too small
 
-Difference from NaiveAlg_0: calculate the number of nodes visited instead of number of calculations
+Difference from NaiveAlg_0: calculate the number of patterns visited instead of number of calculations
 
 """
 
@@ -75,8 +75,8 @@ def PDominatedByM(P, M):
 """
 whole_data: the original data file 
 mis_class_data: file containing mis-classified tuples
-Tha: threshold of accuracy 
-Thc: threshold of cardinality
+Tha: delta fairness value 
+Thc: size threshold
 """
 def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
     print("start new alg")

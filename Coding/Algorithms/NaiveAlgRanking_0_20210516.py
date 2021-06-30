@@ -113,8 +113,8 @@ def GenerateChildren(P, whole_data_frame, attributes):
 """
 whole_data: the original data file 
 mis_class_data: file containing mis-classified tuples
-Tha: threshold of accuracy 
-Thc: threshold of cardinality
+Tha: delta fairness value 
+Thc: size threshold
 """
 
 def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_max, time_limit):
