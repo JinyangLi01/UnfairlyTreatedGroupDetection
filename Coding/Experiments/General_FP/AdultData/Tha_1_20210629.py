@@ -43,8 +43,7 @@ def thousands_formatter(x, pos):
 
 
 
-selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship',
-                       'occupation', 'educational-num', 'capital-gain']
+selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship']
 diff_acc = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
 
 original_data_file = "../../../../InputData/AdultDataset/ForClassification/CleanAdult_numerical_testdata_cat.csv"
@@ -140,7 +139,7 @@ for n in range(len(diff_acc)):
 plt.plot(diff_acc, execution_time, label="optimized algorithm", color='blue', linewidth = 3.4)
 
 
-plt.xlabel('threshold of accuracy')
+plt.xlabel('delta fairness value')
 plt.ylabel('execution time (s)')
 plt.xticks(diff_acc)
 plt.subplots_adjust(bottom=0.15, left=0.18)
@@ -153,7 +152,7 @@ fig, ax = plt.subplots()
 plt.plot(diff_acc, num_calculations, label="optimized algorithm", color='blue', linewidth = 3.4)
 
 plt.xlabel('delta fairness value')
-plt.ylabel('number of nodes visited (K)')
+plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
