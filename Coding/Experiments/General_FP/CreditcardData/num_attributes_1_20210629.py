@@ -126,7 +126,7 @@ TN = pd.read_csv(TN_data_file)
 
 overall_FPR = len(FP) / (len(FP) + len(TN))
 
-time_limit = 5*60
+time_limit = 10*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
 # so for naive alg, we only do when number of attributes <= 7
 # when there are 6 att, naive alg runs faster than new alg with 13 att
