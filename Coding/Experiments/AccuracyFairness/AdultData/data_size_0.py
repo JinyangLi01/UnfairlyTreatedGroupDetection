@@ -14,7 +14,7 @@ x axis: data sizes: 100, 500, 1000, 5000, 10000, 40000
 
 Other parameters:
 selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass']
-threshold of cardinality Thc = 30
+size threshold Thc = 50
 threshold of minority group accuracy: overall acc - 20
 
 """

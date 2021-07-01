@@ -14,7 +14,7 @@ x axis: data sizes: 100, 500, 1000, 5000, 10000, 40000
 
 Other parameters:
 selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass']
-threshold of cardinality Thc = 30
+size threshold Thc = 30
 threshold of minority group accuracy: overall acc - 20
 
 """
@@ -104,7 +104,7 @@ def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes):
     return execution_time1, num_calculation1, execution_time2, num_calculation2, pattern_with_low_accuracy1, overall_acc, tha
 
 
-#selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship']
+# selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship']
 selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass']
 
 data_sizes = [50000, 55000, 60000, 65000, 70000, 75000, 80000, 85000, 90000, 95000, 100000]
@@ -172,7 +172,7 @@ for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], num_patterns_checked1[n], num_patterns_checked2[n]))
 
 
-output_file.write("\n\noverall accuracy and threshold of accuracy\n")
+output_file.write("\n\noverall accuracy and delta fairness value\n")
 for n in range(len(data_sizes)):
     output_file.write('{} {}\n'.format(overall_acc_list[n], tha_list[n]))
 
@@ -198,7 +198,7 @@ plt.plot(data_sizes, num_patterns_checked2, label="naive algorithm", color='oran
 plt.xlabel('data size (K)')
 plt.xticks([50000, 60000, 70000, 80000, 90000, 100000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-plt.ylabel('number of nodes visited (K)')
+plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend()
 plt.subplots_adjust(bottom=0.15, left=0.18)
