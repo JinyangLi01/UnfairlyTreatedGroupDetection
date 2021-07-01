@@ -174,7 +174,7 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
         # lower bound
         while len(S) > 0:
             if time.time() - time0 > time_limit:
-                print("newalg overtime")
+                print("naive overtime")
                 break
             P = S.pop(0)
             st = num2string(P)
@@ -196,7 +196,7 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
         parent_candidate_for_upperbound = []
         while len(S) > 0:
             if time.time() - time0 > time_limit:
-                print("newalg overtime")
+                print("naive overtime")
                 break
             P = S.pop(0)
             st = num2string(P)
