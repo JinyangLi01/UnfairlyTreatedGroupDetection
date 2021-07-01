@@ -210,6 +210,21 @@ plt.legend()
 plt.savefig("../../../../OutputData/Ranking2/CompasData/thc_time.png")
 plt.show()
 
+# log time
+
+plt.plot(Thc_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
+plt.plot(Thc_list, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
+plt.yscale('log')
+plt.yticks([0.1, 1])
+plt.xlabel('size threshold')
+plt.ylabel('execution time (s)')
+plt.xticks(Thc_list)
+plt.subplots_adjust(bottom=0.15, left=0.18)
+plt.legend()
+plt.savefig("../../../../OutputData/Ranking2/CompasData/thc_time_log.png")
+plt.show()
+
+
 
 fig, ax = plt.subplots()
 plt.plot(Thc_list, num_patterns_visited1, label="optimized algorithm", color='blue', linewidth = 3.4)
@@ -220,7 +235,6 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
 plt.xticks(Thc_list)
-
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
 plt.savefig("../../../../OutputData/Ranking2/CompasData/thc_calculations.png")
