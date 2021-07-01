@@ -211,6 +211,7 @@ def False_positive_error_rate_balance_greater_than(whole_data, FPdata, TNdata,
             continue
 
         if PDominatedByM(P, pattern_with_low_fairness)[0] is False:
+            # print("pattern {} has FPR {}".format(P, FPR))
             pattern_with_low_fairness.append(P)
     time2 = time.time()
     # print(duration1, duration2, duration3, duration4, duration5, duration6)
