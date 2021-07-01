@@ -210,7 +210,7 @@ for n in range(len(range_k_list)):
 plt.plot(range_k_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(range_k_list, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 
-plt.xlabel('number of k')
+plt.xlabel('range of k')
 plt.ylabel('execution time (s)')
 plt.xticks([200, 400, 600, 800, 1000])
 plt.subplots_adjust(bottom=0.15, left=0.18)
@@ -222,7 +222,7 @@ plt.show()
 fig, ax = plt.subplots()
 plt.plot(range_k_list, num_patterns_visited1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(range_k_list, num_patterns_visited2, label="naive algorithm", color='orange', linewidth = 3.4)
-plt.xlabel('number of k')
+plt.xlabel('range of k')
 plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 

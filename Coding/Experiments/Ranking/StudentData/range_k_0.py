@@ -62,7 +62,7 @@ selected_attributes = ["school", "sex", "age_binary", "address", "famsize", "Pst
 Thc = 50
 k_min = 10
 range_k_list = [40, 90, 140, 190, 240, 290, 340]
-original_data_file = r"../../../../InputData/StudentDataset/ForRanking/student-mat_selected_8att.csv"
+original_data_file = r"../../../../InputData/StudentDataset/ForRanking_0/student-mat_selected_8att.csv"
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data.drop('rank', axis=1)
 time_limit = 5*60
@@ -207,7 +207,7 @@ fig, ax = plt.subplots()
 plt.plot(range_k_list, num_patterns_visited1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(range_k_list, num_patterns_visited2, label="naive algorithm", color='orange', linewidth = 3.4)
 plt.xlabel('number of k')
-plt.ylabel('number of nodes visited (K)')
+plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
