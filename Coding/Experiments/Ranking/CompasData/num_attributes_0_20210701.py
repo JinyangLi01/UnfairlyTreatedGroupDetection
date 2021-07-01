@@ -164,11 +164,11 @@ num_loops = 1
 
 def lowerbound(x):
     # return int((x-3)/4)
-    return 10
+    return 5
 
 def upperbound(x):
     # return int(3+(x-k_min+1)/3)
-    return 50
+    return 25
 
 k_min = 10
 k_max = 50
@@ -228,7 +228,7 @@ for number_attributes in range(num_att_min, num_att_max):
 
 
 
-output_path = r'../../../../OutputData/Ranking2/CompasData/thc.txt'
+output_path = r'../../../../OutputData/Ranking2/CompasData/num_att.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
