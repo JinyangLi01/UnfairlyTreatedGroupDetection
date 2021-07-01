@@ -84,11 +84,11 @@ time_limit = 5*60
 
 def lowerbound(x):
     # return int((x-3)/4)
-    return 10
+    return 5
 
 def upperbound(x):
     # return int(3+(x-k_min+1)/3)
-    return 50
+    return 25
 
 
 execution_time1 = list()

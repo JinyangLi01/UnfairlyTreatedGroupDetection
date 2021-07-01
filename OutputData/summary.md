@@ -14,3 +14,8 @@ Naive alg, the line of calculations is flat and high, but the line of time grows
 
 Possible reason: when data size is small, time of one cardinatlity calculation is small.
 
+
+datasize: extend times:
+Adult: 2.2
+compas: 2.9
+creditcard: 

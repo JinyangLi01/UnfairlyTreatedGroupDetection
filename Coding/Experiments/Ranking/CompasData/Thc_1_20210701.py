@@ -75,14 +75,13 @@ time_limit = 10*60
 
 
 List_k = list(range(k_min, k_max))
-"""
-[0,0,0,0]: num_top_5 = 3, num_top_6 = 4, size = 2024
-"""
+
+
 def lowerbound(x):
-    return 10
+    return 5
 
 def upperbound(x):
-    return 50
+    return 25
 
 Lowerbounds = [lowerbound(x) for x in List_k]
 Upperbounds = [upperbound(x) for x in List_k]
