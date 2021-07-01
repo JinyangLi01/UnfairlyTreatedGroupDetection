@@ -111,9 +111,13 @@ def GridSearch(original_data, TP, TN, FP, FN, all_attributes, thc, number_attrib
     return execution_time1, num_calculation1, execution_time2, num_calculation2, \
            pattern_with_low_fairness1
 
-all_attributes = ['age','workclass','education','educational-num',
-              'marital-status', 'occupation','relationship','race','gender',
-              'capital-gain','capital-loss','hours-per-week', 'native-country']
+all_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass', 'relationship',
+                  'educational-num', 'occupation', 'capital-gain','capital-loss','hours-per-week', 'native-country']
+
+# all_attributes = ['age','workclass','education','educational-num',
+#               'marital-status', 'occupation','relationship','race','gender',
+#               'capital-gain','capital-loss','hours-per-week', 'native-country']
+
 thc = 50
 
 original_data_file = "../../../../InputData/AdultDataset/ForClassification/CleanAdult_numerical_testdata_cat.csv"
@@ -137,7 +141,7 @@ time_limit = 10*60
 # when there are 6 att, naive alg runs faster than new alg with 13 att
 num_att_max_naive = 8 # if it's 8, naive out of time
 num_att_min = 3
-num_att_max = 14
+num_att_max = 13 # if it's 14, new alg over time
 execution_time1 = list()
 execution_time2 = list()
 num_calculation1 = list()
