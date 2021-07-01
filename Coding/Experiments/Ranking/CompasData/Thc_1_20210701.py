@@ -71,7 +71,7 @@ original_data_file = r"../../../../InputData/CompasData/general/compas_data_cat_
 
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data[selected_attributes]
-time_limit = 5*60
+time_limit = 10*60
 
 
 List_k = list(range(k_min, k_max))
