@@ -222,6 +222,7 @@ plt.plot(Thc_list, execution_time1, label="optimized algorithm", color='blue', l
 plt.plot(Thc_list, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 
 plt.yscale('log')
+plt.yticks([0.1, 1])
 plt.xlabel('size threshold')
 plt.ylabel('execution time (s)')
 plt.xticks(Thc_list)

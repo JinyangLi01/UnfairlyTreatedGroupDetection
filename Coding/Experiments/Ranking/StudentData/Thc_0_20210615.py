@@ -63,7 +63,7 @@ selected_attributes = ["school", "sex", "age_binary", "address", "famsize", "Pst
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 k_min = 10
 k_max = 50
-original_data_file = r"../../../../InputData/StudentDataset/ForRanking/student-mat_selected_8att.csv"
+original_data_file = r"../../../../InputData/StudentDataset/ForRanking_0/student-mat_selected_8att.csv"
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data.drop('rank', axis=1)
 time_limit = 5*60
@@ -197,7 +197,7 @@ for n in range(len(Thc_list)):
 plt.plot(Thc_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(Thc_list, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 
-plt.xlabel('threshold of cardinality')
+plt.xlabel('size threshold')
 plt.ylabel('execution time (s)')
 plt.xticks([20, 40, 60, 80, 100])
 plt.subplots_adjust(bottom=0.15, left=0.18)
@@ -209,8 +209,8 @@ plt.show()
 fig, ax = plt.subplots()
 plt.plot(Thc_list, num_patterns_visited1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(Thc_list, num_patterns_visited2, label="naive algorithm", color='orange', linewidth = 3.4)
-plt.xlabel('threshold of cardinality')
-plt.ylabel('number of nodes visited (K)')
+plt.xlabel('size threshold')
+plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
