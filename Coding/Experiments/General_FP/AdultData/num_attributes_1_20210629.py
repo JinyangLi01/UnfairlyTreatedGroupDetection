@@ -8,7 +8,7 @@ x axis: the number of attributes, from 2 to 13.
 
 other parameters:
 CleanAdult2.csv
-threshold of cardinality Thc = 30
+size threshold Thc = 30
 threshold of minority group accuracy: overall acc - 20
 """
 
@@ -224,7 +224,7 @@ for n in range(num_att_max_naive, num_att_max):
 
 output_file.write("\n\nnumber of patterns found\n")
 for n in range(num_att_min, num_att_max):
-    output_file.write('{} {} \n {}\n'.format(n, num_patterns_found[n], patterns_found[n]))
+    output_file.write('{} {} \n {}\n'.format(n, num_patterns_found[n-num_att_min], patterns_found[n-num_att_min]))
 
 
 
@@ -251,7 +251,7 @@ fig, ax = plt.subplots()
 plt.plot(x_new, num_calculation1, label="optimized algorithm", color='blue', linewidth = 3.4)
 plt.plot(x_naive, num_calculation2, label="naive algorithm", color='orange', linewidth = 3.4)
 plt.xlabel('number of attributes')
-plt.ylabel('number of nodes visited (K)')
+plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
