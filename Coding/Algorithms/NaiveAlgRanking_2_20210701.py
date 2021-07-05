@@ -7,6 +7,7 @@ from itertools import combinations
 import pandas as pd
 from Algorithms import pattern_count
 import time
+import numpy as np
 from Algorithms import Predict_0_20210127 as predict
 from Algorithms import NewAlgGeneral_0_20210412 as newalggeneral
 
@@ -98,7 +99,7 @@ def PDominatesM(P, M):
     return False, None
 
 
-def GenerateChildren(P, whole_data_frame, attributes):
+def GenerateChildren(P, whole_data_frame, ranked_data, attributes):
     children = []
     length = len(P)
     i = 0
@@ -111,6 +112,10 @@ def GenerateChildren(P, whole_data_frame, attributes):
         for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max'])+1):
             s = P.copy()
             s[j] = a
+            # print(ranked_data.loc[3, attributes[j]], type(ranked_data.loc[3, attributes[j]]))
+            if not isinstance(ranked_data.loc[3, attributes[j]], (int, np.integer)):
+            #if type(whole_data_frame[attributes[j]]['min']) is not int:
+                s[j] = float(a)
             children.append(s)
     return children
 
@@ -166,7 +171,7 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
             print("naive overtime, exiting the loop of k")
             break
         root = [-1] * (len(attributes))
-        S = GenerateChildren(root, whole_data_frame, attributes)
+        S = GenerateChildren(root, whole_data_frame, ranked_data, attributes)
         patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_kmin.parse_data()
 
@@ -180,6 +185,7 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
             st = num2string(P)
             num_patterns_visited += 1
             whole_cardinality = pc_whole_data.pattern_count(st)
+            # print("P={}, whole size={}".format(P, whole_cardinality))
             if whole_cardinality < Thc:
                 continue
             num_top_k = patterns_top_kmin.pattern_count(st)
@@ -188,11 +194,11 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
                 #     print("k={}, pattern equal = {}, num_top_k = {}".format(k, P, num_top_k))
                 CheckDominationAndAddForLowerBound(P, pattern_treated_unfairly_lowerbound)
             else:
-                children = GenerateChildren(P, whole_data_frame, attributes)
+                children = GenerateChildren(P, whole_data_frame, ranked_data, attributes)
                 S = children + S
                 continue
         # upper bound
-        S = GenerateChildren(root, whole_data_frame, attributes)
+        S = GenerateChildren(root, whole_data_frame, ranked_data, attributes)
         parent_candidate_for_upperbound = []
         while len(S) > 0:
             if time.time() - time0 > time_limit:
@@ -211,7 +217,7 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_ma
             num_top_k = patterns_top_kmin.pattern_count(st)
             if num_top_k > Upperbounds[k - k_min]:
                 parent_candidate_for_upperbound = P
-                children = GenerateChildren(P, whole_data_frame, attributes)
+                children = GenerateChildren(P, whole_data_frame, ranked_data, attributes)
                 S = children + S
                 if len(children) == 0:
                     CheckDominationAndAddForUpperbound(P, pattern_treated_unfairly_upperbound)
