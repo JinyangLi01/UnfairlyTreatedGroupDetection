@@ -112,6 +112,12 @@ all_attributes = ['age','workclass','education','educational-num',
               'marital-status', 'occupation','relationship','race','gender',
               'capital-gain','capital-loss','hours-per-week', 'native-country']
 
+
+"""
+total number of patterns:
+
+"""
+
 time_limit = 60*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
 # so for naive alg, we only do when number of attributes <= 7

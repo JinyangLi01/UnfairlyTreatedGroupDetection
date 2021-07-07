@@ -113,7 +113,7 @@ mis_data = pd.read_csv(mis_data_file)
 overall_acc = 1 - len(mis_data) / len(original_data)
 
 
-time_limit = 20*60
+time_limit = 10*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
 # so for naive alg, we only do when number of attributes <= 7
 num_att_max_naive = 9

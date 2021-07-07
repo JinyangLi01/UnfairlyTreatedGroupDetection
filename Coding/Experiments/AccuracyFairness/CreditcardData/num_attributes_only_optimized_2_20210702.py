@@ -53,7 +53,7 @@ def ComparePatternSets(set1, set2):
 def thousands_formatter(x, pos):
     return int(x/1000)
 
-def GridSearch(original_data, mis_data, all_attributes, thc, number_attributes, time_limit):
+def GridSearch(original_data, mis_data, all_attributes, thc, number_attributes, time_limit, only_new_alg=False):
     selected_attributes = all_attributes[:number_attributes]
     print("{} attributes: {}".format(number_attributes, selected_attributes))
 
@@ -62,6 +62,15 @@ def GridSearch(original_data, mis_data, all_attributes, thc, number_attributes, 
     overall_acc = 1 - len(mis_class_data) / len(less_attribute_data)
     tha = overall_acc - 0.2
 
+    if only_new_alg:
+        print("tha = {}, thc = {}".format(tha, thc))
+        pattern_with_low_accuracy1, num_calculation1, execution_time1 = newalg.GraphTraverse(less_attribute_data,
+                                                                              mis_class_data, tha,
+                                                                              thc, time_limit)
+        print("newalg, time = {} s, num_calculation = {}".format(execution_time1, num_calculation1))
+        print("{} patterns with low accuracy: \n {}".format(len(pattern_with_low_accuracy1), pattern_with_low_accuracy1))
+        return execution_time1, num_calculation1, 0, 0, pattern_with_low_accuracy1
+
 
     print("tha = {}, thc = {}".format(tha, thc))
     pattern_with_low_accuracy1, num_calculation1, execution_time1 = newalg.GraphTraverse(less_attribute_data,
@@ -69,13 +78,22 @@ def GridSearch(original_data, mis_data, all_attributes, thc, number_attributes, 
                                                                                          thc, time_limit)
     print("newalg, time = {} s, num_calculation = {}".format(execution_time1, num_calculation1), "\n", pattern_with_low_accuracy1)
 
+    pattern_with_low_accuracy2, num_calculation2, execution_time2 = naivealg.NaiveAlg(less_attribute_data,
+                                                                       mis_class_data, tha,
+                                                                       thc, time_limit)
+    print("naivealg, time = {} s, num_calculation = {}".format(execution_time2, num_calculation2), "\n",
+          pattern_with_low_accuracy2)
+
+    if ComparePatternSets(pattern_with_low_accuracy1, pattern_with_low_accuracy2) is False:
+        print("sanity check fails!")
 
 
     print("{} patterns with low accuracy: \n {}".format(len(pattern_with_low_accuracy1), pattern_with_low_accuracy1))
 
     if execution_time1 > time_limit:
         print("new alg exceeds time limit")
-
+    if execution_time2 > time_limit:
+        print("naive alg exceeds time limit")
 
     return execution_time1, num_calculation1, execution_time2, num_calculation2, \
            pattern_with_low_accuracy1
@@ -94,49 +112,50 @@ overall_acc = 1 - len(mis_data) / len(original_data)
 all_attributes = ['limit_bal', 'sex', 'education', 'marriage', 'age', 'pay_0', 'pay_2',
                    'pay_3', 'pay_4', 'pay_5', 'pay_6', 'bill_amt1', 'bill_amt2',
                    'bill_amt3', 'bill_amt4', 'bill_amt5', 'bill_amt6', 'pay_amt1',
-                   'pay_amt2', 'pay_amt3', 'pay_amt4', 'pay_amt5', 'pay_amt6']
+                   'pay_amt2', 'pay_amt3', 'pay_amt4', 'pay_amt5', 'pay_amt6'] # 23
 
 
 time_limit = 10*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
 # so for naive alg, we only do when number of attributes <= 7
-# num_att_max_naive = 9
 num_att_min = 3
-num_att_max = 23
+num_att_max = 24
 execution_time1 = list()
-execution_time2 = list()
+
 num_calculation1 = list()
-num_calculation2 = list()
+
 num_pattern_skipped_mis_c1 = list()
-num_pattern_skipped_mis_c2 = list()
+
 num_pattern_skipped_whole_c1 = list()
-num_pattern_skipped_whole_c2 = list()
+
 num_patterns_found = list()
 patterns_found = list()
 num_loops = 1
 
 
 
-
-
 for number_attributes in range(num_att_min, num_att_max):
     print("\n\nnumber of attributes = {}".format(number_attributes))
-    t1, calculation1 = 0, 0
+    t1, t2, calculation1, calculation2 = 0, 0, 0, 0
     result_cardinality = 0
     for l in range(num_loops):
-        t1_, calculation1_,  _, _, result = \
-            GridSearch(original_data, mis_data, all_attributes, Thc, number_attributes, time_limit)
+        t1_, calculation1_,  t2_, calculation2_, result = \
+            GridSearch(original_data, mis_data, all_attributes, Thc, number_attributes, time_limit, only_new_alg=True)
         t1 += t1_
+        t2 += t2_
         calculation1 += calculation1_
+        calculation2 += calculation2_
         if l == 0:
             result_cardinality = len(result)
             patterns_found.append(result)
             num_patterns_found.append(result_cardinality)
     t1 /= num_loops
     calculation1 /= num_loops
-
     execution_time1.append(t1)
     num_calculation1.append(calculation1)
+
+
+
 
 
 
@@ -148,16 +167,16 @@ num_lines = len(execution_time1)
 output_file.write("overall accuracy: {}\n".format(overall_acc))
 
 output_file.write("execution time\n")
-
 for n in range(num_att_min, num_att_max):
-    output_file.write('{} {}\n'.format(n, execution_time1[n - num_att_min]))
+    output_file.write('{} {}\n'.format(n, execution_time1[n-num_att_min]))
+
 #output_file.write('\n'.join('{} {} {}'.format(index + num_att_min, x, y) for index, x, y in enumerate(execution_time1) and execution_time2))
 
 
 output_file.write("\n\nnumber of patterns checked\n")
-
 for n in range(num_att_min, num_att_max):
     output_file.write('{} {}\n'.format(n, num_calculation1[n-num_att_min]))
+
 
 #output_file.write('\n'.join('{} {} {}'.format(index + num_att_min, x, y) for index, x, y in enumerate(num_calculation1) and num_calculation2))
 
@@ -165,7 +184,7 @@ for n in range(num_att_min, num_att_max):
 
 output_file.write("\n\nnumber of patterns found\n")
 for n in range(num_att_min, num_att_max):
-    output_file.write('{} {} \n {}\n'.format(n, num_patterns_found[n], patterns_found[n]))
+    output_file.write('{} {} \n {}\n'.format(n, num_patterns_found[n-num_att_min], patterns_found[n-num_att_min]))
 
 
 
@@ -173,6 +192,7 @@ for n in range(num_att_min, num_att_max):
 # when number of attributes = 8, naive algorithm running time > 10min
 # so we only use x[:6]
 x_new = list(range(num_att_min, num_att_max))
+
 
 
 plt.plot(x_new, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
