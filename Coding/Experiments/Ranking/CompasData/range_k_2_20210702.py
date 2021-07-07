@@ -18,8 +18,8 @@ threshold of minority group accuracy: overall acc - 20
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_5_20210624 as newalg
-from Algorithms import NaiveAlgRanking_1_20210611 as naivealg
+from Algorithms import NewAlgRanking_8_20210702 as newalg
+from Algorithms import NaiveAlgRanking_2_20210701 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
@@ -57,10 +57,10 @@ def thousands_formatter(x, pos):
     return int(x/1000)
 
 
-all_attributes = ["age_binary","sex_binary","race_C","MarriageStatus_C","juv_fel_count_C","decile_score_C",
-                  "juv_misd_count_C","juv_other_count_C","priors_count_C","days_b_screening_arrest_C",
-                  "c_days_from_compas_C","c_charge_degree_C","v_decile_score_C","start_C","end_C","event_C"]
-
+all_attributes = ["age_binary","sex_binary","race_C","MarriageStatus_C","juv_fel_count_C",
+                  "decile_score_C", "juv_misd_count_C","juv_other_count_C","priors_count_C","days_b_screening_arrest_C",
+                  "c_days_from_compas_C","c_charge_degree_C","v_decile_score_C","start_C","end_C",
+                  "event_C"]
 
 
 
@@ -78,7 +78,8 @@ original_data_file = r"../../../../InputData/CompasData/general/compas_data_cat_
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data[selected_attributes]
 # ranked_data = ranked_data.drop('rank', axis=1)
-time_limit = 5*60
+
+time_limit = 10*60
 
 
 def lowerbound(x):
