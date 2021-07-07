@@ -18,8 +18,8 @@ threshold of minority group accuracy: overall acc - 20
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_5_20210624 as newalg
-from Algorithms import NaiveAlgRanking_1_20210611 as naivealg
+from Algorithms import NewAlgRanking_8_20210702 as newalg
+from Algorithms import NaiveAlgRanking_2_20210701 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
@@ -57,40 +57,41 @@ def thousands_formatter(x, pos):
     return int(x/1000)
 
 
-"""
-
-all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
-                  'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C',
-                  'failures_C', 'schoolsup_C', 'famsup_C', 'paid_C', 'activities_C', 'nursery_C', 'higher_C',
-                  'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
-                  'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
-
-"""
+all_attributes = ["age_binary","sex_binary","race_C","MarriageStatus_C","juv_fel_count_C",
+                  "decile_score_C", "juv_misd_count_C","juv_other_count_C","priors_count_C","days_b_screening_arrest_C",
+                  "c_days_from_compas_C","c_charge_degree_C","v_decile_score_C","start_C","end_C",
+                  "event_C"]
 
 
-selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C']
+selected_attributes = all_attributes[:11]
 
-Thc = 50
+
+Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 k_min = 10
-range_k_list = [40, 90, 140, 190, 240, 290, 340]
+k_max = 50
 
-
-original_data_file = r"../../../../InputData/StudentDataset/ForRanking_1/student-mat_cat_ranked.csv"
+original_data_file = r"../../../../InputData/CompasData/general/compas_data_cat_necessary_att_ranked.csv"
 
 
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data[selected_attributes]
+
 time_limit = 10*60
 
 
+List_k = list(range(k_min, k_max))
+
+
 def lowerbound(x):
-    # return int((x-3)/4)
     return 5
 
 def upperbound(x):
-    # return int(3+(x-k_min+1)/3)
     return 25
 
+Lowerbounds = [lowerbound(x) for x in List_k]
+Upperbounds = [upperbound(x) for x in List_k]
+
+print(Lowerbounds, "\n", Upperbounds)
 
 execution_time1 = list()
 execution_time2 = list()
@@ -109,16 +110,10 @@ num_loops = 1
 
 
 
-for range_k in range_k_list:
-    k_max = k_min + range_k
-    List_k = list(range(k_min, k_max))
-
-    Lowerbounds = [lowerbound(x) for x in List_k]
-    Upperbounds = [upperbound(x) for x in List_k]
-
+for Thc in Thc_list:
     num_patterns_visited1_thc = 0
     num_patterns_visited2_thc = 0
-    print("\nthc = {}, k={}-{}".format(Thc, k_min,  k_max))
+    print("\nthc = {}".format(Thc))
     t1, t2, calculation1, calculation2 = 0, 0, 0, 0
     result_cardinality = 0
     for l in range(num_loops):
@@ -183,55 +178,70 @@ for range_k in range_k_list:
 
 
 
-output_path = r'../../../../OutputData/Ranking2/StudentData/range_k.txt'
+output_path = r'../../../../OutputData/Ranking2/CompasData/thc_11att.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
 output_file.write("execution time\n")
-for n in range(len(range_k_list)):
-    output_file.write('{} {} {}\n'.format(range_k_list[n], execution_time1[n], execution_time2[n]))
+for n in range(len(Thc_list)):
+    output_file.write('{} {} {}\n'.format(Thc_list[n], execution_time1[n], execution_time2[n]))
 
 
 output_file.write("\n\nnumber of patterns visited\n")
-for n in range(len(range_k_list)):
-    output_file.write('{} {} {}\n'.format(range_k_list[n], num_patterns_visited1[n], num_patterns_visited2[n]))
+for n in range(len(Thc_list)):
+    output_file.write('{} {} {}\n'.format(Thc_list[n], num_patterns_visited1[n], num_patterns_visited2[n]))
 
 
 output_file.write("\n\nnumber of patterns found, lowerbound\n")
-for n in range(len(range_k_list)):
-    output_file.write('{} {} \n {}\n'.format(range_k_list[n], num_patterns_found_lowerbound[n], patterns_found_lowerbound[n]))
+for n in range(len(Thc_list)):
+    output_file.write('{} {} \n {}\n'.format(Thc_list[n], num_patterns_found_lowerbound[n], patterns_found_lowerbound[n]))
 
 
 output_file.write("\n\nnumber of patterns found, upperbound\n")
-for n in range(len(range_k_list)):
-    output_file.write('{} {} \n {}\n'.format(range_k_list[n], num_patterns_found_upperbound[n], patterns_found_upperbound[n]))
+for n in range(len(Thc_list)):
+    output_file.write('{} {} \n {}\n'.format(Thc_list[n], num_patterns_found_upperbound[n], patterns_found_upperbound[n]))
 
 
 
-plt.plot(range_k_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
-plt.plot(range_k_list, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
+plt.plot(Thc_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
+plt.plot(Thc_list, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 
-plt.xlabel('range of k')
+plt.xlabel('size threshold')
 plt.ylabel('execution time (s)')
-plt.xticks([100, 200, 300, 350])
+plt.xticks(Thc_list)
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/Ranking2/StudentData/range_k_time.png")
+plt.savefig("../../../../OutputData/Ranking2/CompasData/thc_time_11att.png")
+plt.show()
+
+# log time
+
+plt.plot(Thc_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
+plt.plot(Thc_list, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
+plt.yscale('log')
+plt.yticks([0.1, 1])
+plt.xlabel('size threshold')
+plt.ylabel('execution time (s)')
+plt.xticks(Thc_list)
+plt.subplots_adjust(bottom=0.15, left=0.18)
+plt.legend()
+plt.savefig("../../../../OutputData/Ranking2/CompasData/thc_time_log_11att.png")
 plt.show()
 
 
+
 fig, ax = plt.subplots()
-plt.plot(range_k_list, num_patterns_visited1, label="optimized algorithm", color='blue', linewidth = 3.4)
-plt.plot(range_k_list, num_patterns_visited2, label="naive algorithm", color='orange', linewidth = 3.4)
-plt.xlabel('range of k')
+plt.plot(Thc_list, num_patterns_visited1, label="optimized algorithm", color='blue', linewidth = 3.4)
+plt.plot(Thc_list, num_patterns_visited2, label="naive algorithm", color='orange', linewidth = 3.4)
+plt.xlabel('size threshold')
 plt.ylabel('number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 
 
-plt.xticks([100, 200, 300, 350])
+plt.xticks(Thc_list)
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/Ranking2/StudentData/range_k_calculations.png")
+plt.savefig("../../../../OutputData/Ranking2/CompasData/thc_calculations_11att.png")
 plt.show()
 
 plt.close()

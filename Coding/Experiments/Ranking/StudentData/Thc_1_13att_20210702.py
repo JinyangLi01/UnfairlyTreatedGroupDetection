@@ -18,8 +18,8 @@ threshold of minority group accuracy: overall acc - 20
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_5_20210624 as newalg
-from Algorithms import NaiveAlgRanking_1_20210611 as naivealg
+from Algorithms import NewAlgRanking_8_20210702 as newalg
+from Algorithms import NaiveAlgRanking_2_20210701 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
@@ -56,7 +56,7 @@ def ComparePatternSets(set1, set2):
 def thousands_formatter(x, pos):
     return int(x/1000)
 
-"""
+
 
 all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
                   'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C',
@@ -64,10 +64,9 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstat
                   'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
 
-"""
 
 
-selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C']
+selected_attributes = all_attributes[:13]
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 k_min = 10
@@ -180,7 +179,7 @@ for Thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/Ranking2/StudentData/thc.txt'
+output_path = r'../../../../OutputData/Ranking2/StudentData/thc_13att.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -213,7 +212,7 @@ plt.ylabel('execution time (s)')
 plt.xticks(Thc_list)
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/Ranking2/StudentData/thc_time.png")
+plt.savefig("../../../../OutputData/Ranking2/StudentData/thc_time_13att.png")
 plt.show()
 
 # log y:
@@ -228,7 +227,7 @@ plt.ylabel('execution time (s)')
 plt.xticks(Thc_list)
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/Ranking2/StudentData/thc_time_log.png")
+plt.savefig("../../../../OutputData/Ranking2/StudentData/thc_time_log_13att.png")
 plt.show()
 
 
@@ -246,7 +245,7 @@ plt.xticks(Thc_list)
 
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/Ranking2/StudentData/thc_calculations.png")
+plt.savefig("../../../../OutputData/Ranking2/StudentData/thc_calculations_13att.png")
 plt.show()
 
 plt.close()
