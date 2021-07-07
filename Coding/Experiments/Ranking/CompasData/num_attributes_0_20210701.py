@@ -16,8 +16,8 @@ threshold of minority group accuracy: overall acc - 20
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_5_20210624 as newalg
-from Algorithms import NaiveAlgRanking_1_20210611 as naivealg
+from Algorithms import NewAlgRanking_8_20210702 as newalg
+from Algorithms import NaiveAlgRanking_2_20210701 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter

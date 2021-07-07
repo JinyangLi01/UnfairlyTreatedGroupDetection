@@ -74,15 +74,15 @@ print(num_patterns2)
 
 
 plt.plot(Thc_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
-plt.plot(Thc_list[:13], execution_time2[:13], label="naive algorithm", color='orange', linewidth = 3.4)
+plt.plot(Thc_list[:12], execution_time2[:12], label="naive algorithm", color='orange', linewidth = 3.4)
 
 # plt.yscale('log')
 plt.xlabel('number of attributes')
 plt.ylabel('execution time (s)')
-plt.xticks(Thc_list)
+plt.xticks([3, 5, 7, 9, 10, 12, 14, 16])
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("num_att_time_naive_15.png")
+plt.savefig("num_att_time_naive_14.png")
 plt.show()
 
 
