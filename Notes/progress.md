@@ -87,7 +87,7 @@ x axis:
  - number of attributes
  - datasize
  - threshold of mis-classified size
- - threshold of accuracy
+ - delta fairness value
  
  - run on two different datasets, generate graphs for each
 

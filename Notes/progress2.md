@@ -116,7 +116,57 @@ report other groups is good, but need to have what they find
 
 
 # 2021.06.30
-1. related work
-2. exp figures, default setting
+1. related work: ranking done. Need related work for demo.
+2. exp figures, default setting. Need times of data size.
 3. figures for ranking, num att, data size
 
+
+TODO:
+1. related work for demo
+done 2. update exp figures for classification.
+3. data size is extended up to ? X???
+4. anonymous github repo and gmail
+done 5. log scale for thc
+
+6. Figure 10-13 only blue lines, linear x-axis
+7. we need to explain which attributes we use and why
+
+If I have time, do:
+1. mushroom
+2. student dataset for classification
+3. use more att in Figure 13, 14
+
+TODO:
+1. set up
+done 2. figure 6b!!
+   
+done 3. make figures with only blue lines. 
+done 4. make Figure 4 x-axis to 12.
+5. use all attributes for ranking. 
+
+6. Figure 15, 16 use all attributes! 
+done 7. case study
+8. table
+
+
+Missing:
+done 1. Figure 12 14 att
+4. Figure 4, 5, use up to 16 attributes for optimized alg in (b), and same for (c).
+   COMPAS: due to reason, use only 11
+   creditcard:running num att low acc, and for general FPR
+done 2. table
+1. desctiption of datasets
+3. ranking, data sizes
+
+
+Questions:
+1. use test+train as whole set
+mis as mis
+
+
+    
+TODO:
+1. Figure 4 (b), (c): use dataset in b but run until 16 attributes!!!
+same for Figure 5b
+
+2. 

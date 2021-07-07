@@ -22,5 +22,11 @@ According to AdultDataset_categorize.ipynb
   
 
 
+# Large datasets
+
+1. In folders AdultDataset/LargeDatasets_cat/ and AdultDataset/LargeDatasets_without_cat
+
+These are files w/ or w/o categorazing attributes like age
+
 
 
