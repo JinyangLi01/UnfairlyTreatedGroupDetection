@@ -49,7 +49,7 @@ FP = read_with_att(FP_data_file, selected_attributes)
 TN = read_with_att(TN_data_file, selected_attributes)
 FN = read_with_att(FN_data_file, selected_attributes)
 
-
+print(type(TP))
 
 
 # thc = 3696 this is the max thc to find black [-1, -1, 0]

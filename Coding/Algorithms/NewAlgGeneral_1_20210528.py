@@ -503,17 +503,6 @@ def GraphTraverse(whole_data, TPdata, TNdata, FPdata, FNdata,
                   delta_thf, Thc, time_limit, fairness_definition = 0):
     time1 = time.time()
 
-    pc_whole_data = pattern_count.PatternCounter(whole_data, encoded=False)
-    pc_whole_data.parse_data()
-    pc_TP = pattern_count.PatternCounter(TPdata, encoded=False)
-    pc_TP.parse_data()
-    pc_FP = pattern_count.PatternCounter(FPdata, encoded=False)
-    pc_FP.parse_data()
-    pc_TN = pattern_count.PatternCounter(TNdata, encoded=False)
-    pc_TN.parse_data()
-    pc_FN = pattern_count.PatternCounter(FNdata, encoded=False)
-    pc_FN.parse_data()
-
 
     if fairness_definition == 0:
         return Predictive_parity(whole_data, TPdata, FPdata,
@@ -535,6 +524,37 @@ def GraphTraverse(whole_data, TPdata, TNdata, FPdata, FNdata,
                   delta_thf, Thc, time_limit)
 
 
+def ComputeOriginalFairnessValue(whole_data, TPdata, TNdata, FPdata, FNdata, fairness_definition = 0):
+    pc_whole_data = pattern_count.PatternCounter(whole_data, encoded=False)
+    pc_whole_data.parse_data()
+    pc_TP = pattern_count.PatternCounter(TPdata, encoded=False)
+    pc_TP.parse_data()
+    pc_FP = pattern_count.PatternCounter(FPdata, encoded=False)
+    pc_FP.parse_data()
+    pc_TN = pattern_count.PatternCounter(TNdata, encoded=False)
+    pc_TN.parse_data()
+    pc_FN = pattern_count.PatternCounter(FNdata, encoded=False)
+    pc_FN.parse_data()
+    if fairness_definition == 0:
+        denominator = len(TPdata) + len(FPdata)
+        if denominator == 0:
+            print("len(TPdata) + len(FPdata) = 0, error!")
+            return "NaN"
+        return len(TPdata) / denominator
+    elif fairness_definition == 1:
+        return len(FPdata) / (len(FPdata) + len(TNdata))
+    elif fairness_definition == 2:
+        return len(FNdata) / (len(TPdata) + len(FNdata))
+    elif fairness_definition == 3:
+        original_thf_FPR = len(FPdata) / (len(FPdata) + len(TNdata))
+        original_thf_FNR = len(FNdata) / (len(TPdata) + len(FNdata))
+        return original_thf_FPR, original_thf_FNR
+    elif fairness_definition == 4:
+        original_thf_FP = len(TPdata) / (len(FPdata) + len(TPdata))
+        original_thf_FN = len(TNdata) / (len(TNdata) + len(FNdata))
+        return original_thf_FP, original_thf_FN
+    elif fairness_definition == 5:
+        return len(FPdata) / len(FNdata)
 
 
 #

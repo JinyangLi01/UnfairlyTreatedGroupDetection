@@ -1,0 +1,17 @@
+sex
+0:Male
+1:Female
+
+age_cat
+0:Less than 25
+1:25 - 45
+2:Greater than 45
+
+race
+0:African-American
+1:Asian
+2:Caucasian
+3:Hispanic
+4:Native American
+5:Other
+
