@@ -14,3 +14,12 @@
 8. The two patterns in the output imply these two groups people are treated unfairly
 9. change parameters, we get different results
 10. The different results imply that ... eg, group A's size is larger than 10 but smaller than 30, so it only appears in the second experiment
+
+
+# 2021.06.10 
+- errors in output when changing thresholds?
+- add size and fairness values after each pattern in the output
+- add preview table
+- add check boxes of attributes
+- slider for fairness delta, up and down integers for size threshold
+- clear output when setting new thresholds

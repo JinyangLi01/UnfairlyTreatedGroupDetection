@@ -164,9 +164,3 @@ Questions:
 mis as mis
 
 
-    
-TODO:
-1. Figure 4 (b), (c): use dataset in b but run until 16 attributes!!!
-same for Figure 5b
-
-2. 

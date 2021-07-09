@@ -54,9 +54,17 @@ selected_attributes = []
 
 
 # ==================== to preview data =====================
-matrix = []
-header=[]
-PreviewTable = sg.Table(visible=False, values=matrix, key="-preview-table-", headings=header,)
+data_for_preview = []
+header_list = []
+PreviewTable = sg.Table(
+                    visible=False,
+                    values=data_for_preview,
+                    headings=header_list,
+                    display_row_numbers=True,
+                    auto_size_columns=False,
+                    key='-preview_table-',
+                    num_rows=min(25, len(data_for_preview)))
+
 # ==================== to preview data =====================
 
 
@@ -164,9 +172,23 @@ while True:
         break
     elif event == "Preview data":
         print(values['-InputData-'])
-        dataset_name = values['-InputData-']
-        dataset_file = values['-upload_dataset-']
-        # TODO: update table
+        # dataset_name = values['-InputData-']
+        # dataset_file = values['-upload_dataset-']
+        # df = pd.read_csv(dataset_file, sep=',', engine='python', header=None)
+        # data_for_preview = df.values.tolist()               # read everything else into a list of rows
+        # # Uses the first row (which should be column names) as columns names
+        # header_list = df.iloc[0].tolist()
+        # # Drops the first row in the table (otherwise the header names and the first row will be the same)
+        # data_for_preview = df[1:].values.tolist()
+        # # TODO: update table
+        # PreviewTable = sg.Table(
+        #     visible=False,
+        #     values=data_for_preview,
+        #     headings=header_list,
+        #     display_row_numbers=True,
+        #     auto_size_columns=False,
+        #     key='-preview_table-',
+        #     num_rows=min(25, len(data_for_preview)))
         # window['-preview_table-'].update(PreviewTable)
     elif event == "-InputData-":
         dataset_name = window['-InputData-']
