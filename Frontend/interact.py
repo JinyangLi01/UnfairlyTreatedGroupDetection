@@ -15,7 +15,7 @@ def read_with_att(original_data_file, selected_attributes):
     return less_attribute_data
 
 
-# ==================== preparing dicts =========================
+# ================================ preparing dicts =====================================
 datasets = dict()
 datasets['COMPAS'] = r"../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed_7214rows_cat.csv"
 datasets['COMPAS-TP'] = r"../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed-TP-cat.csv"
@@ -47,19 +47,18 @@ time_limit = 5 * 60
 fairness_definition = 1
 selected_attributes = []
 
-# ==================== preparing dicts =========================
+# ================================ preparing dicts =====================================
 
 
-# ==================== to preview data =====================
-data_for_preview = []
-header_list = []
+# ================================ to preview data =================================
+data_for_preview = [[str(x * y) for x in range(6)] for y in range(10)]
+header=["header isn't updatable ","         ","         ","           ","           "]
 PreviewTable = sg.Table(
     visible=False,
     values=data_for_preview,
-    headings=header_list,
-    display_row_numbers=True,
-    auto_size_columns=False,
+    auto_size_columns=True,
     key='-preview_table-',
+    headings=header,
     num_rows=min(25, len(data_for_preview))
 )
 
@@ -67,7 +66,7 @@ PreviewTable = sg.Table(
 # attributes
 Attributes = []
 
-# ==================== to preview data =====================
+# ================================ to preview data =================================
 
 
 def ReadCateFile(cate_file):
@@ -168,7 +167,7 @@ layout = [
 ]
 
 # Create the window
-window = sg.Window('Window Title', layout, size=(1000, 1000), font=font)
+window = sg.Window('Window Title', layout, size=(1000, 1000), font=font).finalize()
 
 UploadDataFlag = False
 UploadClassifierFlag = False
@@ -205,11 +204,10 @@ while True:
             dataset_name = values['-InputData-']
             data_name_short = dataset_name.split(' ')[0]
             df = pd.read_csv(datasets[data_name_short], sep=',', engine='python', header=None)
-        data_for_preview = df.values.tolist()               # read everything else into a list of rows
         # Uses the first row (which should be column names) as columns names
         header_list = df.iloc[0].tolist()
         # Drops the first row in the table (otherwise the header names and the first row will be the same)
-        data_for_preview = df[1:].values.tolist()
+        data_for_preview = df[0:].values.tolist()
         # TODO: update table
         # PreviewTable = sg.Table(
         #     visible=True,
@@ -222,7 +220,7 @@ while True:
         window['-preview_table-'].update(visible=True)
         window['-preview_table-'].update(values=data_for_preview)
         window['-preview_table-'].update(num_rows=min(10, len(data_for_preview)))
-        # window['-preview_table-'].update(headings=header_list)
+        # window['-preview_table-'].update(ColunmHeadings=header_list)
     elif event == "-show_original_fairness_value-":
         dataset_name = values['-InputData-']
         classifier_name = values['-MLClassifier-']

@@ -48,10 +48,10 @@ import numpy as np
 # =================================================== example 3 ===============================================
 matrix = [[str(x * y) for x in range(5)] for y in range(10)]
 header=["one","two","three","four","five"]
-Table = sg.Table(values=[], key="_table1_", headings=header, visible=False)
+Table = sg.Table(values=matrix, key="_table1_", headings=header,)
 layout=[[sg.Text("Table")], [Table],[sg.Button("refresh")], [sg.Button("Exit")]]
 window = (
-    sg.Window("Table", default_element_size=(20, 22), resizable=True).Layout(layout).Finalize()
+    sg.Window("Table",default_element_size=(20, 22), resizable=False).Layout(layout).Finalize()
 )
 
 while True:
@@ -61,11 +61,9 @@ while True:
             break
         elif event == "refresh":
             matrix[0][1]="10000"
-            window.FindElement("_table1_").Update(values=matrix)
-            window["_table1_"].update(visible=True)
+            window.FindElement("_table1_").Update(matrix)
         print(event, values)
 window.Close()
-
 
 
 # =================================================== example 4 ===============================================
