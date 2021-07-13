@@ -18,8 +18,17 @@
 
 # 2021.06.10 
 - errors in output when changing thresholds?
+  * because output size need to be decided beforehand. Now it's 100 rows.
 - add size and fairness values after each pattern in the output
+  * done:)
 - add preview table
 - add check boxes of attributes
 - slider for fairness delta, up and down integers for size threshold
+  * done
 - clear output when setting new thresholds
+  * done
+
+
+
+
+
