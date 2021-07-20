@@ -31,4 +31,6 @@
 
 
 
-
+# 2021.07.15
+- make slides
+- table columns?!

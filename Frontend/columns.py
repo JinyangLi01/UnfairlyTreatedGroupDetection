@@ -1,48 +1,38 @@
 import PySimpleGUI as sg
-import pandas as pd
-import numpy as np
-import csv
 
-def calc_ladder():
-    filename = sg.PopupGetFile('Get required file', no_window=True, file_types=(("CSV Files", "*.csv"),))
-    # populate table with file contents
-    # Assume we know csv has heading in row 1
-    # Assume we know 7 columns of data - relevenat to AFL w/o Pts or % shown
-    # data is a list of lists containing data about each team
-    # data[0] is one teams data data[0[[0] = team, data[0][1] P, data[0] [2] W,
-    # data[0][3] L, data [0][4] D, data [0][5] F, data [0][6] A
-    # no error checking or validation used.
+TaggerList = ["viking", "saddle", "beast", "ze", "princess", "vet", "art", "two", "hood", "mosaic",
+              "viking1", "saddle1", "beast1", "ze1", "princess1", "vet1", "art1", "two1", "hood1", "mosaic1"]
 
-    # initialise variable
-    data = []
-    header_list = []
-    # read csv
-    with open(filename, "r") as infile:
-        reader = csv.reader(infile)
-        for i in range(1):
-            # get headings
-            header = next(reader)
-            # read everything else into a list of rows
-            data = list(reader)
-            # add headings
-    header = header + ['%', 'Pts']
-    for i in range(len(data)):
-        # calculate % and format to 2 decimal places
-        percent = str('{:.2f}'.format(int(data[i][5]) / int(data[i][6]) * 100))
-        data[i] = data[i] + [percent]  # add to data
-        pts = int(data[i][2]) * 4 + int(data[i][4]) * 2
-        data[i] = data[i] + [pts]  # add to data
-
-    # use Table (explore settings) and add to column layout
-    col_layout = [[sg.Table(values=data, headings=header, auto_size_columns=True,
-                            max_col_width=12, justification='right', background_color='White',
-                            text_color='Black', alternating_row_color='LightBlue', size=(None, len(data)))]]
-
-    layout = [[sg.Column(col_layout, size=(500, 400), scrollable=True)], ]
-
-    window = sg.Window('Table', location=(700, 325), grab_anywhere=False).Layout(layout)
-    b, v = window.Read()
+TaggerListLen = len(TaggerList)
+Tags1 = TaggerList[:int(TaggerListLen/3)]
+Tags2 = TaggerList[int(TaggerListLen/3):int(TaggerListLen/3*2)]
+Tags3 = TaggerList[int(TaggerListLen/3*2):]
 
 
-calc_ladder()
+def CBtn(BoxText):
+    return sg.Checkbox(BoxText, size=(8, 1), default=False)
 
+col2 = [[CBtn(i)] for i in range(len(Tags2))]
+
+col5 = sg.Column([[sg.Checkbox("BoxText1", size=(8, 1), default=False)],
+            [sg.Checkbox("BoxText2", size=(8, 1), default=False)],
+            [sg.Checkbox("BoxText3", size=(8, 1), default=False)],
+            [sg.Checkbox("BoxText4", size=(8, 1), default=False)]])
+
+layout = [
+    # [sg.Menu(menu_def, tearoff=True)],
+    [sg.Text('Image Tagger', size=(
+        30, 1), justification='center', font=("Helvetica", 25), relief=sg.RELIEF_RIDGE)],
+    [sg.Text('Your Folder', size=(15, 1), justification='right'),
+        sg.InputText('Default Folder'), sg.FolderBrowse()],
+    [sg.Text('Column 2', justification='center', size=(10, 1))],
+    [sg.Column(col2)],
+    [col5]]
+
+window = sg.Window('Everything bagel', layout)
+
+while True:
+    event, values = window.read()
+    if event == sg.WINDOW_CLOSED or event == 'Quit':
+        break
+window.close()
