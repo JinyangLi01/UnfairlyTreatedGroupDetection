@@ -34,3 +34,14 @@
 # 2021.07.15
 - make slides
 - table columns?!
+
+# 2021.07.20
+- camera-ready version. Go over the draft according to the email.
+- fix all typos
+- add a sentence: The user can select attribtues they want to use.
+
+# 2021.07.22
+Questions for demo paper:
+- after adding acknowledge, a little over length
+- need to add attribute-select functionality in the figure?
+
