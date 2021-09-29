@@ -17,7 +17,8 @@ def read_with_att(original_data_file, selected_attributes):
 
 # ================================ preparing dicts =====================================
 datasets = dict()
-datasets['COMPAS'] = r"../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed_7214rows_cat.csv"
+datasets['COMPAS'] = r"../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed_7214rows_cat_necessary_att.csv"
+# datasets['COMPAS'] = r"../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed_7214rows_cat_necessary_att.csv"
 datasets['COMPAS-TP'] = r"../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed-TP-cat.csv"
 datasets['COMPAS-FP'] = r"../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed-FP-cat.csv"
 datasets['COMPAS-TN'] = r"../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed-TN-cat.csv"
@@ -120,7 +121,7 @@ def open_window_preview_data_select_attributes(all_attributes, data_for_preview)
     PreviewTable = sg.Table(
         visible=True,
         values=data_for_preview,
-        auto_size_columns=True,
+        # auto_size_columns=True,
         key='-preview_table-',
         headings=header,
         num_rows=min(10, len(data_for_preview)),
@@ -138,7 +139,7 @@ def open_window_preview_data_select_attributes(all_attributes, data_for_preview)
          [sg.Button("Submit")]], size=(300, 300)),
          ]
     ]
-    window = sg.Window("select attributes", layout, size=(800, 800), modal=True)
+    window = sg.Window("select attributes", layout, size=(800, 700), modal=True)
     choice = None
     while True:
         event, values = window.read()
@@ -201,14 +202,14 @@ layout = [
 ]
 
 # Create the window
-window = sg.Window('Window Title', layout, size=(800, 800), font=font, resizable=True).finalize()
+window = sg.Window('Window Title', layout, size=(820, 800), font=font, resizable=True).finalize()
 window.bind('<Configure>', "Configure") # resizable
 # column_layout = [[sg.Column(layout, size=(1000, 1000), scrollable=True)], ]
 #
 # window = sg.Window('Window Title', layout=column_layout, size=(1000, 1000), font=font).finalize()
 
 def UpdateOriginalFairnessValue(window, values, dataset_name):
-    print(event, dataset_name)
+    print("UpdateOriginalFairnessValue", event, dataset_name)
     data_name_short = dataset_name.split(' ')[0]
     whole_data = read_with_att(datasets[data_name_short], selected_attributes)
     TP = read_with_att(datasets[data_name_short + '-TP'], selected_attributes)
@@ -216,6 +217,9 @@ def UpdateOriginalFairnessValue(window, values, dataset_name):
     TN = read_with_att(datasets[data_name_short + '-TN'], selected_attributes)
     FN = read_with_att(datasets[data_name_short + '-FN'], selected_attributes)
     fairness_definition = int(general_fairness_definition[values['-fairness_definition-']])
+
+    # print(whole_data, TP, FP, TN, FN)
+
     original_fairness_value = float("{:.2f}".format(newalggeneral.ComputeOriginalFairnessValue(whole_data, TP, TN,
                                                                          FP, FN, fairness_definition)))
     print(original_fairness_value)
@@ -235,8 +239,8 @@ while True:
         dataset_name = values['-InputData-']
         window['-OUTPUT-'].update("")
         print(event, dataset_name)
-        UpdateOriginalFairnessValue(window, values, dataset_name)
-    elif event == "-upload-dataset-":
+        # UpdateOriginalFairnessValue(window, values, dataset_name)
+    elif event == "-upload_dataset-":
         UploadDataFlag = True
         dataset_file = values['-upload-dataset-']
         window['-OUTPUT-'].update("")
