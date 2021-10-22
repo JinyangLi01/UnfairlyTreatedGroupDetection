@@ -1,8 +1,13 @@
 """
-New algorithm for minority group detection in general case
-Search the graph top-down, generate children using the method in coverage paper to avoid redundancy.
-Stop point 1: when finding a pattern satisfying the requirements
-Stop point 2: when the cardinality is too small
+Naive algorithm for minority group detection.
+The number of deterministic attributes in a pattern is 0, 1, 2.....
+In each for loop, enumerate all kinds of combinations, and all possible attribute values
+
+
+difference from alg 1:
+Add a stop condition: when there are x deterministic attributes in a pattern, but all patterns have a size that is too small.
+
+
 """
 
 from itertools import combinations
@@ -144,6 +149,7 @@ def Predictive_parity(whole_data, TPdata, FPdata,
     pattern_with_low_accuracy = []
     for num_att in range(1, NumAttribute + 1):
         # print("----------------------------------------------------  num_att = ", num_att)
+        all_have_small_size = True
         comb_num_att = list(
             combinations(index_list, num_att))  # list of combinations of attribute index, length num_att
         overTime = False
@@ -158,6 +164,7 @@ def Predictive_parity(whole_data, TPdata, FPdata,
                 whole_cardinality = pc_whole_data.pattern_count(st)
                 if whole_cardinality < Thc:
                     continue
+                all_have_small_size = False
                 tp = pc_TP.pattern_count(st)
 
                 fp = pc_FP.pattern_count(st)
@@ -172,11 +179,12 @@ def Predictive_parity(whole_data, TPdata, FPdata,
         if overTime:
             print("naive alg overtime")
             break
-        """
-        # stop condition: if all patterns satisfying all conditions are dominated by pattern_with_low_accuracy, stop searching
-        if allDominatedByCurrentCandidateSet:
+
+        # stop condition: if all patterns have a size smaller than the threshold, stop searching
+        if all_have_small_size:
+            print("stop condition satisfied, patterns with {} attributes all have "
+                  "sizes smaller than threshold".format(num_att))
             break
-        """
     time2 = time.time()
     execution_time = time2 - time1
     # print("execution time = %s seconds" % execution_time)
@@ -214,6 +222,7 @@ def False_positive_error_rate_balance_greater_than(whole_data, FPdata, TNdata,
     pattern_with_low_accuracy = []
     for num_att in range(1, NumAttribute + 1):
         # print("----------------------------------------------------  num_att = ", num_att)
+        all_have_small_size = True
         comb_num_att = list(
             combinations(index_list, num_att))  # list of combinations of attribute index, length num_att
         overTime = False
@@ -228,6 +237,7 @@ def False_positive_error_rate_balance_greater_than(whole_data, FPdata, TNdata,
                 whole_cardinality = pc_whole_data.pattern_count(st)
                 if whole_cardinality < Thc:
                     continue
+                all_have_small_size = False
                 fp = pc_FP.pattern_count(st)
 
                 tn = pc_TN.pattern_count(st)
@@ -242,11 +252,11 @@ def False_positive_error_rate_balance_greater_than(whole_data, FPdata, TNdata,
         if overTime:
             print("naive alg overtime")
             break
-        """
-        # stop condition: if all patterns satisfying all conditions are dominated by pattern_with_low_accuracy, stop searching
-        if allDominatedByCurrentCandidateSet:
+        # stop condition: if all patterns have a size smaller than the threshold, stop searching
+        if all_have_small_size:
+            print("stop condition satisfied, patterns with {} attributes all have "
+                  "sizes smaller than threshold".format(num_att))
             break
-        """
     time2 = time.time()
     execution_time = time2 - time1
     # print("execution time = %s seconds" % execution_time)
@@ -286,6 +296,7 @@ def False_negative_error_rate_balance_greater_than(whole_data, TPdata, FNdata,
     pattern_with_low_accuracy = []
     for num_att in range(1, NumAttribute + 1):
         # print("----------------------------------------------------  num_att = ", num_att)
+        all_have_small_size = True
         comb_num_att = list(
             combinations(index_list, num_att))  # list of combinations of attribute index, length num_att
         overTime = False
@@ -300,6 +311,7 @@ def False_negative_error_rate_balance_greater_than(whole_data, TPdata, FNdata,
                 whole_cardinality = pc_whole_data.pattern_count(st)
                 if whole_cardinality < Thc:
                     continue
+                all_have_small_size = False
                 fn = pc_FN.pattern_count(st)
                 tp = pc_TP.pattern_count(st)
 
@@ -314,11 +326,11 @@ def False_negative_error_rate_balance_greater_than(whole_data, TPdata, FNdata,
         if overTime:
             print("naive alg overtime")
             break
-        """
-        # stop condition: if all patterns satisfying all conditions are dominated by pattern_with_low_accuracy, stop searching
-        if allDominatedByCurrentCandidateSet:
+        # stop condition: if all patterns have a size smaller than the threshold, stop searching
+        if all_have_small_size:
+            print("stop condition satisfied, patterns with {} attributes all have "
+                  "sizes smaller than threshold".format(num_att))
             break
-        """
     time2 = time.time()
     execution_time = time2 - time1
     # print("execution time = %s seconds" % execution_time)
@@ -363,6 +375,7 @@ def Equalized_odds(whole_data, TPdata, TNdata, FPdata, FNdata,
     pattern_with_low_accuracy = []
     for num_att in range(1, NumAttribute + 1):
         # print("----------------------------------------------------  num_att = ", num_att)
+        all_have_small_size = True
         comb_num_att = list(
             combinations(index_list, num_att))  # list of combinations of attribute index, length num_att
         overTime = False
@@ -377,6 +390,7 @@ def Equalized_odds(whole_data, TPdata, TNdata, FPdata, FNdata,
                 whole_cardinality = pc_whole_data.pattern_count(st)
                 if whole_cardinality < Thc:
                     continue
+                all_have_small_size = False
                 fp = pc_FP.pattern_count(st)
                 fn = pc_FN.pattern_count(st)
 
@@ -397,11 +411,9 @@ def Equalized_odds(whole_data, TPdata, TNdata, FPdata, FNdata,
         if overTime:
             print("naive alg overtime")
             break
-        """
-        # stop condition: if all patterns satisfying all conditions are dominated by pattern_with_low_accuracy, stop searching
-        if allDominatedByCurrentCandidateSet:
+        # stop condition: if all patterns have a size smaller than the threshold, stop searching
+        if all_have_small_size:
             break
-        """
     time2 = time.time()
     execution_time = time2 - time1
     # print("execution time = %s seconds" % execution_time)
@@ -446,6 +458,7 @@ def Conditional_use_accuracy_equality(whole_data, TPdata, TNdata, FPdata, FNdata
     pattern_with_low_accuracy = []
     for num_att in range(1, NumAttribute + 1):
         # print("----------------------------------------------------  num_att = ", num_att)
+        all_have_small_size = True
         comb_num_att = list(
             combinations(index_list, num_att))  # list of combinations of attribute index, length num_att
         overTime = False
@@ -460,6 +473,7 @@ def Conditional_use_accuracy_equality(whole_data, TPdata, TNdata, FPdata, FNdata
                 whole_cardinality = pc_whole_data.pattern_count(st)
                 if whole_cardinality < Thc:
                     continue
+                all_have_small_size = False
                 fp = pc_FP.pattern_count(st)
                 tn = pc_TN.pattern_count(st)
                 tp = pc_TP.pattern_count(st)
@@ -477,11 +491,9 @@ def Conditional_use_accuracy_equality(whole_data, TPdata, TNdata, FPdata, FNdata
         if overTime:
             print("naive alg overtime")
             break
-        """
-        # stop condition: if all patterns satisfying all conditions are dominated by pattern_with_low_accuracy, stop searching
-        if allDominatedByCurrentCandidateSet:
+        # stop condition: if all patterns have a size smaller than the threshold, stop searching
+        if all_have_small_size:
             break
-        """
     time2 = time.time()
     execution_time = time2 - time1
     # print("execution time = %s seconds" % execution_time)
@@ -520,6 +532,7 @@ def Treatment_equality(whole_data, TPdata, TNdata, FPdata, FNdata,
     pattern_with_low_accuracy = []
     for num_att in range(1, NumAttribute + 1):
         # print("----------------------------------------------------  num_att = ", num_att)
+        all_have_small_size = True
         comb_num_att = list(
             combinations(index_list, num_att))  # list of combinations of attribute index, length num_att
         overTime = False
@@ -532,8 +545,11 @@ def Treatment_equality(whole_data, TPdata, TNdata, FPdata, FNdata,
                 st = num2string(p)
                 num_patterns += 1
                 whole_cardinality = pc_whole_data.pattern_count(st)
+                if num_att == NumAttribute and whole_cardinality >= Thc:
+                    print("whole_cardinality = {}".format(whole_cardinality))
                 if whole_cardinality < Thc:
                     continue
+                all_have_small_size = False
                 fp = pc_FP.pattern_count(st)
 
                 fn = pc_FN.pattern_count(st)
@@ -550,11 +566,9 @@ def Treatment_equality(whole_data, TPdata, TNdata, FPdata, FNdata,
         if overTime:
             print("naive alg overtime")
             break
-        """
-        # stop condition: if all patterns satisfying all conditions are dominated by pattern_with_low_accuracy, stop searching
-        if allDominatedByCurrentCandidateSet:
+        # stop condition: if all patterns have a size smaller than the threshold, stop searching
+        if all_have_small_size:
             break
-        """
     time2 = time.time()
     execution_time = time2 - time1
     # print("execution time = %s seconds" % execution_time)
@@ -615,7 +629,7 @@ def NaiveAlg(whole_data, TPdata, TNdata, FPdata, FNdata,
 #
 # fairness_definition = 0
 # delta_thf = 0.1
-# thc = 3
+# thc = 30
 #
 # less_attribute_data, TP, TN, FP, FN = predict.PredictWithMLReturnTPTNFPFN(original_data_file,
 #                                                                          selected_attributes,
@@ -653,5 +667,14 @@ def NaiveAlg(whole_data, TPdata, TNdata, FPdata, FNdata,
 #             flag = True
 #     if not flag:
 #         print(p)
+#
+#
+# import NaiveAlgGeneral_1_202105258 as naive1
+#
+# pattern_with_low_fairness3, num_patterns3, t3_ = naive1.NaiveAlg(less_attribute_data,
+#                                                           TP, TN, FP, FN, delta_thf,
+#                                                           thc, time_limit, 5)
+#
+# print("naive 1, time = {} s, num_patterns = {}".format(t3_, num_patterns3), "\n")
 #
 #
