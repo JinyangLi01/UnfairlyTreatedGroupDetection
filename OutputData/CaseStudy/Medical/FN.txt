@@ -1,0 +1,10 @@
+selected_attributes: ['SEX', 'REGION', 'MARRY', 'RACE', 'FTSTU', 'ACTDTY', 'HONRDC', 'RTHLTH', 'MNHLTH', 'HIBPDX', 'CHDDX', 'ANGIDX', 'MIDX']
+fairness_definition = 2, thc = 250, delta_thf = 0.2
+newalg, time = 19.411561965942383 s, num_calculation = 196303
+num of patterns detected = 6
+[-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, 1, -2, -2]
+[2, 2, -2, -2, -1, 2, -2, -2, -2, 2, -2, -2, -2]
+[1, 3, -2, -2, -2, -2, -2, 3, -2, -2, -2, -2, 2]
+[1, 3, -2, -2, -2, -2, -2, 3, -2, -2, -2, 2, -2]
+[1, 3, -2, -2, -2, -2, -2, 3, -2, -2, 2, -2, -2]
+[1, 3, -2, -2, -2, -2, 2, 3, -2, -2, -2, -2, -2]

@@ -1,0 +1,1 @@
+selected_attributes: ['REGION', 'SEX', 'MARRY', 'RACE', 'FTSTU', 'ACTDTY', 'HONRDC', 'RTHLTH', 'MNHLTH', 'HIBPDX', 'CHDDX', 'ANGIDX', 'MIDX']
