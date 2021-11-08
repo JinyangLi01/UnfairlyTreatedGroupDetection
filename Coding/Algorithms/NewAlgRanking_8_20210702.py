@@ -1,16 +1,23 @@
 """
-New algorithm for minority group detection in general case
-Search the graph top-down, generate children using the method in coverage paper to avoid redundancy.
-Stop point 1: when finding a pattern satisfying the requirements
-Stop point 2: when the cardinality is too small
-"""
+New algorithm for group detection in ranking
+fairness definition: the number of a group members in top-k is bounded by U_k, L_k, k_min <= k <= k_max
+bounds for different k can be different, but all patterns have the same bounds
+This is the final algorithm for this fairness definition in ranking
 
 
-"""
+
 Go top-down, find two result sets: for lower bound and for upper bound
 For lower bound: most general pattern
 For upper bound: most specific pattern
-We don't use patterns_size_topk[st] to store the sizes
+
+Use alg from classification for k_min
+and then, for k>k_min, only search locally.
+When k increases by 1, there is only one tuple added into top-k
+There are two groups of patterns we need to check:
+1. patterns related to this additional tuple, starting from root
+2. if bounds change, check parents of patterns in the result set for lower bound, upper bound are not affected
+
+We don't use patterns_size_topk[st] to store the sizes, but still use patterns_size_whole
 We compute the size every time of k
 """
 
@@ -184,8 +191,8 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
     root = [-1] * num_att
     root_str = '|' * (num_att-1)
     S = GenerateChildren(root, whole_data_frame, attributes)
-    pattern_treated_unfairly_lowerbound = []
-    pattern_treated_unfairly_upperbound = []
+    pattern_treated_unfairly_lowerbound = [] # looking for the most general patterns
+    pattern_treated_unfairly_upperbound = [] # looking for the most specific patterns
     patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k_min], encoded=False)
     patterns_top_kmin.parse_data()
     patterns_size_whole = dict()
@@ -210,7 +217,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
         whole_cardinality = pc_whole_data.pattern_count(st)
         patterns_size_whole[st] = whole_cardinality
         if whole_cardinality < Thc:
-            if len(parent_candidate_for_upperbound) > 0:
+            if len(parent_candidate_for_upperbound) > 0: # there is a parent which is above upper bound
                 CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, pattern_treated_unfairly_upperbound)
                 parent_candidate_for_upperbound = []
             parent = findParent(P, num_att)
@@ -235,14 +242,14 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
                 patterns_searched_lowest_level_lowerbound.add(st)
             S = children + S
         if num_top_k > Upperbounds[k - k_min]:
-            parent_candidate_for_upperbound = P
+            parent_candidate_for_upperbound = P # we need to store this so that if child is below upper bound, we put this into result set
             children = GenerateChildren(P, whole_data_frame, attributes)
             S = children + S
-            if len(children) == 0:
+            if len(children) == 0: # P is in result set
                 CheckDominationAndAddForUpperbound(P, pattern_treated_unfairly_upperbound)
                 parent_candidate_for_upperbound = []
         else:
-            if len(parent_candidate_for_upperbound) > 0:
+            if len(parent_candidate_for_upperbound) > 0: # P is not above upperbound, so its parent should be added to the result set
                 CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, pattern_treated_unfairly_upperbound)
                 parent_candidate_for_upperbound = []
 
@@ -253,7 +260,8 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
         patterns_top_k = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_k.parse_data()
         new_tuple = ranked_data.iloc[[k - 1]].values.flatten().tolist()
-        # top down for related patterns
+        # top down for related patterns, using similar methods as k_min, add to result set if needed
+        # ancestors are patterns checked in AddNewTuple() function, to avoid checking them again
         ancestors, num_patterns_visited = AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound,
                                 whole_data_frame, patterns_top_k, k, k_min, pc_whole_data, num_patterns_visited,
                     patterns_size_whole, Lowerbounds, Upperbounds, num_att, attributes)
@@ -318,7 +326,7 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
     for st in patterns_searched_lowest_level_lowerbound: # st is a string
         num_patterns_visited += 1
         p = string2num(st)
-        if p in ancestors or p in pattern_treated_unfairly_lowerbound:
+        if p in ancestors or p in pattern_treated_unfairly_lowerbound: # already checked
             continue
         if st in patterns_size_whole:
             whole_cardinality = patterns_size_whole[st]
@@ -329,19 +337,20 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
         pattern_size_in_topk = patterns_top_k.pattern_count(st)
         if pattern_size_in_topk >= Lowerbounds[k - k_min]:
             continue
-
+        # if pattern_size_in_topk < Lowerbounds[k - k_min], remove thild and add this parent
         child_str = st
         parent_str = findParentForStr(child_str)
         child = string2num(child_str)
         if parent_str == root_str:
             CheckDominationAndAddForLowerbound(child, pattern_treated_unfairly_lowerbound)
-            to_remove.add(child_str)
+            to_remove.add(child_str) # child need removing
             continue
 
+        # if parent is not root, we need to check until 1: the root, 2: we find a node that is above the lower bound
+        # since lower bound may increase by 5, and parent is below the lower bound, grandparent may be too
         while parent_str != root_str:
             num_patterns_visited += 1
             pattern_size_in_topk = patterns_top_k.pattern_count(parent_str)
-
             if pattern_size_in_topk < Lowerbounds[k - k_min]:
                 child_str = parent_str
                 parent_str = findParentForStr(child_str)
@@ -357,81 +366,19 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
         patterns_searched_lowest_level_lowerbound.remove(p_str)
     patterns_searched_lowest_level_lowerbound = patterns_searched_lowest_level_lowerbound | to_append
 
-    # to_remove = set()
-    # to_append = set()
-    # for st in patterns_searched_lowest_level_upperbound:
-    #     p = string2num(st) #
-    #     num_patterns_visited += 1
-    #     if p in ancestors or p in pattern_treated_unfairly_upperbound:
-    #         continue
-    #     if st in patterns_size_whole:
-    #         whole_cardinality = patterns_size_whole[st]
-    #     else:
-    #         whole_cardinality = pc_whole_data.pattern_count(st)
-    #     if whole_cardinality < Thc:
-    #         continue
-    #     if st in patterns_size_topk:
-    #         pattern_size_in_topk = patterns_size_topk[st]
-    #     else:
-    #         pattern_size_in_topk = patterns_top_kmin.pattern_count(st)
-    #         patterns_size_topk[st] = pattern_size_in_topk
-    #     if pattern_size_in_topk <= Upperbounds[k - k_min]:
-    #         continue
-    #
-    #     parent_str = st
-    #     to_remove.add(parent_str)
-    #     children = GenerateChildren(p, whole_data_frame, attributes)
-    #     parent = []
-    #     if len(children) == 0:
-    #         parent = string2num(parent_str)
-    #         CheckDominationAndAddForUpperbound(parent, pattern_treated_unfairly_upperbound)
-    #     add_for_upper_bound = False
-    #     while len(children) != 0:
-    #         child = children.pop(0)
-    #         num_patterns_visited += 1
-    #         child_str = num2string(child)
-    #         if child_str in patterns_size_whole:
-    #             whole_cardinality = patterns_size_whole[child_str]
-    #         else:
-    #             whole_cardinality = pc_whole_data.pattern_count(child_str)
-    #         if whole_cardinality < Thc:
-    #             continue
-    #         if child_str in patterns_size_topk:
-    #             pattern_size_in_topk = patterns_size_topk[child_str]
-    #         else:
-    #             pattern_size_in_topk = patterns_top_kmin.pattern_count(child_str)
-    #             patterns_size_topk[child_str] = pattern_size_in_topk
-    #         if pattern_size_in_topk > Upperbounds[k - k_min]:
-    #             parent = child
-    #             children_new = GenerateChildren(parent, whole_data_frame, attributes)
-    #             children = children_new + children
-    #             if len(children_new) == 0:
-    #                 add_for_upper_bound = True
-    #                 CheckDominationAndAddForUpperbound(parent, pattern_treated_unfairly_upperbound)
-    #                 parent = []
-    #         else:
-    #             if len(parent) > 0:
-    #                 add_for_upper_bound = True
-    #                 CheckDominationAndAddForUpperbound(parent, pattern_treated_unfairly_upperbound)
-    #                 to_append.add(child_str)
-    #                 parent = []
-    #     if not add_for_upper_bound:
-    #         CheckDominationAndAddForUpperbound(p, pattern_treated_unfairly_upperbound)
-    # for p_str in to_remove:
-    #     patterns_searched_lowest_level_upperbound.remove(p_str)
-    # patterns_searched_lowest_level_upperbound = patterns_searched_lowest_level_upperbound | to_append
-
     return num_patterns_visited, patterns_searched_lowest_level_lowerbound, patterns_searched_lowest_level_upperbound
 
 
-# search top-down
+# search top-down to go over all patterns related to new_tuple
+# using similar checking methods as k_min
+# add to result set if they are outliers
 def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound,
                                 whole_data_frame, patterns_top_k, k, k_min, pc_whole_data, num_patterns_visited,
                     patterns_size_whole, Lowerbounds, Upperbounds, num_att, attributes):
 
     ancestors = []
     root = [-1] * num_att
-    children = GenerateChildrenRelatedToTuple(root, new_tuple)
+    children = GenerateChildrenRelatedToTuple(root, new_tuple) # pattern with one deternimistic attribute
     S = children
     parent_candidate_for_upperbound = []
     while len(S) > 0:
