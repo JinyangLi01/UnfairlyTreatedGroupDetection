@@ -1,8 +1,8 @@
 """
-New algorithm for minority group detection in general case
-Search the graph top-down, generate children using the method in coverage paper to avoid redundancy.
-Stop point 1: when finding a pattern satisfying the requirements
-Stop point 2: when the cardinality is too small
+New algorithm for group detection in ranking
+fairness definition: the number of a group members in top-k is bounded by U_k, L_k, k_min <= k <= k_max
+bounds for different k can be different, but all patterns have the same bounds
+this alg has some problem, not the final used version
 """
 
 
