@@ -88,3 +88,10 @@ meeting with Yuval
 
 
 
+# Nov. 9, 2021
+questions while writing code implementing NewAlgRanking_definition2_0_20211108. Alg for ranking, definition 2
+
+- Can we make original alg the same? Maintaining a set with smallest k?
+- In this alg, can we make the stop set to be the nodes with smallest k, instead of where we stopped?
+  - No. The next pattern at position k may satisfy these patterns so their k values will change.
+
