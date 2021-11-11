@@ -13,6 +13,7 @@ Its child may be also above the upper bound.
 We need to go all the way to leaves, unless the size is too small.
 
 We maintain a dict for nodes whose k is smallest locally.
+And maintain a sorted list, parent is before children.
 
 """
 import math
@@ -206,44 +207,10 @@ class Node:
 
 
 # find the closet ancestor of pattern p in nodes_dict
-def Find_closet_ancestor(nodes_dict, p, st, num_att):
-    original_st = st
-    length = len(st)
-    j = length - 1
-    i = length - 1
-    find = False
+def Find_closet_ancestor(nodes_dict, node_list, p, st):
+    length = len(node_list)
+    position = length / 2
     while True:
-        if i < 0:
-            if find:
-                parent_str = st[j+1:]
-                if parent_str in nodes_dict:
-                    return parent_str
-                else:
-                    return original_st
-            else:
-                return original_st
-        if find is False and st[i] == "|":
-            i -= 1
-            j -= 1
-            continue
-        elif find is False and st[i] != "|":
-            j = i
-            find = True
-            i -= 1
-            continue
-        elif find and st[i] != "|":
-            i -= 1
-            continue
-        else:
-            parent_str = st[:i+1] + st[j+1:]
-            if parent_str in nodes_dict:
-                return parent_str
-            else:
-                st = parent_str
-                j = i - 1
-                i -= 1
-                continue
-    return st
 
 
 # in this function, we find the ancestor with the smallest k for pattern p
