@@ -13,13 +13,17 @@ Its child may be also above the upper bound.
 We need to go all the way to leaves, unless the size is too small.
 
 We maintain a dict for nodes whose k is smallest locally.
-And maintain a sorted list, parent is before children.
+How to find nearest ancestor: check each ancestor and see whether the ancestor is in this dict
+For each node in this dict, if its descendant is in the dict, the descendant must have a smaller or equal k value
+
+Current Problem:
+Can we allow dominance in stop set?
+In this script, it is allowed, but then I found we can't.
+Since we need to stop searching until stop set when we check whether k needs updating.
+
 
 """
-import math
-import numpy as np
-import pandas as pd
-import NaiveAlgRanking_definition2_0_20211108 as naiveranking
+
 """
 Go top-down, find two result sets: for lower bound and for upper bound
 For lower bound: most general pattern
@@ -34,11 +38,38 @@ There are two groups of patterns we need to check:
 
 We don't use patterns_size_topk[st] to store the sizes, but still use patterns_size_whole
 We compute the size every time of k
+
 """
 
-import time
 
+import time
+import math
+import numpy as np
+import pandas as pd
+import NaiveAlgRanking_definition2_1_20211108 as naiveranking
 from Algorithms import pattern_count
+
+
+def P1DominatedByP2ForStr(str1, str2, num_att):
+    if str1 == str2:
+        return True
+    num_separator = num_att - 1
+    start_pos1 = 0
+    start_pos2 = 0
+    for i in range(num_separator):
+        p1 = str1.find("|", start_pos1)
+        p2 = str2.find("|", start_pos2)
+        s1 = str1[start_pos1:p1]
+        s2 = str2[start_pos2:p2]
+        if s1 != s2 and s2 != "":
+            return False
+        start_pos1 = p1 + 1
+        start_pos2 = p2 + 1
+    s1 = str1[start_pos1:]
+    s2 = str2[start_pos2:]
+    if s1 != s2 and s2 != "":
+        return False
+    return True
 
 
 def P1DominatedByP2(P1, P2):
@@ -77,7 +108,8 @@ def AddSizeTopKMinOfChildren(children, patterns_top_kmin, patterns_size_topk, ne
         children = children + new_children
     return num_patterns_visited
 
-
+# for a tuple, there is one parent generating it
+# but it has more than one parent, and those who doesn't generate this tuple, their size also increase
 def GenerateChildrenRelatedToTuple(P, new_tuple):
     children = []
     length = len(P)
@@ -192,6 +224,8 @@ def findParentForStr(child):
     return parent
 
 
+# closest ancestor must be the ancestor with smallest k value
+# smallest_ancestor != "" if and only if there is an ancestor having the same k value
 class Node:
     # init method or constructor
     def __init__(self, pattern, st, smallest_valid_k, smallest_ancestor, self_smallest_k):
@@ -202,56 +236,330 @@ class Node:
         # in case of same k, smallest_ancestor points to the ancestor rather than the node itself
         # since when we reach that k, all these nodes need updating
         self.smallest_ancestor = smallest_ancestor
-        self.self_smallest_k = self_smallest_k
+        self.self_smallest_k = self_smallest_k # must be true. It may have children with smaller k but it doesn't know
 
 
 
-# find the closet ancestor of pattern p in nodes_dict
-def Find_closet_ancestor(nodes_dict, node_list, p, st):
-    length = len(node_list)
-    position = length / 2
+# find the closest ancestor of pattern p in nodes_dict
+# by checking each of p's ancestor in nodes_dict
+def Find_closest_ancestor(string_set, st, num_att):
+    if st in string_set:
+        return True, st
+    original_st = st
+    length = len(st)
+    j = length - 1
+    i = length - 1
+    find = False
     while True:
+        if i < 0:
+            if find:
+                parent_str = st[j+1:]
+                if parent_str in string_set:
+                    return True, parent_str
+                else:
+                    return False, original_st
+            else:
+                return False, original_st
+        if find is False and st[i] == "|":
+            i -= 1
+            j -= 1
+            continue
+        elif find is False and st[i] != "|":
+            j = i
+            find = True
+            i -= 1
+            continue
+        elif find and st[i] != "|":
+            i -= 1
+            continue
+        else:
+            parent_str = st[:i+1] + st[j+1:]
+            if parent_str in string_set:
+                return True, parent_str
+            else:
+                st = parent_str
+                j = i - 1
+                i -= 1
+                continue
+    return False, original_st
 
 
+# before executing this function, we need to check whether this node has already been in nodes_dict
 # in this function, we find the ancestor with the smallest k for pattern p
 # and point p to this ancestor if p's k is larger
 # otherwise, point p to itself
-def Add_node_to_set(nodes_dict, smallest_valid_k, p, st, parent, parent_str, root, root_str):
+def Add_node_to_set(nodes_dict, smallest_valid_k, p, st, parent, parent_str, root, root_str, num_att):
     if parent_str == root_str:
         nodes_dict[st] = Node(p, st, smallest_valid_k, "", True)
         return
     # find ancestor with the smallest k
-    node = nodes_dict[parent_str]
-    while node.smallest_ancestor != "":
-        node = nodes_dict[node.smallest_ancestor]
-    if node.smallest_valid_k > smallest_valid_k:
-        nodes_dict[st] = Node(p, st, smallest_valid_k, "", True)
-    elif node.smallest_valid_k == smallest_valid_k:
-        nodes_dict[st] = Node(p, st, smallest_valid_k, node.st, True)
+    find, ancestor_st = Find_closest_ancestor(nodes_dict.keys(), st, num_att)
+    if find:
+        node = nodes_dict[ancestor_st]
+        while node.smallest_ancestor != "":
+            node = nodes_dict[node.smallest_ancestor]
+        if node.smallest_valid_k > smallest_valid_k:
+            nodes_dict[st] = Node(p, st, smallest_valid_k, "", True)
+        elif node.smallest_valid_k == smallest_valid_k:
+            nodes_dict[st] = Node(p, st, smallest_valid_k, ancestor_st, True)
     else:
-        nodes_dict[st] = Node(p, st, smallest_valid_k, node.st, False)
+        nodes_dict[st] = Node(p, st, smallest_valid_k, "", True)
 
 
-def Update_k_value(nodes_dict, smallest_valid_k, p, st, parent, parent_str, root, root_str):
+
+
+# this is used when we add a new tuple, and the k is increased by 1
+# we only care about k values for nodes above stop set
+#
+# a pattern in nodes_set doesn't have any ancestors with smaller k also in nodes_set !!!
+# since all patterns in this branch will be traversed in a top-down fashion
+# for each pattern, we just need to find its closest ancestor, also find whether it itself is in nodes_set
+# and compare the k value
+# TODO: reimplement this function, since now stop set has dominance ...
+def Update_k_value(nodes_dict, smallest_valid_k, p, st, parent, parent_str, root, root_str, num_att,
+                   pattern_treated_unfairly_lowerbound, patterns_searched_lowest_level_lowerbound,
+                   whole_data_frame, attributes, children_related_to_new_tuple,
+                   patterns_top_k, whole_cardinality, data_size, alpha):
     # print(nodes_dict)
-    nodes_dict[st].smallest_valid_k = smallest_valid_k
-    if parent_str == root_str:
-        nodes_dict[st].smallest_ancestor = ""
-        nodes_dict[st].self_smallest_k = True
-        return
-    # find ancestor with the smallest k
-    node = nodes_dict[parent_str]
-    while node.smallest_ancestor != "":
-        node = nodes_dict[node.smallest_ancestor]
-    if node.smallest_valid_k > smallest_valid_k:
-        nodes_dict[st].smallest_ancestor = ""
-        nodes_dict[st].self_smallest_k = True
-    elif node.smallest_valid_k == smallest_valid_k:
-        nodes_dict[st].smallest_ancestor = node.st
-        nodes_dict[st].self_smallest_k = True
+    find, ancestor_st = Find_closest_ancestor(patterns_searched_lowest_level_lowerbound, st, num_att)
+    if find:  # this pattern either exists in stop set itself or has a ancestor in stop set (it is below the stop set)
+        if st in nodes_dict.keys():
+            nodes_dict[st].smallest_valid_k = smallest_valid_k
+            if ancestor_st == st: # this pattern is in stop set
+                parent_str = findParentForStr(st)
+                find2, ancestor_st2 = Find_closest_ancestor(nodes_dict.keys(), parent_str, num_att)
+                if find2: # should be able to find in most cases, if not found, it means parent_str = root_str
+                    if nodes_dict[ancestor_st2].smallest_valid_k == smallest_valid_k:
+                        nodes_dict[st].smallest_ancestor = ancestor_st2
+                    elif nodes_dict[ancestor_st2].smallest_valid_k < smallest_valid_k:
+                        nodes_dict.pop(st) # there is a smaller ancestor, and this node has a larger k, so it is removed
+                else: # if not found, it means parent_str = root_str
+                    # TODO: now stop set have dominance, this node is in stop set, but we still need to find its children!!
+                    # the current pattern only has one deterministic attribute, and it is in the stop set
+                    # so we only need to change the k value of this node, which is done several lines above
+                    # and then return, without searching deeper
+                    return
+            else: # this pattern has an ancestor in stop set, which means this pattern is below the stop set
+                return # in this case, we don't need to do anything for this pattern
+        else:
+            if ancestor_st == st: # this pattern is in stop set
+                parent_str = findParentForStr(st)
+                find2, ancestor_st2 = Find_closest_ancestor(nodes_dict.keys(), parent_str, num_att)
+                if find2: # should be able to find in most cases, if not found, it means parent_str = root_str
+                    if nodes_dict[ancestor_st2].smallest_valid_k == smallest_valid_k:
+                        nodes_dict[st] = Node(p, st, smallest_valid_k, ancestor_st2, True)
+                    elif nodes_dict[ancestor_st2].smallest_valid_k > smallest_valid_k:
+                        nodes_dict[st] = Node(p, st, smallest_valid_k, "", True)
+                else: # if not found, it means parent_str = root_str
+                    return
+    else: # this pattern is above the stop set, and it is possible not tracked by nodes_dict
+
+        nodes_dict[st].smallest_valid_k = smallest_valid_k
+        children = GenerateChildren(p, whole_data_frame, attributes)
+        for c in children:
+            if c in children_related_to_new_tuple:
+                For_node_related_to_new_tuple(nodes_dict, smallest_valid_k, p, st, c,
+                                              patterns_searched_lowest_level_lowerbound, whole_cardinality,
+                                              data_size, alpha, patterns_top_k, whole_data_frame, attributes,
+                                              children_related_to_new_tuple)
+
+            else:
+                For_node_not_related_to_new_tuple(nodes_dict, smallest_valid_k, p, st, c,
+                                              patterns_searched_lowest_level_lowerbound, whole_cardinality,
+                                              data_size, alpha, patterns_top_k, whole_data_frame, attributes)
+
+def For_node_related_to_new_tuple(nodes_dict, smallest_valid_k, p, st, c, patterns_searched_lowest_level_lowerbound,
+                                  whole_cardinality, data_size, alpha, patterns_top_k, whole_data_frame, attributes,
+                                  children_related_to_new_tuple):
+    c_str = num2string(c)
+    num_top_k_of_c = patterns_top_k.pattern_count(c_str)
+    if whole_cardinality / data_size - alpha <= 0:
+        smallest_valid_k_of_c = k_max + 1
     else:
-        nodes_dict[st].smallest_ancestor = node.st
-        nodes_dict[st].self_smallest_k = False
+        smallest_valid_k_of_c = math.floor(num_top_k_of_c / ((whole_cardinality / data_size) - alpha))
+    if c_str in nodes_dict.keys():
+        nodes_dict[c_str].smallest_valid_k = smallest_valid_k_of_c
+        if smallest_valid_k_of_c < smallest_valid_k:
+            nodes_dict[c_str].smallest_ancestor = ""
+            nodes_dict[c_str].self_smallest_k = True
+            Continue_check_k(smallest_valid_k_of_c, c, c_str, c, c_str, patterns_searched_lowest_level_lowerbound,
+                             whole_data_frame,
+                             attributes, children_related_to_new_tuple, nodes_dict, whole_cardinality, data_size,
+                             patterns_top_k)
+        elif smallest_valid_k_of_c == smallest_valid_k:
+            nodes_dict[c_str].smallest_ancestor = st
+            nodes_dict[c_str].self_smallest_k = True
+            Continue_check_k(smallest_valid_k_of_c, c, c_str, c, c_str, patterns_searched_lowest_level_lowerbound,
+                             whole_data_frame,
+                             attributes, children_related_to_new_tuple, nodes_dict, whole_cardinality, data_size,
+                             patterns_top_k)
+        else:
+            Continue_check_k(smallest_valid_k, p, st, c, c_str, patterns_searched_lowest_level_lowerbound,
+                             whole_data_frame,
+                             attributes, children_related_to_new_tuple, nodes_dict, whole_cardinality, data_size,
+                             patterns_top_k)
+    else:
+        num_top_k_of_c = patterns_top_k.pattern_count(c_str)
+        if whole_cardinality / data_size - alpha <= 0:
+            smallest_valid_k_of_c = k_max + 1
+        else:
+            smallest_valid_k_of_c = math.floor(num_top_k_of_c / ((whole_cardinality / data_size) - alpha))
+        if smallest_valid_k_of_c == smallest_valid_k:
+            nodes_dict[c_str] = Node(c, c_str, smallest_valid_k_of_c, st, True)
+            Continue_check_k(smallest_valid_k_of_c, c, c_str, c, c_str, patterns_searched_lowest_level_lowerbound,
+                             whole_data_frame,
+                             attributes, children_related_to_new_tuple, nodes_dict, whole_cardinality, data_size,
+                             patterns_top_k)
+        elif smallest_valid_k_of_c < smallest_valid_k:
+            nodes_dict[c_str] = Node(c, c_str, smallest_valid_k_of_c, "", True)
+            Continue_check_k(smallest_valid_k_of_c, c, c_str, c, c_str, patterns_searched_lowest_level_lowerbound,
+                             whole_data_frame,
+                             attributes, children_related_to_new_tuple, nodes_dict, whole_cardinality, data_size,
+                             patterns_top_k)
+        else:
+            Continue_check_k(smallest_valid_k, p, st, c, c_str, patterns_searched_lowest_level_lowerbound,
+                             whole_data_frame,
+                             attributes, children_related_to_new_tuple, nodes_dict, whole_cardinality, data_size,
+                             patterns_top_k)
+
+
+
+
+def Continue_check_k(smallest_valid_k, p, st, c, c_str, patterns_searched_lowest_level_lowerbound, whole_data_frame,
+                     attributes, children_related_to_new_tuple, nodes_dict, whole_cardinality, data_size, patterns_top_k):
+    if c_str not in patterns_searched_lowest_level_lowerbound:
+        children = GenerateChildren(c, whole_data_frame, attributes)
+        for child in children:
+            if child in children_related_to_new_tuple:
+                For_node_related_to_new_tuple(nodes_dict, smallest_valid_k, p, st, child,
+                                              patterns_searched_lowest_level_lowerbound,
+                                              whole_cardinality, data_size, alpha, patterns_top_k,
+                                              whole_data_frame, attributes, children_related_to_new_tuple)
+            else:
+                For_node_not_related_to_new_tuple(nodes_dict, smallest_valid_k, p, st, child,
+                                                  patterns_searched_lowest_level_lowerbound,
+                                                  whole_cardinality, data_size, alpha, patterns_top_k,
+                                                  whole_data_frame, attributes)
+
+
+# node isn't related to new tuple, so k doesn't change
+# c is a pattern which is either above, or in the stop set
+# p and st is the current pattern with smallest k value in the ancestors
+def For_node_not_related_to_new_tuple(nodes_dict, smallest_valid_k, p, st, c, patterns_searched_lowest_level_lowerbound,
+                                  whole_cardinality, data_size, alpha, patterns_top_k, whole_data_frame, attributes):
+    c_str = num2string(c)
+    if c_str in nodes_dict.keys():
+        if nodes_dict[c_str].smallest_valid_k < smallest_valid_k:
+            nodes_dict[c_str].smallest_ancestor = ""
+            nodes_dict[c_str].self_smallest_k = True
+            # if this node is above stop set (stop set is above the result set)
+            # we must check its descendants
+            if c_str not in patterns_searched_lowest_level_lowerbound:
+                children = GenerateChildren(c, whole_data_frame, attributes)
+                for child in children:
+                    For_node_not_related_to_new_tuple(nodes_dict, nodes_dict[c_str].smallest_valid_k, c, c_str, child,
+                                                      patterns_searched_lowest_level_lowerbound,
+                                                      whole_cardinality, data_size, alpha, patterns_top_k,
+                                                      whole_data_frame, attributes)
+        elif nodes_dict[c_str].smallest_valid_k == smallest_valid_k:
+            nodes_dict[c_str].smallest_ancestor = st
+            nodes_dict[c_str].self_smallest_k = True
+            if c_str not in patterns_searched_lowest_level_lowerbound:
+                children = GenerateChildren(c, whole_data_frame, attributes)
+                for child in children:
+                    For_node_not_related_to_new_tuple(nodes_dict, nodes_dict[c_str].smallest_valid_k, c, c_str, child,
+                                                      patterns_searched_lowest_level_lowerbound,
+                                                      whole_cardinality, data_size, alpha, patterns_top_k,
+                                                      whole_data_frame, attributes)
+        else:
+            raise Exception("this is impossible !! a node with a greater k value cannot be tracked")
+    else:
+        num_top_k_of_c = patterns_top_k.pattern_count(c_str)
+        if whole_cardinality / data_size - alpha <= 0:
+            smallest_valid_k_of_c = k_max + 1
+        else:
+            smallest_valid_k_of_c = math.floor(num_top_k_of_c / ((whole_cardinality / data_size) - alpha))
+        if smallest_valid_k_of_c == smallest_valid_k:
+            nodes_dict[c_str] = Node(c, c_str, smallest_valid_k_of_c, st, True)
+            if c_str not in patterns_searched_lowest_level_lowerbound:
+                children = GenerateChildren(c, whole_data_frame, attributes)
+                for child in children:
+                    For_node_not_related_to_new_tuple(nodes_dict, smallest_valid_k_of_c, c, c_str, child,
+                                                      patterns_searched_lowest_level_lowerbound,
+                                                      whole_cardinality, data_size, alpha, patterns_top_k,
+                                                      whole_data_frame, attributes)
+        elif smallest_valid_k_of_c < smallest_valid_k:
+            nodes_dict[c_str] = Node(c, c_str, smallest_valid_k_of_c, "", True)
+            if c_str not in patterns_searched_lowest_level_lowerbound:
+                children = GenerateChildren(c, whole_data_frame, attributes)
+                for child in children:
+                    For_node_not_related_to_new_tuple(nodes_dict, smallest_valid_k_of_c, c, c_str, child,
+                                                      patterns_searched_lowest_level_lowerbound,
+                                                      whole_cardinality, data_size, alpha, patterns_top_k,
+                                                      whole_data_frame, attributes)
+        else:
+            if c_str not in patterns_searched_lowest_level_lowerbound:
+                children = GenerateChildren(c, whole_data_frame, attributes)
+                for child in children:
+                    For_node_not_related_to_new_tuple(nodes_dict, smallest_valid_k, p, st, child,
+                                                      patterns_searched_lowest_level_lowerbound,
+                                                      whole_cardinality, data_size, alpha, patterns_top_k,
+                                                      whole_data_frame, attributes)
+    return
+
+#
+# # when k of c doesn't change, c is child of p
+# # smallest_valid_k is new k for p
+# # I need to check whether c or c's descendants has k value = smallest_valid_k - 1 or smallest_valid_k
+# def Check_same_k(c, p, st, smallest_valid_k, nodes_dict, pattern_treated_unfairly_lowerbound, patterns_top_k,
+#                  whole_cardinality, data_size):
+#     c_str = num2string(c)
+#     if c in nodes_dict.keys():
+#         k_of_c = nodes_dict[c_str].smallest_valid_k
+#         if k_of_c < smallest_valid_k:
+#             nodes_dict[c_str].smallest_ancestor = ""
+#         elif k_of_c == smallest_valid_k:
+#             nodes_dict[c_str].smallest_ancestor = st
+#             # TODO: do i need to continue checking c's children?
+#             # TODO: i need to answer the following questions:
+#             # if parent and child has the same smallest k, only parent is tracked, is it ok?
+#             # leave it for now...
+#     else:
+#         num_top_k = patterns_top_k.pattern_count(st)
+#         k_of_c = math.floor(num_top_k / ((whole_cardinality / data_size) - alpha))
+#         if k_of_c < smallest_valid_k:
+#             nodes_dict[c_str] = Node(c, c_str, k_of_c, "", True)
+#         elif k_of_c == smallest_valid_k:
+#             nodes_dict[c_str] = Node(c, c_str, k_of_c, st, True)
+#     if c in pattern_treated_unfairly_lowerbound:
+#
+
+
+
+# def Update_k_value(nodes_dict, smallest_valid_k, p, st, parent, parent_str, root, root_str, num_att):
+#     # print(nodes_dict)
+#     find, ancestor_st = Find_closest_ancestor(nodes_dict.keys(), st, num_att)
+#     if find:
+#         ancestor_node = nodes_dict[ancestor_st]
+#         if st in nodes_dict.keys():
+#             nodes_dict[st].smallest_valid_k = smallest_valid_k
+#             if ancestor_node.smallest_valid_k > smallest_valid_k:
+#                 nodes_dict[st].smallest_ancestor = ""
+#                 nodes_dict[st].self_smallest_k = True
+#             elif ancestor_node.smallest_valid_k == smallest_valid_k:
+#                 nodes_dict[st].smallest_ancestor = ancestor_node.st
+#                 nodes_dict[st].self_smallest_k = True
+#             else:
+#                 nodes_dict.pop(st)
+#         else:
+#             if ancestor_node.smallest_valid_k > smallest_valid_k:
+#                 nodes_dict[st] = Node(p, st, smallest_valid_k, "", True)
+#             elif ancestor_node.smallest_valid_k == smallest_valid_k:
+#                 nodes_dict[st] = Node(p, st, smallest_valid_k, ancestor_st, True)
+#     else:
+#         nodes_dict[st] = Node(p, st, smallest_valid_k, "", True)
+#
+
 
 # whether a is an ancestor of b, a and b are string
 def A_is_ancestor_of_B(a, b):
@@ -272,155 +580,12 @@ def A_is_ancestor_of_B(a, b):
             return False
     return True
 
+def Check_duplicate_and_add(pattern_list, new_pattern):
+    for p in pattern_list:
+        if PatternEqual(p, new_pattern):
+            return
+    pattern_list.append(new_pattern)
 
-
-def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
-    # print("attributes:", attributes)
-    time0 = time.time()
-    data_size = len(ranked_data)
-    pc_whole_data = pattern_count.PatternCounter(ranked_data, encoded=False)
-    pc_whole_data.parse_data()
-
-    whole_data_frame = ranked_data.describe(include='all')
-
-    num_patterns_visited = 0
-    num_att = len(attributes)
-    root = [-1] * num_att
-    root_str = '|' * (num_att - 1)
-    S = GenerateChildren(root, whole_data_frame, attributes)
-    pattern_treated_unfairly_lowerbound = []  # looking for the most general patterns
-    pattern_treated_unfairly_upperbound = []  # looking for the most specific patterns
-    patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k_min], encoded=False)
-    patterns_top_kmin.parse_data()
-    patterns_size_whole = dict()
-    k = k_min
-    patterns_searched_lowest_level_lowerbound = set()
-    patterns_searched_lowest_level_upperbound = set()
-    # this dict stores all patterns, indexed by num2string(p)
-    nodes_dict = dict()
-    nodes_list = [] # sorted, parents are before children
-
-    parent_candidate_for_upperbound = []
-    # DFS
-    # this part is the main time consumption
-    while len(S) > 0:
-        if time.time() - time0 > time_limit:
-            print("newalg overtime")
-            break
-        P = S.pop(0)
-        st = num2string(P)
-        if st == '0|1|0|0|1||':
-            print("st = {}\n".format(st))
-            print("stop here naive alg")
-        num_patterns_visited += 1
-        whole_cardinality = pc_whole_data.pattern_count(st)
-        patterns_size_whole[st] = whole_cardinality
-        parent = findParent(P, num_att)
-        parent_str = num2string(parent)
-        children = []
-        added_children = False
-        if whole_cardinality < Thc:
-            if len(parent_candidate_for_upperbound) > 0:  # there is a parent which is above upper bound
-                CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, pattern_treated_unfairly_upperbound)
-                parent_candidate_for_upperbound = []
-            # patterns in patterns_searched_lowest_level all have valid whole cardinality
-            # and are not in pattern_treated_unfairly
-            # ================== time consuming ===============
-            if parent_str != root_str:
-                patterns_searched_lowest_level_lowerbound.add(parent_str)
-                patterns_searched_lowest_level_upperbound.add(parent_str)
-            continue
-        num_top_k = patterns_top_kmin.pattern_count(st)
-        lowerbound = (whole_cardinality / data_size - alpha) * k
-        if num_top_k < lowerbound:
-            if parent_str != root_str:
-                patterns_searched_lowest_level_lowerbound.add(parent_str)
-            CheckDominationAndAddForLowerbound(P, pattern_treated_unfairly_lowerbound)
-            # maintain sets for k values only for a node not in result set.
-            # so now we add the parent to nodes_dict
-            # smallest k before which lower bound is ok
-            if parent_str != root_str:
-                whole_cardinality = patterns_size_whole[parent_str]
-                if whole_cardinality / data_size - alpha <= 0:
-                    smallest_valid_k = k_max + 1
-                else:
-                    smallest_valid_k = math.floor(num_top_k / ((whole_cardinality / data_size) - alpha))
-                parent_of_parent = findParent(parent, num_att)
-                Add_node_to_set(nodes_dict, smallest_valid_k, parent, parent_str, parent_of_parent,
-                                num2string(parent_of_parent), root, root_str)
-        else:
-            children = GenerateChildren(P, whole_data_frame, attributes)
-            if len(children) == 0:
-                patterns_searched_lowest_level_lowerbound.add(st)
-            S = children + S
-            added_children = True
-            # maintain sets for k values only for a node not in result set.
-            # so now we add the this node to nodes_dict
-            # smallest k before which lower bound is ok
-            if whole_cardinality / data_size - alpha <= 0:
-                smallest_valid_k = k_max + 1
-            else:
-                smallest_valid_k = math.floor(num_top_k / ((whole_cardinality / data_size) - alpha))
-            Add_node_to_set(nodes_dict, smallest_valid_k, P, st, parent, parent_str, root, root_str)
-
-        upperbound = (whole_cardinality / data_size + alpha) * k
-        if num_top_k > upperbound:
-            parent_candidate_for_upperbound = P  # we need to store this so that if child is below upper bound, we put this into result set
-            if added_children is False:
-                children = GenerateChildren(P, whole_data_frame, attributes)
-                S = children + S
-                added_children = True
-            if len(children) == 0:  # P is in result set
-                CheckDominationAndAddForUpperbound(P, pattern_treated_unfairly_upperbound)
-                parent_candidate_for_upperbound = []
-        else:
-            if added_children is False:
-                children = GenerateChildren(P, whole_data_frame, attributes)
-                S = children + S
-                added_children = True
-            if len(children) == 0:  # P is in result set
-                if len(parent_candidate_for_upperbound) > 0:  # add its ancestor to the result set
-                    CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, pattern_treated_unfairly_upperbound)
-                    parent_candidate_for_upperbound = []
-            # if len(parent_candidate_for_upperbound) > 0:  # P is not above upperbound, so its parent should be added to the result set
-            #     CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, pattern_treated_unfairly_upperbound)
-            #     parent_candidate_for_upperbound = []
-
-    if PatternInSet("0|0|||0", pattern_treated_unfairly_lowerbound):
-        print("after kmin, in lowerbound\n".format(k))
-    for k in range(k_min + 1, k_max):
-        if time.time() - time0 > time_limit:
-            print("newalg overtime")
-            break
-        print("k={}".format(k))
-        if PatternInSet("0|0|||0", pattern_treated_unfairly_lowerbound):
-            print("k={}, in lowerbound\n".format(k))
-            print("stop here!")
-        patterns_top_k = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
-        patterns_top_k.parse_data()
-        new_tuple = ranked_data.iloc[[k - 1]].values.flatten().tolist()
-        # top down for related patterns, using similar methods as k_min, add to result set if needed
-        # ancestors are patterns checked in AddNewTuple() function, to avoid checking them again
-        ancestors, num_patterns_visited = AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound,
-                                                      pattern_treated_unfairly_upperbound,
-                                                      whole_data_frame, patterns_top_k, k, k_min, pc_whole_data,
-                                                      num_patterns_visited,
-                                                      patterns_size_whole, alpha, num_att,
-                                                      data_size, nodes_dict)
-        # but in naive, it doesn't
-        # check all patterns in the stop set whether the current k is the smallest k
-        num_patterns_visited, patterns_searched_lowest_level_lowerbound, patterns_searched_lowest_level_upperbound \
-            = CheckCandidatesForKValues(nodes_dict, ancestors, patterns_searched_lowest_level_lowerbound,
-                                           patterns_searched_lowest_level_upperbound, root, root_str,
-                                           pattern_treated_unfairly_lowerbound,
-                                           pattern_treated_unfairly_upperbound, k,
-                                           k_min, pc_whole_data, patterns_top_k, patterns_size_whole,
-                                           alpha, num_att, whole_data_frame,
-                                           attributes, num_patterns_visited, Thc, data_size)
-        if PatternInSet("0|0|||0", pattern_treated_unfairly_lowerbound):
-            print("@@@@@@@@@@@")
-    time1 = time.time()
-    return pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, time1 - time0
 
 def PatternInSet(p, set):
     if isinstance(p, str):
@@ -430,11 +595,22 @@ def PatternInSet(p, set):
             return True
     return False
 
-def CheckRepeatingAndAppend(pattern, pattern_lowest_level):
-    for p in pattern_lowest_level:
-        if PatternEqual(p, pattern):
-            return
-    pattern_lowest_level.append(pattern)
+
+
+def CheckDuplicateAndAddForString(str, patterns_searched_lowest_level_lowerbound, num_att):
+    # to_remove = []
+    if str in patterns_searched_lowest_level_lowerbound:
+        return
+    # for p in patterns_searched_lowest_level_lowerbound:
+    #     if str == p:
+    #         return
+    #     if P1DominatedByP2ForStr(str, p, num_att):
+    #         return
+    #     elif P1DominatedByP2ForStr(p, str, num_att):
+    #         to_remove.append(p)
+    # for p in to_remove:
+    #     patterns_searched_lowest_level_lowerbound.remove(p)
+    patterns_searched_lowest_level_lowerbound.append(str)
 
 
 def CheckDominationAndAddForLowerbound(pattern, pattern_treated_unfairly):
@@ -465,178 +641,284 @@ def CheckDominationAndAddForUpperbound(pattern, pattern_treated_unfairly):
     pattern_treated_unfairly.append(pattern)
 
 
+def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
+    # print("attributes:", attributes)
+    time0 = time.time()
+    data_size = len(ranked_data)
+    pc_whole_data = pattern_count.PatternCounter(ranked_data, encoded=False)
+    pc_whole_data.parse_data()
 
-# check whether k values exceeds the smallest k for a pattern
-def CheckCandidatesForKValues(nodes_dict, ancestors, patterns_searched_lowest_level_lowerbound,
-                             patterns_searched_lowest_level_upperbound, root, root_str,
-                             pattern_treated_unfairly_lowerbound,
-                             pattern_treated_unfairly_upperbound, k,
-                             k_min, pc_whole_data, patterns_top_k, patterns_size_whole,
-                             alpha, num_att, whole_data_frame,
-                             attributes, num_patterns_visited, Thc, data_size):
-    to_remove = set()
-    to_append = set()
-    for st in patterns_searched_lowest_level_lowerbound:  # st is a string
-        # if st == "0|0|||0":
-        #     print("CheckCandidatesForKValues, st = {}".format(st))
+    whole_data_frame = ranked_data.describe(include='all')
+
+    num_patterns_visited = 0
+    num_att = len(attributes)
+    root = [-1] * num_att
+    root_str = '|' * (num_att - 1)
+    S = GenerateChildren(root, whole_data_frame, attributes)
+    pattern_treated_unfairly_lowerbound = []  # looking for the most general patterns
+    patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k_min], encoded=False)
+    patterns_top_kmin.parse_data()
+    patterns_size_whole = dict()
+    k = k_min
+    patterns_searched_lowest_level_lowerbound = []
+    # this dict stores all patterns, indexed by num2string(p)
+    nodes_dict = dict()
+    nodes_list = [] # sorted, parents are before children
+
+    # DFS
+    # this part is the main time consumption
+    while len(S) > 0:
+        if time.time() - time0 > time_limit:
+            print("newalg overtime")
+            break
+        P = S.pop(0)
+        st = num2string(P)
+        # print("GraphTraverse, st = {}".format(st))
+        if st == "0|||||||||||":
+            print("GraphTraverse, st={}".format(st))
+
         num_patterns_visited += 1
-        p = string2num(st)
-        if p in ancestors or p in pattern_treated_unfairly_lowerbound:  # already checked
-            continue
-        node = nodes_dict[st]
-        str_node_w_smallest_k = node.smallest_ancestor
-        while node.self_smallest_k is False:
-            num_patterns_visited += 1
-            node = nodes_dict[str_node_w_smallest_k]
-            str_node_w_smallest_k = node.smallest_ancestor
-        if node.smallest_valid_k >= k:
-            continue
-        # node.smallest_valid_k < k: find the most upper node with this smallest_valid_k
-        while str_node_w_smallest_k != "":
-            num_patterns_visited += 1
-            node = nodes_dict[str_node_w_smallest_k]
-            str_node_w_smallest_k = node.smallest_ancestor
-        child_str = node.st
-        parent_str = findParentForStr(child_str)
-        child = node.pattern
-        if parent_str == root_str:
-            CheckDominationAndAddForLowerbound(child, pattern_treated_unfairly_lowerbound)
-            to_remove.add(child_str)  # child need removing
-        else:
-            CheckDominationAndAddForLowerbound(child, pattern_treated_unfairly_lowerbound)
-            to_remove.add(st)
-            to_append.add(parent_str)
-    for p_str in to_remove:
-        patterns_searched_lowest_level_lowerbound.remove(p_str)
-    patterns_searched_lowest_level_lowerbound = patterns_searched_lowest_level_lowerbound | to_append
-
-    return num_patterns_visited, patterns_searched_lowest_level_lowerbound, patterns_searched_lowest_level_upperbound
-
-
-# only need to check the lower bound of parents
-def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerbound,
-                             patterns_searched_lowest_level_upperbound, root, root_str,
-                             pattern_treated_unfairly_lowerbound,
-                             pattern_treated_unfairly_upperbound, k,
-                             k_min, pc_whole_data, patterns_top_k, patterns_size_whole,
-                             Lowerbounds, Upperbounds, num_att, whole_data_frame,
-                             attributes, num_patterns_visited, Thc):
-    to_remove = set()
-    to_append = set()
-    for st in patterns_searched_lowest_level_lowerbound:  # st is a string
-        num_patterns_visited += 1
-        p = string2num(st)
-        if p in ancestors or p in pattern_treated_unfairly_lowerbound:  # already checked
-            continue
-        if st in patterns_size_whole:
-            whole_cardinality = patterns_size_whole[st]
-        else:
-            whole_cardinality = pc_whole_data.pattern_count(st)
+        whole_cardinality = pc_whole_data.pattern_count(st)
+        patterns_size_whole[st] = whole_cardinality
+        parent = findParent(P, num_att)
+        parent_str = num2string(parent)
+        # if parent_str == "0|||||||||4||":
+        #     print("GraphTraverse, parent_str={}".format(st))
+        #     print("\n")
         if whole_cardinality < Thc:
+            # TODO: in this case, we put parent_str into stop set. But we allow dominance between patterns in stop set.
+            if parent_str != root_str:
+                CheckDuplicateAndAddForString(parent_str, patterns_searched_lowest_level_lowerbound, num_att)
+                # if parent_str not in set(patterns_searched_lowest_level_lowerbound):
+                #     patterns_searched_lowest_level_lowerbound.append(parent_str)
+                # patterns_searched_lowest_level_lowerbound.add(parent_str)
+                # print("patterns_searched_lowest_level_lowerbound added {}".format(parent_str))
             continue
-        pattern_size_in_topk = patterns_top_k.pattern_count(st)
-        if pattern_size_in_topk >= Lowerbounds[k - k_min]:
-            continue
-        # if pattern_size_in_topk < Lowerbounds[k - k_min], remove thild and add this parent
-        child_str = st
-        parent_str = findParentForStr(child_str)
-        child = string2num(child_str)
-        if parent_str == root_str:
-            CheckDominationAndAddForLowerbound(child, pattern_treated_unfairly_lowerbound)
-            to_remove.add(child_str)  # child need removing
-            continue
-
-        # if parent is not root, we need to check until 1: the root, 2: we find a node that is above the lower bound
-        # since lower bound may increase by 5, and parent is below the lower bound, grandparent may be too
-        while parent_str != root_str:
-            num_patterns_visited += 1
-            pattern_size_in_topk = patterns_top_k.pattern_count(parent_str)
-            if pattern_size_in_topk < Lowerbounds[k - k_min]:
-                child_str = parent_str
-                parent_str = findParentForStr(child_str)
+        num_top_k = patterns_top_kmin.pattern_count(st)
+        lowerbound = (whole_cardinality / data_size - alpha) * k
+        upperbound = (whole_cardinality / data_size + alpha) * k
+        if num_top_k < lowerbound or num_top_k > upperbound:
+            if parent_str != root_str:
+                CheckDuplicateAndAddForString(parent_str, patterns_searched_lowest_level_lowerbound, num_att)
+                # if parent_str not in set(patterns_searched_lowest_level_lowerbound):
+                #     patterns_searched_lowest_level_lowerbound.append(parent_str)
+                # patterns_searched_lowest_level_lowerbound.add(parent_str)
+                # print("patterns_searched_lowest_level_lowerbound added {}".format(parent_str))
+            CheckDominationAndAddForLowerbound(P, pattern_treated_unfairly_lowerbound)
+            # maintain sets for k values only for a node not in result set.
+            # so now we add the parent to nodes_dict
+            # smallest k before which lower bound is ok
+            if parent_str != root_str:
+                num_top_k = patterns_top_kmin.pattern_count(parent_str)
+                whole_cardinality = patterns_size_whole[parent_str]
+                if whole_cardinality / data_size - alpha <= 0:
+                    smallest_valid_k = k_max + 1
+                else:
+                    smallest_valid_k = math.floor(num_top_k / ((whole_cardinality / data_size) - alpha))
+                parent_of_parent = findParent(parent, num_att)
+                if parent_str not in nodes_dict.keys():
+                    Add_node_to_set(nodes_dict, smallest_valid_k, parent, parent_str, parent_of_parent,
+                                num2string(parent_of_parent), root, root_str, num_att)
+        else:
+            children = GenerateChildren(P, whole_data_frame, attributes)
+            if len(children) == 0:
+                # if st == '|||||||||4||':
+                #     print("'|||||||||4||' added to stop set")
+                CheckDuplicateAndAddForString(st, patterns_searched_lowest_level_lowerbound, num_att)
+                # if st not in set(patterns_searched_lowest_level_lowerbound):
+                #     patterns_searched_lowest_level_lowerbound.append(st)
+                # patterns_searched_lowest_level_lowerbound.add(st)
+                # print("patterns_searched_lowest_level_lowerbound added {}".format(st))
+                # print(patterns_searched_lowest_level_lowerbound)
+            S = children + S
+            # maintain sets for k values only for a node not in result set.
+            # so now we add the this node to nodes_dict
+            # smallest k before which lower bound is ok
+            if whole_cardinality / data_size - alpha <= 0:
+                smallest_valid_k = k_max + 1
             else:
-                CheckDominationAndAddForLowerbound(child, pattern_treated_unfairly_lowerbound)
-                to_remove.add(st)
-                to_append.add(parent_str)
-                break
-        if parent_str == root_str:
-            CheckDominationAndAddForLowerbound(child, pattern_treated_unfairly_lowerbound)
-            continue
-    for p_str in to_remove:
-        patterns_searched_lowest_level_lowerbound.remove(p_str)
-    patterns_searched_lowest_level_lowerbound = patterns_searched_lowest_level_lowerbound | to_append
+                smallest_valid_k = math.floor(num_top_k / ((whole_cardinality / data_size) - alpha))
+            if st not in nodes_dict.keys():
+                Add_node_to_set(nodes_dict, smallest_valid_k, P, st, parent, parent_str, root, root_str, num_att)
+    print("finish kmin")
+    # print("pattern_treated_unfairly_lowerbound:", pattern_treated_unfairly_lowerbound)
+    # print(patterns_searched_lowest_level_lowerbound)
+    for k in range(k_min + 1, k_max):
+        if time.time() - time0 > time_limit:
+            print("newalg overtime")
+            break
+        print("k={}".format(k))
 
-    return num_patterns_visited, patterns_searched_lowest_level_lowerbound, patterns_searched_lowest_level_upperbound
+        if PatternInSet([0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], pattern_treated_unfairly_lowerbound):
+            print("in, k={}".format(k))
+        st = "0|||||||||||"
+        print(nodes_dict[st].smallest_valid_k, nodes_dict[st].smallest_ancestor)
+        # if st in nodes_dict.keys():
+        #     print("{} in nodes_dict".format(st))
+        patterns_top_k = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
+        patterns_top_k.parse_data()
+        new_tuple = ranked_data.iloc[[k - 1]].values.flatten().tolist()
+        # print("k={}, new tuple = {}".format(k, new_tuple))
+        # top down for related patterns, using similar methods as k_min, add to result set if needed
+        # ancestors are patterns checked in AddNewTuple() function, to avoid checking them again
+        ancestors, num_patterns_visited = AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound,
+                                                      patterns_searched_lowest_level_lowerbound,
+                                                      whole_data_frame, patterns_top_k, k, k_min, pc_whole_data,
+                                                      num_patterns_visited,
+                                                      patterns_size_whole, alpha, num_att,
+                                                      data_size, nodes_dict, attributes)
+        print(nodes_dict[st].smallest_valid_k, nodes_dict[st].smallest_ancestor)
+        # if st in nodes_dict.keys():
+        #     print("after AddNewTuple, {} in nodes_dict".format(st))
+        if PatternInSet([0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], pattern_treated_unfairly_lowerbound):
+            print("after addnewtuple, in, k={}".format(k))
+        num_patterns_visited, patterns_searched_lowest_level_lowerbound \
+            = CheckCandidatesForKValues(nodes_dict, ancestors, patterns_searched_lowest_level_lowerbound,
+                                           root, root_str,
+                                           pattern_treated_unfairly_lowerbound, k,
+                                           k_min, pc_whole_data, patterns_top_k, patterns_size_whole,
+                                           alpha, num_att, whole_data_frame,
+                                           attributes, num_patterns_visited, Thc, data_size)
+        if PatternInSet([0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], pattern_treated_unfairly_lowerbound):
+            print("after CheckCandidatesForKValues, in, k={}".format(k))
+    time1 = time.time()
+    return pattern_treated_unfairly_lowerbound, num_patterns_visited, time1 - time0
+
 
 
 # search top-down to go over all patterns related to new_tuple
 # using similar checking methods as k_min
 # add to result set if they are outliers
 # need to update k values for these patterns
-def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound,
+
+# for lower bound, when k and s_k increase by 1 at the same time, Sk/k is still larger than Sd(p)-Sd-alpha
+# So if a pattern is above lower bound, after this, it is still above lower bound
+# No patterns will be added to result set for lower bound here. Some will be added to upper bound result set
+# but the smallest k values may maintain unchanged, may also increase
+# thus, for lower bound, we only need to check for k values;
+# for upper bound, we only need to check whether it is above upper bound
+def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound,
+                patterns_searched_lowest_level_lowerbound,
                 whole_data_frame, patterns_top_k, k, k_min, pc_whole_data, num_patterns_visited,
-                patterns_size_whole, alpha, num_att, data_size, nodes_dict):
+                patterns_size_whole, alpha, num_att, data_size, nodes_dict, attributes):
     ancestors = []
     root = [-1] * num_att
     root_str = '|' * (num_att - 1)
     children = GenerateChildrenRelatedToTuple(root, new_tuple)  # pattern with one deternimistic attribute
     S = children
     parent_candidate_for_upperbound = []
+    # if the k values increases, go to function () without generating children
+    # otherwise, generating children and add children to queue
     while len(S) > 0:
         P = S.pop(0)
         st = num2string(P)
-        # if "0|0|||0" == st:
-        #     print("st={}\n".format(st))
-        #     print("stop here!")
-
+        if st == "0|||||||||||":
+            print("AddNewTuple, st = {}".format(st))
+        if P in pattern_treated_unfairly_lowerbound:
+            continue
         parent = findParent(P, num_att)
         parent_str = num2string(parent)
         num_patterns_visited += 1
-        add_children = False
         children = GenerateChildrenRelatedToTuple(P, new_tuple)
         if st in patterns_size_whole:
             whole_cardinality = patterns_size_whole[st]
         else:
             whole_cardinality = pc_whole_data.pattern_count(st)
-
         if whole_cardinality < Thc:
-            if len(parent_candidate_for_upperbound) > 0:
-                CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, pattern_treated_unfairly_upperbound)
-                parent_candidate_for_upperbound = []
+            continue
         else:
+            # print("lower bound")
+            # special case: this pattern itself is in the result set
             num_top_k = patterns_top_k.pattern_count(st)
-            lowerbound = (whole_cardinality / data_size - alpha) * k
-            if num_top_k < lowerbound:
-                CheckDominationAndAddForLowerbound(new_tuple, pattern_treated_unfairly_lowerbound)
+            upperbound = (whole_cardinality / data_size + alpha) * k
+            if num_top_k > upperbound:
+                CheckDominationAndAddForLowerbound(P, pattern_treated_unfairly_lowerbound)
             else:
                 S = children + S
                 ancestors = ancestors + children
-                add_children = True
+
             # smallest k before which lower bound is ok
             if whole_cardinality / data_size - alpha <= 0:
                 smallest_valid_k = k_max + 1
             else:
                 smallest_valid_k = math.floor(num_top_k / ((whole_cardinality / data_size) - alpha))
-            if st in nodes_dict.keys():
-                Update_k_value(nodes_dict, smallest_valid_k, P, st, parent, parent_str, root, root_str)
+            old_k = math.floor((num_top_k - 1) / ((whole_cardinality / data_size) - alpha))
+            if old_k <= 0:
+                old_k = k_max + 1
+            # we need to check k values for this node
+            if smallest_valid_k > old_k:
+                Update_k_value(nodes_dict, smallest_valid_k, P, st, parent, parent_str, root,
+                           root_str, num_att, pattern_treated_unfairly_lowerbound,
+                               patterns_searched_lowest_level_lowerbound, whole_data_frame, attributes,
+                               children, patterns_top_k, whole_cardinality, data_size, alpha)
             else:
-                Add_node_to_set(nodes_dict, smallest_valid_k, P, st, parent, parent_str, root, root_str)
-            upperbound = (whole_cardinality / data_size + alpha) * k
-            if num_top_k > upperbound:
-                parent_candidate_for_upperbound = P
-                if not add_children:
-                    S = children + S
-                    ancestors = ancestors + children
-                if len(children) == 0:
-                    CheckDominationAndAddForUpperbound(P, pattern_treated_unfairly_upperbound)
-                    parent_candidate_for_upperbound = []
-            else:  # below the upper bound
-                if len(parent_candidate_for_upperbound) > 0:
-                    CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound,
-                                                       pattern_treated_unfairly_upperbound)
-                    parent_candidate_for_upperbound = []
-
+                S = children + S
+                ancestors = ancestors + children
+                add_children = True
     return ancestors, num_patterns_visited
+
+
+# check whether k values exceeds the smallest k for a pattern
+def CheckCandidatesForKValues(nodes_dict, ancestors, patterns_searched_lowest_level_lowerbound,
+                             root, root_str,
+                             pattern_treated_unfairly_lowerbound, k,
+                             k_min, pc_whole_data, patterns_top_k, patterns_size_whole,
+                             alpha, num_att, whole_data_frame,
+                             attributes, num_patterns_visited, Thc, data_size):
+    to_remove = set()
+    to_append = set()
+    for st in patterns_searched_lowest_level_lowerbound:  # st is a string
+        # print("CheckCandidatesForKValues, st={}".format(st))
+        if st == "0|||||||||4|0|":
+            print("CheckCandidatesForKValues, st = {}".format(st))
+        num_patterns_visited += 1
+        p = string2num(st)
+        if p in ancestors or p in pattern_treated_unfairly_lowerbound:  # already checked
+            continue
+        if st in patterns_size_whole:
+            whole_cardinality = patterns_size_whole[st]
+        else:
+            whole_cardinality = pc_whole_data.pattern_count(st)
+        if whole_cardinality < Thc:
+            continue
+        find, nearest_ancestor_str = Find_closest_ancestor(nodes_dict.keys(), st, num_att)
+        if find:
+            nearest_ancestor_node = nodes_dict[nearest_ancestor_str]
+        else:
+            raise Exception('ancestors {} in nodes_dict not found'.format(st))
+        if nearest_ancestor_node.smallest_valid_k >= k:
+            continue
+        # nearest_ancestor.smallest_valid_k < k, this should be added to result set
+        while nearest_ancestor_node.smallest_ancestor != "":
+            nearest_ancestor_node = nodes_dict[nearest_ancestor_node.smallest_ancestor]
+            nodes_dict.pop(nearest_ancestor_str)
+            nearest_ancestor_str = nearest_ancestor_node.st
+
+        child_str = nearest_ancestor_str
+        parent_str = findParentForStr(child_str)
+        child = nearest_ancestor_node
+        if child_str == "0|||||||||||" or parent_str == "0|||||||||||":
+            print("Added to result set here")
+        if parent_str == root_str:
+            CheckDominationAndAddForLowerbound(child.pattern, pattern_treated_unfairly_lowerbound)
+            to_remove.add(st)  # child need removing
+            # we can't remove node here
+            # print("pop {} from nodes_dict".format(child_str))
+            # can't remove this node, since it may still the smallest k values for other branches
+            # nodes_dict.pop(child_str)
+        else:
+            CheckDominationAndAddForLowerbound(child.pattern, pattern_treated_unfairly_lowerbound)
+            to_remove.add(st)
+            to_append.add(parent_str)
+            # child is in result set, but we need to maintain k values for its ancestors
+            # print("pop {} from nodes_dict".format(child_str))
+            # nodes_dict.pop(child_str)
+
+    for p_str in to_remove:
+        patterns_searched_lowest_level_lowerbound.remove(p_str)
+    patterns_searched_lowest_level_lowerbound = patterns_searched_lowest_level_lowerbound + list(to_append)
+
+    return num_patterns_visited, patterns_searched_lowest_level_lowerbound
 
 
 all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
@@ -645,7 +927,8 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstat
                   'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
 
-selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C']
+selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
+                       'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C']
 
 """
 with the above 19 att,
@@ -663,7 +946,7 @@ ranked_data = ranked_data[selected_attributes]
 
 time_limit = 5 * 60
 k_min = 10
-k_max = 15
+k_max = 14
 Thc = 50
 
 List_k = list(range(k_min, k_max))
@@ -680,20 +963,20 @@ List_k = list(range(k_min, k_max))
 # print(Lowerbounds, "\n", Upperbounds)
 #
 
-alpha = 0.06
+alpha = 0.1
 
 
 print("start the new alg")
 
-pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, running_time = \
+pattern_treated_unfairly_lowerbound, num_patterns_visited, running_time = \
     GraphTraverse(ranked_data, selected_attributes, Thc,
                  alpha,
                  k_min, k_max, time_limit)
 
 print("num_patterns_visited = {}".format(num_patterns_visited))
-print("time = {} s, num of pattern_treated_unfairly_lowerbound = {}, num of pattern_treated_unfairly_upperbound = {} ".format(running_time,
-        len(pattern_treated_unfairly_lowerbound), len(pattern_treated_unfairly_upperbound)), "\n", "patterns:\n",
-      pattern_treated_unfairly_lowerbound, "\n", pattern_treated_unfairly_upperbound)
+print("time = {} s, num of pattern_treated_unfairly_lowerbound = {}".format(running_time,
+        len(pattern_treated_unfairly_lowerbound)), "\n", "patterns:\n",
+      pattern_treated_unfairly_lowerbound)
 
 print("dominated by pattern_treated_unfairly_lowerbound:")
 for p in pattern_treated_unfairly_lowerbound:
@@ -706,17 +989,16 @@ for p in pattern_treated_unfairly_lowerbound:
 
 print("start the naive alg")
 
-pattern_treated_unfairly_lowerbound2, pattern_treated_unfairly_upperbound2, \
-num_patterns_visited2, running_time2 = naiveranking.NaiveAlg(ranked_data, selected_attributes, Thc,
+pattern_treated_unfairly_lowerbound2, num_patterns_visited2, running_time2 = \
+    naiveranking.NaiveAlg(ranked_data, selected_attributes, Thc,
                                                              alpha,
                                                              k_min, k_max, time_limit)
 
 
 print("num_patterns_visited = {}".format(num_patterns_visited2))
-print("time = {} s, num of pattern_treated_unfairly_lowerbound = {}, num of pattern_treated_unfairly_upperbound = {} ".format(running_time2,
-        len(pattern_treated_unfairly_lowerbound2), len(pattern_treated_unfairly_upperbound2)), "\n", "patterns:\n",
-      pattern_treated_unfairly_lowerbound2, "\n", pattern_treated_unfairly_upperbound2)
-
+print("time = {} s, num of pattern_treated_unfairly_lowerbound = {}".format(running_time2,
+        len(pattern_treated_unfairly_lowerbound2)), "\n", "patterns:\n",
+      pattern_treated_unfairly_lowerbound2)
 
 
 
@@ -741,21 +1023,6 @@ for p in pattern_treated_unfairly_lowerbound2:
     if p not in pattern_treated_unfairly_lowerbound:
         print(p)
 
-
-print("\n\n\n")
-
-print("p in pattern_treated_unfairly_upperbound but not in pattern_treated_unfairly_upperbound2:")
-for p in pattern_treated_unfairly_upperbound:
-    if p not in pattern_treated_unfairly_upperbound2:
-        print(p)
-
-
-print("\n\n\n")
-
-print("p in pattern_treated_unfairly_upperbound2 but not in pattern_treated_unfairly_upperbound:")
-for p in pattern_treated_unfairly_upperbound2:
-    if p not in pattern_treated_unfairly_upperbound:
-        print(p)
 
 
 

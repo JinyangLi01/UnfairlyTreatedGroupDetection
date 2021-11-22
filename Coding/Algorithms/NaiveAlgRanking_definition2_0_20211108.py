@@ -220,17 +220,17 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
     pattern_treated_unfairly_upperbound = []
     overtime_flag = False
 
-    q = [-1, 0, 0, -1, 0]
+    q = [0, 0, 0, 0, 1, -1, -1]
     for k in range(k_min, k_max):
         print("k={}".format(k))
-        # p_in_ub = False
-        # for p in pattern_treated_unfairly_upperbound:
-        #     if PatternEqual(p, q):
-        #         print(q, "in")
-        #         p_in_ub = True
-        #         break
-        # if p_in_ub is False:
-        #     print(q, " not in")
+        p_in_ub = False
+        for p in pattern_treated_unfairly_upperbound:
+            if PatternEqual(p, q):
+                print(q, "in")
+                p_in_ub = True
+                break
+        if p_in_ub is False:
+            print(q, " not in")
         if overtime_flag:
             print("naive overtime, exiting the loop of k")
             break
@@ -276,9 +276,9 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
                 break
             P = S.pop(0)
             st = num2string(P)
-            if st == "|1|0|||0|4":
-                print("st = {}\n".format(st))
-                print("stop here naive alg")
+            # if st == "|1|0|||0|4":
+            #     print("st = {}\n".format(st))
+            #     print("stop here naive alg")
             # if PatternInSet("|1|0|||0|4", pattern_treated_unfairly_upperbound):
             #     print("k={}, st in".format(k))
             num_patterns_visited += 1
@@ -304,72 +304,70 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
                     CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, pattern_treated_unfairly_upperbound)
                     parent_candidate_for_upperbound = []
     time1 = time.time()
-    if PatternInSet("|1|0|||0|4", pattern_treated_unfairly_upperbound):
+    if PatternInSet("0|0|0|0|1||", pattern_treated_unfairly_upperbound):
         print("k=k_max, st in")
     return pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, time1 - time0
 
+
+all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
+                  'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C',
+                  'failures_C', 'schoolsup_C', 'famsup_C', 'paid_C', 'activities_C', 'nursery_C', 'higher_C',
+                  'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
+                  'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
+
+selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C']
+
+
+"""
+with the above 19 att,
+naive: 98s num_patterns_visited = 2335488
+optimized: 124s num_patterns_visited = 299559
+num of pattern_treated_unfairly_lowerbound = 85, num of pattern_treated_unfairly_upperbound = 18
+"""
+
+original_data_file = r"../../InputData/StudentDataset/ForRanking_1/student-mat_cat_ranked.csv"
+
+
+ranked_data = pd.read_csv(original_data_file)
+ranked_data = ranked_data[selected_attributes]
+
+
+time_limit = 5 * 60
+k_min = 10
+k_max = 12
+Thc = 50
+
+List_k = list(range(k_min, k_max))
 #
-# all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
-#                   'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C',
-#                   'failures_C', 'schoolsup_C', 'famsup_C', 'paid_C', 'activities_C', 'nursery_C', 'higher_C',
-#                   'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
-#                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
+# def lowerbound(x):
+#     return 5 # int((x-3)/4)
 #
-# selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C',
-#                        'Pstatus_C', 'Medu_C', 'Fedu_C', 'Mjob_C', 'Fjob_C',
-#                        'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C', 'failures_C',
-#                        'schoolsup_C', 'famsup_C', 'paid_C', 'activities_C']
+# def upperbound(x):
+#     return 25 # int(3+(x-k_min+1)/3)
 #
-# """
-# with the above 19 att,
-# naive: 98s num_patterns_visited = 2335488
-# optimized: 124s num_patterns_visited = 299559
-# num of pattern_treated_unfairly_lowerbound = 85, num of pattern_treated_unfairly_upperbound = 18
-# """
+# Lowerbounds = [lowerbound(x) for x in List_k]
+# Upperbounds = [upperbound(x) for x in List_k]
 #
-# original_data_file = r"../../InputData/StudentDataset/ForRanking_1/student-mat_cat_ranked.csv"
-#
-#
-# ranked_data = pd.read_csv(original_data_file)
-# ranked_data = ranked_data[selected_attributes]
-#
-#
-# time_limit = 5 * 60
-# k_min = 10
-# k_max = 50
-# Thc = 50
-#
-# List_k = list(range(k_min, k_max))
-# #
-# # def lowerbound(x):
-# #     return 5 # int((x-3)/4)
-# #
-# # def upperbound(x):
-# #     return 25 # int(3+(x-k_min+1)/3)
-# #
-# # Lowerbounds = [lowerbound(x) for x in List_k]
-# # Upperbounds = [upperbound(x) for x in List_k]
-# #
-# # print(Lowerbounds, "\n", Upperbounds)
-#
-#
-# alpha = 0.05
-#
-#
-#
-# pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, running_time = \
-#     NaiveAlg(ranked_data, selected_attributes, Thc,
-#                      alpha,
-#                      k_min, k_max, time_limit)
-#
-# print("num_patterns_visited = {}".format(num_patterns_visited))
-# print("time = {} s, num of pattern_treated_unfairly_lowerbound = {}, num of pattern_treated_unfairly_upperbound = {} ".format(running_time,
-#         len(pattern_treated_unfairly_lowerbound), len(pattern_treated_unfairly_upperbound)), "\n", "patterns:\n",
-#       "lower bound ", pattern_treated_unfairly_lowerbound, "\n", "upper bound ", pattern_treated_unfairly_upperbound)
-#
-# print("dominated by pattern_treated_unfairly_lowerbound:")
-# for p in pattern_treated_unfairly_lowerbound:
-#     if PDominatedByM(p, pattern_treated_unfairly_lowerbound)[0]:
-#         print(p)
-#
+# print(Lowerbounds, "\n", Upperbounds)
+
+
+alpha = 0.1
+
+
+
+pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, running_time = \
+    NaiveAlg(ranked_data, selected_attributes, Thc,
+                     alpha,
+                     k_min, k_max, time_limit)
+
+print("num_patterns_visited = {}".format(num_patterns_visited))
+print("time = {} s, num of pattern_treated_unfairly_lowerbound = {}, num of pattern_treated_unfairly_upperbound = {} ".format(running_time,
+        len(pattern_treated_unfairly_lowerbound), len(pattern_treated_unfairly_upperbound)), "\n", "patterns:\n",
+      "lower bound ", pattern_treated_unfairly_lowerbound, "\n", "upper bound ", pattern_treated_unfairly_upperbound)
+
+print("dominated by pattern_treated_unfairly_lowerbound:")
+for p in pattern_treated_unfairly_lowerbound:
+    if PDominatedByM(p, pattern_treated_unfairly_lowerbound)[0]:
+        print(p)
+
 

@@ -95,3 +95,11 @@ questions while writing code implementing NewAlgRanking_definition2_0_20211108. 
 - In this alg, can we make the stop set to be the nodes with smallest k, instead of where we stopped?
   - No. The next pattern at position k may satisfy these patterns so their k values will change.
 
+# Nov. 21, 2021
+
+If a pattern's size is too small, should it be added to stop set or should its parent?
+- add itself: not allow dominance in stop set 
+- add its parent: must allow dominance in stop set. But, when we update k value in function Update_k_value()    
+When should we stop? We are supposed to stop when we reach stop set. So we can't allow dominance in stop set:)
+
+
