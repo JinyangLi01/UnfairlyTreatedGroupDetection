@@ -207,7 +207,7 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
     pattern_treated_unfairly = []
     overtime_flag = False
 
-    q = [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    q = [0, -1, -1, -1, -1, -1, -1, -1, -1, -1]
     for k in range(k_min, k_max):
         print("k={}".format(k))
         if q in pattern_treated_unfairly:

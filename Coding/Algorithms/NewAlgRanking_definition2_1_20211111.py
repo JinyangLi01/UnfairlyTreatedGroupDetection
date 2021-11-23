@@ -20,7 +20,7 @@ Current Problem:
 Can we allow dominance in stop set?
 In this script, it is allowed, but then I found we can't.
 Since we need to stop searching until stop set when we check whether k needs updating.
-
+So this script doesn't work.
 
 """
 
