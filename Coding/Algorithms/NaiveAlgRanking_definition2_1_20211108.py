@@ -207,13 +207,13 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
     pattern_treated_unfairly = []
     overtime_flag = False
 
-    q = [0, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    q = [0, -1, -1, -1, 1, -1, 3]
     for k in range(k_min, k_max):
-        print("k={}".format(k))
-        if q in pattern_treated_unfairly:
-            print("q in!!")
-        else:
-            print("q not in ... ")
+        # print("k={}".format(k))
+        # if q in pattern_treated_unfairly:
+        #     print("q in!!")
+        # else:
+        #     print("q not in ... ")
         if overtime_flag:
             print("naive overtime, exiting the loop of k")
             break
@@ -230,9 +230,9 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
                 break
             P = S.pop(0)
             st = num2string(P)
-            # if PatternEqual(P, q):
-            #     print("st = {}\n".format(st))
-            #     print("stop here naive alg")
+            if PatternEqual(P, q) and k == 164:
+                print("st = {}\n".format(st))
+                print("stop here naive alg")
 
             num_patterns_visited += 1
             whole_cardinality = pc_whole_data.pattern_count(st)
@@ -253,7 +253,7 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
     time1 = time.time()
     return pattern_treated_unfairly, num_patterns_visited, time1 - time0
 
-#
+
 #
 # all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
 #                   'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C',
@@ -279,8 +279,8 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
 #
 #
 # time_limit = 5 * 60
-# k_min = 10
-# k_max = 15
+# k_min = 162
+# k_max = 166
 # Thc = 50
 #
 # List_k = list(range(k_min, k_max))
