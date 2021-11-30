@@ -103,3 +103,20 @@ If a pattern's size is too small, should it be added to stop set or should its p
 When should we stop? We are supposed to stop when we reach stop set. So we can't allow dominance in stop set:)
 
 
+# Nov. 28, 2021
+
+Current problems:
+
+- Some patterns in stop set need future checking for larger k, other don't. We can't tell.    
+Eg. p is added to result set and then removed by another pattern dominating p.    
+so p is also in stop set. I get calculating p repeatedly later...
+    - solution: maintain two stop sets.
+    - Now I'm implementing this solution in NewAlgRanking_definition2_2_20211121.py
+  
+- In CheckCandidatesForKValues(), we go up from stop set, so some patterns share the same upper branch but we check them twice.    
+    - solution: remember patterns one level above stop set and avoid double checking for them.    
+  
+
+
+
+
