@@ -51,19 +51,6 @@ def PatternEqual(m, P):
             return False
     return True
 
-# increase size by 1 for children, and children's children
-def AddSizeTopKMinOfChildren(children, patterns_top_kmin, patterns_size_topk, new_tuple, num_patterns_visited):
-    while len(children) > 0:
-        child = children.pop(0)
-        num_patterns_visited += 1
-        st = num2string(child)
-        if st in patterns_size_topk:
-            patterns_size_topk[st] += 1
-        else:
-            patterns_size_topk[st] = patterns_top_kmin.pattern_count(st) + 1
-        new_children = GenerateChildrenRelatedToTuple(child, new_tuple)
-        children = children + new_children
-    return num_patterns_visited
 
 def GenerateChildrenRelatedToTuple(P, new_tuple):
     children = []
@@ -384,7 +371,6 @@ def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_tre
     S = children
     parent_candidate_for_upperbound = []
     while len(S) > 0:
-
         P = S.pop(0)
         st = num2string(P)
         num_patterns_visited += 1
@@ -419,7 +405,6 @@ def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound, pattern_tre
                 if len(parent_candidate_for_upperbound) > 0:
                     CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, pattern_treated_unfairly_upperbound)
                     parent_candidate_for_upperbound = []
-
     return ancestors, num_patterns_visited
 
 

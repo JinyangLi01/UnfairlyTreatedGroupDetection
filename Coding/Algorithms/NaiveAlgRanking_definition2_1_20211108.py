@@ -207,7 +207,7 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
     pattern_treated_unfairly = []
     overtime_flag = False
 
-    q = [-1, -1, -1, 1, 1]
+    q = [-1, -1, -1, -1, -1, 0, -1, -1, -1]
     for k in range(k_min, k_max):
         # print("k={}".format(k))
         # if q in pattern_treated_unfairly:
@@ -230,9 +230,9 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
                 break
             P = S.pop(0)
             st = num2string(P)
-            if PatternEqual(P, q) and k == 56:
-                print("st = {}\n".format(st))
-                print("stop here naive alg")
+            # if PatternEqual(P, q) and k == 33:
+            #     print("st = {}\n".format(st))
+            #     print("stop here naive alg")
 
             num_patterns_visited += 1
             whole_cardinality = pc_whole_data.pattern_count(st)

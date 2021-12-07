@@ -1009,13 +1009,6 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstat
 selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
                        'Fedu_C', 'Mjob_C', 'Fjob_C']
 
-"""
-with the above 19 att,
-naive: 98s num_patterns_visited = 2335488
-optimized: 124s num_patterns_visited = 299559
-num of pattern_treated_unfairly_lowerbound = 85, num of pattern_treated_unfairly_upperbound = 18
-"""
-
 original_data_file = r"../../InputData/StudentDataset/ForRanking_1/student-mat_cat_ranked.csv"
 
 

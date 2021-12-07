@@ -98,20 +98,6 @@ def PatternEqual(m, P):
     return True
 
 
-# increase size by 1 for children, and children's children
-def AddSizeTopKMinOfChildren(children, patterns_top_kmin, patterns_size_topk, new_tuple, num_patterns_visited):
-    while len(children) > 0:
-        child = children.pop(0)
-        num_patterns_visited += 1
-        st = num2string(child)
-        if st in patterns_size_topk:
-            patterns_size_topk[st] += 1
-        else:
-            patterns_size_topk[st] = patterns_top_kmin.pattern_count(st) + 1
-        new_children = GenerateChildrenRelatedToTuple(child, new_tuple)
-        children = children + new_children
-    return num_patterns_visited
-
 # for a tuple, there is one parent generating it
 # but it has more than one parent, and those who doesn't generate this tuple, their size also increase
 def GenerateChildrenRelatedToTuple(P, new_tuple):
@@ -209,7 +195,6 @@ def findParent(child, length):
 
 def findParentForStr(child):
     end = 0
-    start = 0
     length = len(child)
     i = length - 1
     while i > -1:
@@ -331,13 +316,6 @@ def A_is_ancestor_of_B(a, b):
     return True
 
 
-def Check_duplicate_and_add(pattern_list, new_pattern):
-    for p in pattern_list:
-        if PatternEqual(p, new_pattern):
-            return
-    pattern_list.append(new_pattern)
-
-
 def PatternInSet(p, set):
     if isinstance(p, str):
         p = string2num(p)
@@ -347,8 +325,7 @@ def PatternInSet(p, set):
     return False
 
 
-
-
+# TODO: >_< time-consuming
 # Instead of checking dominance, we should check whether this node is
 def CheckDominationAndAddForStopSetStr(str, patterns_searched_lowest_level_lowerbound):
     to_remove = []
@@ -458,7 +435,6 @@ def Update_k_value(nodes_dict, smallest_valid_k, p, st, parent, parent_str, root
             #     print("\n")
             if c in children_of_p_related_to_new_tuple:
                 # if c violates the conditions
-
                 if c_str in patterns_size_whole:
                     whole_cardinality = patterns_size_whole[c_str]
                 else:
@@ -494,7 +470,7 @@ def For_node_related_to_new_tuple(nodes_dict, smallest_valid_k, p, st, c, c_str,
         CheckDominationAndAddForStopSetStr(c_str, patterns_no_need_searching)
         Remove_descendants_str(c_str, patterns_to_search_lowest_level)
         CheckDominationAndAddForLowerbound(c, pattern_treated_unfairly_lowerbound)
-        if c_str in nodes_dict.keys():  # TODO: c_str is already in result set, I think I pop here.
+        if c_str in nodes_dict.keys():  # c_str is already in result set, I think I should pop here.
             nodes_dict.pop(c_str)
         return
     # update k value for c, and continue checking for its children
@@ -502,7 +478,7 @@ def For_node_related_to_new_tuple(nodes_dict, smallest_valid_k, p, st, c, c_str,
         smallest_valid_k_of_c = k_max + 1
     else:
         smallest_valid_k_of_c = math.floor(num_top_k_of_c / ((whole_cardinality_of_c / data_size) - alpha))
-    if smallest_valid_k_of_c < k: # TODO: What does this mean? this means this pattern doesn't satisfy conditions now???
+    if smallest_valid_k_of_c < k:
         raise Exception("smallest_valid_k_of_c < k")
     if c_str in nodes_dict.keys():
         nodes_dict[c_str].smallest_valid_k = smallest_valid_k_of_c
@@ -627,8 +603,6 @@ def For_node_not_related_to_new_tuple(nodes_dict, smallest_valid_k, p, st, c, c_
             if c_str not in patterns_to_search_lowest_level:
                 children = GenerateChildren(c, whole_data_frame, attributes)
                 for child in children:
-                    # if child in pattern_treated_unfairly_lowerbound: # TODO: this checking is redundant??
-                    #     continue
                     child_str = num2string(child)
                     if child_str in patterns_no_need_searching:
                         continue
@@ -712,13 +686,18 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
     patterns_no_need_searching = []
     # this dict stores all patterns, indexed by num2string(p)
     nodes_dict = dict()
-
+    time_for_CheckDominationAndAddForStopSetStr = 0
+    time_for_CheckDominationAndAddForLowerbound = 0
+    time_for_Remove_descendants_str = 0
+    time_setup1 = 0
+    time_Add_node_to_set = 0
     # DFS
     # this part is the main time consumption
     while len(S) > 0:
         if time.time() - time0 > time_limit:
             print("newalg overtime")
             break
+        time1 = time.time()
         P = S.pop(0)
         st = num2string(P)
         # print("GraphTraverse, st = {}".format(st))
@@ -730,22 +709,39 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         patterns_size_whole[st] = whole_cardinality
         parent = findParent(P, num_att)
         parent_str = num2string(parent)
+        time2 = time.time()
+        time_setup1 += time2-time1
         if whole_cardinality < Thc:
             # We can only add itself into stop set,
             # since stop set doesn't allow dominance between ancestors and descendant
+            # TODO: this function is toooooo time-consuming
             CheckDominationAndAddForStopSetStr(st, patterns_no_need_searching)
+            time3 = time.time()
+            time_for_CheckDominationAndAddForStopSetStr += time3 - time2
             continue
+        time3 = time.time()
         num_top_k = patterns_top_kmin.pattern_count(st)
         lowerbound = (whole_cardinality / data_size - alpha) * k
         upperbound = (whole_cardinality / data_size + alpha) * k
         if num_top_k < lowerbound or num_top_k > upperbound:
             CheckDominationAndAddForStopSetStr(st, patterns_no_need_searching)
+            time4 = time.time()
+            time_for_CheckDominationAndAddForStopSetStr += time4 - time3
+            time5 = time.time()
             CheckDominationAndAddForLowerbound(P, pattern_treated_unfairly_lowerbound)
+            time6 = time.time()
+            time_for_CheckDominationAndAddForLowerbound += time6 - time5
+            time7 = time.time()
             Remove_descendants_str(st, patterns_to_search_lowest_level)
+            time8 = time.time()
+            time_for_Remove_descendants_str += time8 - time7
         else:
             children = GenerateChildren(P, whole_data_frame, attributes)
             if len(children) == 0:
+                time9 = time.time()
                 CheckDominationAndAddForStopSetStr(st, patterns_to_search_lowest_level)
+                time10 = time.time()
+                time_for_CheckDominationAndAddForStopSetStr += time10 - time9
                 # if st not in set(patterns_searched_lowest_level_lowerbound):
                 #     patterns_searched_lowest_level_lowerbound.append(st)
                 # patterns_searched_lowest_level_lowerbound.add(st)
@@ -762,7 +758,14 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
             if smallest_valid_k < k:
                 raise Exception("smallest_valid_k_of_c < k")
             if st not in nodes_dict.keys():
+                time11 = time.time()
                 Add_node_to_set(nodes_dict, smallest_valid_k, P, st, parent, parent_str, root, root_str, num_att)
+                time12 = time.time()
+                time_Add_node_to_set += time12 - time11
+    time1 = time.time()
+    print("time for k_min = {}".format(time1 - time0))
+    print(time_setup1, time_for_CheckDominationAndAddForStopSetStr,
+          time_for_CheckDominationAndAddForLowerbound, time_Add_node_to_set)
     print("finish kmin")
     # print("pattern_treated_unfairly_lowerkbound:", pattern_treated_unfairly_lowerbound)
     # for p in patterns_searched_lowest_level_lowerbound:
@@ -779,10 +782,11 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
             print("smallest_valid_k = {}".format(nodes_dict[st].smallest_valid_k))
         # if st in patterns_to_search_lowest_level:
         #     print("{} in stop set".format(st))
+        time1 = time.time()
         patterns_top_k = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_k.parse_data()
         new_tuple = ranked_data.iloc[[k - 1]].values.flatten().tolist()
-        print("k={}, new tuple={}".format(k, new_tuple))
+        # print("k={}, new tuple={}".format(k, new_tuple))
         # print("k={}, new tuple = {}".format(k, new_tuple))
         # top down for related patterns, using similar methods as k_min, add to result set if needed
         # ancestors are patterns checked in AddNewTuple() function, to avoid checking them again
@@ -792,6 +796,8 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
                                                       num_patterns_visited,
                                                       patterns_size_whole, alpha, num_att,
                                                       data_size, nodes_dict, attributes)
+        time2 = time.time()
+        print("time for AddNewTuple = {}".format(time2-time1))
         if st in nodes_dict.keys():
             print("after AddNewTuple, {} in nodes_dict, smallest_valid_k = {}".format(st, nodes_dict[st].smallest_valid_k))
         # print("patterns_searched_lowest_level_lowerbound:")
@@ -799,6 +805,7 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         #     print(p)
         if PatternInSet([0, -1, 0, -1, -1], pattern_treated_unfairly_lowerbound):
             print("after AddNewTuple, in result set, k={}".format(k))
+        time1 = time.time()
         num_patterns_visited, patterns_to_search_lowest_level, patterns_no_need_searching \
             = CheckCandidatesForKValues(nodes_dict, ancestors, patterns_to_search_lowest_level,
                                         patterns_no_need_searching,
@@ -807,6 +814,8 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
                                         k_min, pc_whole_data, patterns_top_k, patterns_size_whole,
                                         alpha, num_att, whole_data_frame,
                                         attributes, num_patterns_visited, Thc, data_size)
+        time2 = time.time()
+        print("time for CheckCandidatesForKValues = {}".format(time2 - time1))
         if PatternInSet([0, -1, 0, -1, -1], pattern_treated_unfairly_lowerbound):
             print("after CheckCandidatesForKValues, in result set, k={}".format(k))
     time1 = time.time()
@@ -856,7 +865,6 @@ def AddNewTuple(new_tuple, Thc, pattern_treated_unfairly_lowerbound,
         if whole_cardinality < Thc:
             raise Exception("whole_cardinality_of_child < Thc")
         else:
-            # print("lower bound")
             # special case: this pattern itself is in the result set
             num_top_k = patterns_top_k.pattern_count(st)
             upperbound = (whole_cardinality / data_size + alpha) * k
@@ -914,13 +922,8 @@ def CheckCandidatesForKValues_patterns_to_search_lowest_level(nodes_dict, ancest
             whole_cardinality = patterns_size_whole[st]
         else:
             whole_cardinality = pc_whole_data.pattern_count(st)
-        if whole_cardinality < Thc: # TODO: this is impossible??
+        if whole_cardinality < Thc:
             raise Exception("whole_cardinality_of_child < Thc")
-            # num_patterns_visited += 1
-            # # should go up to ancestors
-            # st = findParentForStr(st)
-            # if st == root_str:
-            #     continue
         find, nearest_ancestor_str = Find_closest_ancestor(nodes_dict.keys(), st, num_att)
         if find:
             nearest_ancestor_node = nodes_dict[nearest_ancestor_str]
@@ -941,8 +944,6 @@ def CheckCandidatesForKValues_patterns_to_search_lowest_level(nodes_dict, ancest
         CheckDominationAndAddForLowerbound(child.pattern, pattern_treated_unfairly_lowerbound)
         CheckDominationAndAddForStopSetStr(child_str, patterns_no_need_searching)
         Remove_descendants_str(child_str, patterns_to_search_lowest_level)
-        if child_str == "0||0||":
-            print("{} added to result set".format(child_str))
     return checked_patterns
 
 
@@ -972,7 +973,6 @@ def CheckCandidatesForKValues_patterns_no_need_searching(nodes_dict, ancestors, 
         checked_patterns.add(nearest_ancestor_str)
         if nearest_ancestor_node.smallest_valid_k >= k:
             continue
-        # to_remove.add(st) # TODO: if each time we check dominance for patterns_no_need_searching, we don't need to_remove in this function!
         # nearest_ancestor.smallest_valid_k < k, we need to find whether it has ancestor with the same k
         # and then that should be added to result set
         while nearest_ancestor_node.smallest_ancestor != "":
@@ -1025,14 +1025,8 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstat
                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
 
 selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
-                       'Fedu_C', 'Mjob_C', 'Fjob_C']
+                       'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C']
 
-"""
-with the above 19 att,
-naive: 98s num_patterns_visited = 2335488
-optimized: 124s num_patterns_visited = 299559
-num of pattern_treated_unfairly_lowerbound = 85, num of pattern_treated_unfairly_upperbound = 18
-"""
 
 original_data_file = r"../../InputData/StudentDataset/ForRanking_1/student-mat_cat_ranked.csv"
 
@@ -1043,7 +1037,7 @@ ranked_data = ranked_data[selected_attributes]
 
 time_limit = 5 * 60
 k_min = 50
-k_max = 150
+k_max = 60
 Thc = 30
 
 List_k = list(range(k_min, k_max))
