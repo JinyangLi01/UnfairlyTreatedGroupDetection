@@ -421,12 +421,14 @@ def Remove_descendants_str(c_str, patterns_to_search_lowest_level):
 # c is the pattern to check, and it is sure that they deserve checking
 def For_node_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, p, st, c,
                                   data_size, alpha, patterns_top_k, whole_data_frame, attributes,
-                                  k, new_tuple, ancestors, patterns_size_whole, pc_whole_data, result_set, num_att):
+                                  k, new_tuple, ancestors, patterns_size_whole, pc_whole_data, result_set, num_att,
+                                  num_patterns_visited):
     if c in ancestors:
         raise Exception("Is this possible?")
     ancestors.append(c)
-    print("For_node_related_to_new_tuple check {}".format(c))
+    #print("For_node_related_to_new_tuple check {}".format(c))
     # check whether pattern c violates the conditions
+    num_patterns_visited += 1
     c_str = num2string(c)
     num_top_k_of_c = patterns_top_k.pattern_count(c_str)
     if c_str in patterns_size_whole:
@@ -434,18 +436,20 @@ def For_node_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, p, st, c
     else:
         whole_cardinality_of_c = pc_whole_data.pattern_count(c_str)
     if whole_cardinality_of_c < Thc:
-        return
+        return num_patterns_visited
     lowerbound = (whole_cardinality_of_c / data_size - alpha) * k
     if whole_cardinality_of_c / data_size - alpha <= 0:
         smallest_valid_k_of_c = k_max + 1
     else:
         smallest_valid_k_of_c = math.floor(num_top_k_of_c / ((whole_cardinality_of_c / data_size) - alpha))
+    if smallest_valid_k_of_c > k_max:
+        smallest_valid_k_of_c = k_max + 1
     if num_top_k_of_c < lowerbound:
         if c in result_set:
-            return
+            return num_patterns_visited
         CheckDominationAndAddForLowerbound(c, result_set)
         Update_or_add_node_w_smaller_k(nodes_dict, k_dict, smallest_valid_k_of_c, c, c_str, st)
-        return
+        return num_patterns_visited
     if c in result_set:
         result_set.remove(c)
     # update k value for c, and continue checking for its children
@@ -455,29 +459,31 @@ def For_node_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, p, st, c
         Update_or_add_node_w_smaller_k(nodes_dict, k_dict, smallest_valid_k_of_c, c, c_str, st)
         for grandc in children:
             if grandc in children_related_to_new_tuple:
-                For_node_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k_of_c, c, c_str, grandc,
+                num_patterns_visited = For_node_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k_of_c, c, c_str, grandc,
                                               data_size, alpha, patterns_top_k, whole_data_frame,
                                               attributes, k, new_tuple, ancestors,
-                                              patterns_size_whole, pc_whole_data, result_set, num_att)
+                                              patterns_size_whole, pc_whole_data, result_set, num_att,
+                                              num_patterns_visited)
             else:
-                For_node_not_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k_of_c, c, c_str, grandc,
+                num_patterns_visited = For_node_not_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k_of_c, c, c_str, grandc,
                                                   data_size, alpha, patterns_top_k, whole_data_frame,
                                                   attributes, k, new_tuple, ancestors,
-                                                  patterns_size_whole, pc_whole_data, result_set, num_att)
+                                                  patterns_size_whole, pc_whole_data, result_set, num_att,
+                                                                          num_patterns_visited)
     else:
         Check_and_remove_a_larger_k(nodes_dict, k_dict, c, c_str)
         for grandc in children:
             if grandc in children_related_to_new_tuple:
-                For_node_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, p, st, grandc,
+                num_patterns_visited = For_node_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, p, st, grandc,
                                               data_size, alpha, patterns_top_k, whole_data_frame,
                                               attributes, k, new_tuple, ancestors,
-                                              patterns_size_whole, pc_whole_data, result_set, num_att)
+                                              patterns_size_whole, pc_whole_data, result_set, num_att, num_patterns_visited)
             else:
-                For_node_not_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, p, st, grandc,
+                num_patterns_visited = For_node_not_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, p, st, grandc,
                                                   data_size, alpha, patterns_top_k, whole_data_frame,
                                                   attributes, k, new_tuple, ancestors,
-                                                  patterns_size_whole, pc_whole_data, result_set, num_att)
-
+                                                  patterns_size_whole, pc_whole_data, result_set, num_att, num_patterns_visited)
+    return num_patterns_visited
 
 # note isn't related to new tuple, so k doesn't change,
 # but the smallest k value among this route may change
@@ -485,68 +491,76 @@ def For_node_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, p, st, c
 # This function is to check whether this pattern should be added to result set, and see whether smallest k value changes
 def For_node_not_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, p, st, c,
                                       data_size, alpha, patterns_top_k, whole_data_frame, attributes, k, new_tuple,
-                                      ancestors, patterns_size_whole, pc_whole_data, result_set, num_att):
+                                      ancestors, patterns_size_whole, pc_whole_data, result_set, num_att, num_patterns_visited):
     if c in ancestors:
         raise Exception("Is this possible?")
     ancestors.append(c)
-    print("For_node_not_related_to_new_tuple check {}".format(c))
+    if PatternEqual(c, [-1, -1, -1, -1, -1, -1, 4, 4, -1]):
+        print("stop here")
+    #print("For_node_not_related_to_new_tuple check {}".format(c))
     if c in result_set:
-        return
+        return num_patterns_visited
+    num_patterns_visited += 1
     c_str = num2string(c)
     if c_str in patterns_size_whole:
         whole_cardinality_of_c = patterns_size_whole[c_str]
     else:
         whole_cardinality_of_c = pc_whole_data.pattern_count(c_str)
     if whole_cardinality_of_c < Thc:
-        return
+        return num_patterns_visited
     lowerbound = (whole_cardinality_of_c / data_size - alpha) * k
     num_top_k_of_c = patterns_top_k.pattern_count(c_str)
     if whole_cardinality_of_c / data_size - alpha <= 0:
         smallest_valid_k_of_c = k_max + 1
     else:
         smallest_valid_k_of_c = math.floor(num_top_k_of_c / ((whole_cardinality_of_c / data_size) - alpha))
+    if smallest_valid_k_of_c > k_max:
+        smallest_valid_k_of_c = k_max + 1
     if num_top_k_of_c < lowerbound:
         if c in result_set:
-            return
+            return num_patterns_visited
         CheckDominationAndAddForLowerbound(c, result_set)
         Update_or_add_node_w_smaller_k(nodes_dict, k_dict, smallest_valid_k_of_c, c, c_str, st)
-        return
+        return num_patterns_visited
     if c_str in nodes_dict.keys():
         if smallest_valid_k_of_c < smallest_valid_k:  # no need to go deeper
             nodes_dict[c_str].smallest_ancestor = st
             nodes_dict[c_str].self_smallest_k = True
-            return
+            return num_patterns_visited
         elif smallest_valid_k_of_c == smallest_valid_k:
             k_dict[nodes_dict[c_str].smallest_valid_k].remove(c_str)
             nodes_dict.pop(c_str)
-            return
+            return num_patterns_visited
         else:  # nodes_dict[c_str].smallest_valid_k > smallest_valid_k
             k_dict[nodes_dict[c_str].smallest_valid_k].remove(c_str)
             nodes_dict.pop(c_str)
             children = GenerateChildren(c, whole_data_frame, attributes)
             # for child in children:
-            #     For_node_not_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, p, st, child,
+            #     num_patterns_visited = For_node_not_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k,
+            #                                       p, st, child,
             #                                       data_size, alpha, patterns_top_k, whole_data_frame,
             #                                       attributes, k, new_tuple, ancestors, patterns_size_whole,
-            #                                       pc_whole_data, result_set, num_att)
+            #                                       pc_whole_data, result_set, num_att, num_patterns_visited)
     else:
         if smallest_valid_k_of_c > smallest_valid_k:
             children = GenerateChildren(c, whole_data_frame, attributes)
             for child in children:
-                For_node_not_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, p, st, child,
+                num_patterns_visited = For_node_not_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k,
+                                                  p, st, child,
                                                   data_size, alpha, patterns_top_k, whole_data_frame,
                                                   attributes, k, new_tuple, ancestors, patterns_size_whole,
-                                                  pc_whole_data, result_set, num_att)
+                                                  pc_whole_data, result_set, num_att, num_patterns_visited)
         else:
             k_dict[smallest_valid_k_of_c].append(c_str)
             nodes_dict[c_str] = Node(c, c_str, smallest_valid_k_of_c, st, True)
             children = GenerateChildren(c, whole_data_frame, attributes)
             # for child in children:
-            #     For_node_not_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k_of_c, c, c_str, child,
+            #     num_patterns_visited = For_node_not_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k_of_c,
+            #                                       c, c_str, child,
             #                                       data_size, alpha, patterns_top_k, whole_data_frame,
             #                                       attributes, k, new_tuple, ancestors, patterns_size_whole,
-            #                                       pc_whole_data, result_set, num_att)
-
+            #                                       pc_whole_data, result_set, num_att, num_patterns_visited)
+    return num_patterns_visited
 
 # Stop set: doesn't allow ancestor and children, but allow dominance between others.
 # We can only put a node itself into the stop set, whether it is in result set or not.
@@ -695,7 +709,7 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, pc_w
         #     print("\n")
         # print("in addnewtuple, st={}".format(st))
         time1 = time.time()
-        ancestors.append(st)
+        ancestors.append(P)
         num_patterns_visited += 1
         children, children_related_to_new_tuple = GenerateChildrenAndChildrenRelatedToNewTuple(P,
                                                                                                whole_data_frame,
@@ -726,7 +740,7 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, pc_w
                 # P only has one deterministic attribute
                 Update_or_add_node_w_smaller_k(nodes_dict, k_dict, smallest_valid_k, P, st, "")
                 time2 = time.time()
-                print("time 1-2 in AddNewTuple = {}".format(time2 - time1))
+                #print("time 1-2 in AddNewTuple = {}".format(time2 - time1))
                 continue
             if P in result_set:
                 result_set.remove(P)
@@ -748,24 +762,26 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, pc_w
                     nodes_dict[st].smallest_valid_k = smallest_valid_k
                     k_dict[smallest_valid_k].append(st)
             time3 = time.time()
-            print("time 1-3 in AddNewTuple = {}".format(time3 - time1))
+            #print("time 1-3 in AddNewTuple = {}".format(time3 - time1))
             for c in children:
                 if c in children_related_to_new_tuple:
                     time4 = time.time()
-                    For_node_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, P, st, c,
+                    num_patterns_visited = For_node_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, P, st, c,
                                                   data_size, alpha, patterns_top_k, whole_data_frame,
                                                   attributes, k, new_tuple, ancestors,
-                                                  patterns_size_whole, pc_whole_data, result_set, num_att)
+                                                  patterns_size_whole, pc_whole_data, result_set, num_att,
+                                                                          num_patterns_visited)
                     time5 = time.time()
-                    print("time for For_node_related_to_new_tuple = {}".format(time5 - time4))
+                    #print("time for For_node_related_to_new_tuple = {}".format(time5 - time4))
                 else:
                     time4 = time.time()
-                    For_node_not_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, P, st, c,
+                    num_patterns_visited = For_node_not_related_to_new_tuple(nodes_dict, k_dict, smallest_valid_k, P, st, c,
                                                       data_size, alpha, patterns_top_k, whole_data_frame,
                                                       attributes, k, new_tuple, ancestors,
-                                                      patterns_size_whole, pc_whole_data, result_set, num_att)
+                                                      patterns_size_whole, pc_whole_data, result_set, num_att,
+                                                      num_patterns_visited)
                     time5 = time.time()
-                    print("time for For_node_not_related_to_new_tuple = {}".format(time5 - time4))
+                    #print("time for For_node_not_related_to_new_tuple = {}".format(time5 - time4))
 
                 # time2 = time.time()
                 # print("time for Update_k_value is {}".format(time2 - time1))
@@ -809,7 +825,7 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstat
                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
 
 selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
-                       'Fedu_C', 'Mjob_C', 'Fjob_C']
+                       'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C']
 
 original_data_file = r"../../InputData/StudentDataset/ForRanking_1/student-mat_cat_ranked.csv"
 

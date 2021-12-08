@@ -33,7 +33,7 @@ from itertools import combinations
 from Algorithms import pattern_count
 import time
 from Algorithms import Predict_0_20210127 as predict
-from Algorithms import NewAlgRanking_8_20210702 as naiveranking
+from Algorithms import NaiveAlgRanking_2_20210701 as naiveranking
 
 
 def P1DominatedByP2(P1, P2):
@@ -466,8 +466,6 @@ print(Lowerbounds, "\n", Upperbounds)
 
 
 
-
-
 print("start the new alg")
 
 pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, running_time = \
@@ -488,13 +486,15 @@ for p in pattern_treated_unfairly_lowerbound:
 
 
 
-
 print("start the naive alg")
 
 pattern_treated_unfairly_lowerbound2, pattern_treated_unfairly_upperbound2, \
-num_patterns_visited2, running_time2 = naiveranking.GraphTraverse(ranked_data, selected_attributes, Thc,
+num_patterns_visited2, running_time2 = naiveranking.NaiveAlg(ranked_data, selected_attributes, Thc,
                                                                      Lowerbounds, Upperbounds,
                                                                      k_min, k_max, time_limit)
+
+
+
 
 
 print("num_patterns_visited = {}".format(num_patterns_visited2))
