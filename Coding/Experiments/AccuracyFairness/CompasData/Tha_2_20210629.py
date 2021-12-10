@@ -21,24 +21,36 @@ Thc = 30
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlg_1_20210529 as newalg
-from Algorithms import NaiveAlg_1_20210528 as naivealg
+from Algorithms import NewAlg_2_20211001 as newalg
+from Algorithms import NaiveAlg_2_20211020 as naivealg
 from Algorithms import Predict_0_20210127 as predict
+
+
 import matplotlib.pyplot as plt
+import seaborn as sns
 from matplotlib.ticker import FuncFormatter
-SMALL_SIZE = 8
-MEDIUM_SIZE = 10
-BIGGER_SIZE = 20
-plt.rc('figure', figsize=(7, 5.6))
 
-plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
-plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
-plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
-plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=BIGGER_SIZE)    # legend fontsize
-plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
 
+
+sns.set_palette("Paired")
+# sns.set_palette("deep")
+sns.set_context("poster", font_scale=2)
+sns.set_style("whitegrid")
+# sns.palplot(sns.color_palette("deep", 10))
+# sns.palplot(sns.color_palette("Paired", 9))
+
+line_style = ['o-', 's--', '^:', '-.p']
+color = ['C0', 'C1', 'C2', 'C3', 'C4']
+plt_title = ["BlueNile", "COMPAS", "Credit Card"]
+
+label = ["Optimized", "Naive"]
+line_width = 8
+marker_size = 15
+# f_size = (14, 10)
+
+f_size = (14, 10)
 def thousands_formatter(x, pos):
     return int(x/1000)
 
@@ -84,9 +96,8 @@ for dif in diff_acc:
     result_cardinality = 0
     for l in range(num_loops):
         print("tha = {}, thc = {}".format(tha, thc))
-        pattern_with_low_accuracy, num_calculation, t_ = newalg.GraphTraverse(less_attribute_data,
-                                                                              mis_class_data, tha,
-                                                                              thc, time_limit)
+        pattern_with_low_accuracy, sizes_of_patterns, fairness_values_of_patterns, num_calculation, t_ \
+            = newalg.GraphTraverse(less_attribute_data, mis_class_data, tha, thc, time_limit)
         print("time = {} s, num_calculation = {}".format(t_, num_calculation))
         print("find {} patterns".format(len(pattern_with_low_accuracy)))
         print(pattern_with_low_accuracy)
@@ -104,7 +115,7 @@ for dif in diff_acc:
 
 
 
-output_path = r'../../../../OutputData/LowAccDetection/CompasDataset/tha.txt'
+output_path = r'../../../../OutputData/LowAccDetection/AdultDataset/tha.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time)
 
@@ -128,35 +139,46 @@ for n in range(len(diff_acc)):
 
 
 
-plt.plot(diff_acc, execution_time, label="optimized algorithm", color='blue', linewidth = 3.4)
 
 
-plt.xlabel('delta fairness value')
-plt.ylabel('execution time (s)')
+
+fig, ax = plt.subplots(1, 1, figsize=f_size)
+plt.plot(diff_acc, execution_time, line_style[0], color=color[0], label=label[0], linewidth=line_width,
+          markersize=marker_size)
+plt.xlabel('Delta fairness value')
+plt.ylabel('Execution time (s)')
 plt.xticks(diff_acc)
-
-plt.subplots_adjust(bottom=0.15, left=0.18)
-plt.legend()
-plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/tha_time.png")
+plt.legend(loc='best')
+plt.grid(True)
+fig.tight_layout()
+plt.savefig("../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/tha_time.png", bbox_inches='tight')
 plt.show()
-
-
-fig, ax = plt.subplots()
-plt.plot(diff_acc, num_calculations, label="optimized algorithm", color='blue', linewidth = 3.4)
-
-plt.xlabel('delta fairness value')
-plt.ylabel('number of patterns visited (K)')
-ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-
-
-plt.xticks(diff_acc)
-plt.subplots_adjust(bottom=0.15, left=0.18)
-plt.legend()
-plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/tha_calculations.png")
-plt.show()
-
-
 plt.close()
+
+
+
+
+
+
+fig, ax = plt.subplots(1, 1, figsize=f_size)
+plt.plot(diff_acc, num_calculations, line_style[0], color=color[0], label=label[0], linewidth=line_width,
+          markersize=marker_size)
+plt.xlabel('Delta fairness value')
+plt.ylabel('Number of patterns visited (K)')
+ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
+plt.xticks(diff_acc)
+plt.legend(loc='best')
+plt.grid(True)
+fig.tight_layout()
+plt.savefig("../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/tha_calculations.png", bbox_inches='tight')
+plt.show()
+plt.close()
+
+
+
+
+
+
 plt.clf()
 
 

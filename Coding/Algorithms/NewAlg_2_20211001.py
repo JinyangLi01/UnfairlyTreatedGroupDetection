@@ -5,7 +5,7 @@ Stop point 1: when finding a pattern satisfying the requirements
 Stop point 2: when the cardinality is too small
 
 difference from newalg_1:
-change undertermined from -1 to -2, since dataset has -1 values but no smaller values
+change undertermined from -1 to -2, since medical dataset has -1 values but no smaller values
 """
 
 from Algorithms import pattern_count
