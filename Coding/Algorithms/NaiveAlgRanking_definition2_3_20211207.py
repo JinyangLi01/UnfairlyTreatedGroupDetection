@@ -22,7 +22,7 @@ import time
 import pandas as pd
 import numpy as np
 
-import pattern_count
+from Algorithms import pattern_count
 
 
 def DFSattributes(cur, last, comb, pattern, all_p, mcdes, attributes):
