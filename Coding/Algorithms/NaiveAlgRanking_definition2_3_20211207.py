@@ -22,7 +22,7 @@ import time
 import pandas as pd
 import numpy as np
 
-from Algorithms import pattern_count
+import pattern_count
 
 
 def DFSattributes(cur, last, comb, pattern, all_p, mcdes, attributes):
@@ -237,14 +237,17 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
                 #     print("k={}, pattern equal = {}, num_top_k = {}".format(k, P, num_top_k))
                 CheckDominationAndAdd(P, result_set)
             else:
+                time1 = time.time()
                 children = GenerateChildren(P, whole_data_frame, ranked_data, attributes)
+                time2 = time.time()
+                # print("time for GenerateChildren = {}".format(time2 - time1))
                 S = children + S
                 continue
         pattern_treated_unfairly.append(result_set)
     time1 = time.time()
     return pattern_treated_unfairly, num_patterns_visited, time1 - time0
 
-#
+
 #
 # all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
 #                   'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C',
@@ -252,27 +255,18 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
 #                   'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
 #                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
 #
-# selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C']
-#
-#
-# """
-# with the above 19 att,
-# naive: 98s num_patterns_visited = 2335488
-# optimized: 124s num_patterns_visited = 299559
-# num of pattern_treated_unfairly_lowerbound = 85, num of pattern_treated_unfairly_upperbound = 18
-# """
+# selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
+#                        'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C']
 #
 # original_data_file = r"../../InputData/StudentDataset/ForRanking_1/student-mat_cat_ranked.csv"
-#
 #
 # ranked_data = pd.read_csv(original_data_file)
 # ranked_data = ranked_data[selected_attributes]
 #
-#
 # time_limit = 5 * 60
-# k_min = 162
-# k_max = 166
-# Thc = 50
+# k_min = 10
+# k_max = 16
+# Thc = 30
 #
 # List_k = list(range(k_min, k_max))
 #

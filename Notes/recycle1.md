@@ -120,3 +120,16 @@ so p is also in stop set. I get calculating p repeatedly later...
 
 
 
+# Dec. 9, 2021
+
+TODO:
+1. finish implementation ASAP. Don't use recursive functions...
+2. Do medical dataset for all classification experiments
+3. Add description for medical dataset in paper draft
+4. Good luck >_<
+
+
+
+
+
+
