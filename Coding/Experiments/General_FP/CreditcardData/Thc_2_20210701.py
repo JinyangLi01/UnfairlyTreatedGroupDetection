@@ -19,22 +19,35 @@ import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
 from Algorithms import NewAlgGeneral_1_20210528 as newalg
-from Algorithms import NaiveAlgGeneral_1_202105258 as naivealg
+from Algorithms import NaiveAlgGeneral_2_20211020 as naivealg
 from Algorithms import Predict_0_20210127 as predict
-import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter
-SMALL_SIZE = 8
-MEDIUM_SIZE = 10
-BIGGER_SIZE = 20
-plt.rc('figure', figsize=(7, 5.6))
 
-plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
-plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
-plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
-plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=BIGGER_SIZE)    # legend fontsize
-plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib.ticker import FuncFormatter
+
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
+
+sns.set_palette("Paired")
+# sns.set_palette("deep")
+sns.set_context("poster", font_scale=2)
+sns.set_style("whitegrid")
+# sns.palplot(sns.color_palette("deep", 10))
+# sns.palplot(sns.color_palette("Paired", 9))
+
+line_style = ['o-', 's--', '^:', '-.p']
+color = ['C0', 'C1', 'C2', 'C3', 'C4']
+plt_title = ["BlueNile", "COMPAS", "Credit Card"]
+
+label = ["Optimized", "Naive"]
+line_width = 8
+marker_size = 15
+# f_size = (14, 10)
+
+f_size = (14, 10)
+
+
 
 
 def ComparePatternSets(set1, set2):
@@ -124,7 +137,7 @@ for thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/General/CreditcardDataset/thc_optimized.txt'
+output_path = r'../../../../OutputData/General_withStopCond/CreditcardDataset/thc_optimized.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -145,31 +158,40 @@ for n in range(len(Thc_list)):
 
 
 
-plt.plot(Thc_list, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
 
-plt.xlabel('size threshold')
-plt.ylabel('execution time (s)')
+fig, ax = plt.subplots(1, 1, figsize=f_size)
+plt.plot(Thc_list, execution_time1, line_style[0], color=color[0], label=label[0], linewidth=line_width,
+         markersize=marker_size)
+plt.xlabel('Size threshold')
+plt.ylabel('Execution time (s)')
 plt.xticks(Thc_list)
-plt.subplots_adjust(bottom=0.15, left=0.18)
-plt.legend()
-plt.savefig("../../../../OutputData/General/CreditcardDataset/thc_time_optimized.png")
+plt.legend(loc='best')
+plt.grid(True)
+fig.tight_layout()
+plt.savefig("../../../../OutputData/General_withStopCond/CreditcardDataset/thc_time_optimized.png",
+            bbox_inches='tight')
 plt.show()
-
-
-fig, ax = plt.subplots()
-plt.plot(Thc_list, num_calculation1, label="optimized algorithm", color='blue', linewidth = 3.4)
-
-plt.xlabel('size threshold')
-plt.ylabel('number of patterns visited (K)')
-ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-
-
-plt.xticks(Thc_list)
-plt.subplots_adjust(bottom=0.15, left=0.18)
-plt.legend()
-plt.savefig("../../../../OutputData/General/CreditcardDataset/thc_calculations_optimized.png")
-plt.show()
-
 plt.close()
+
+
+
+
+fig, ax = plt.subplots(1, 1, figsize=f_size)
+plt.plot(Thc_list, num_calculation1, line_style[0], color=color[0], label=label[0], linewidth=line_width,
+         markersize=marker_size)
+plt.xlabel('Size threshold')
+plt.ylabel('Number of patterns visited (K)')
+ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
+plt.xticks(Thc_list)
+plt.legend(loc='best')
+plt.grid(True)
+fig.tight_layout()
+plt.savefig("../../../../OutputData/General_withStopCond/CreditcardDataset/thc_calculations_optimized.png",
+            bbox_inches='tight')
+plt.show()
+plt.close()
+
+
+
 plt.clf()
 
