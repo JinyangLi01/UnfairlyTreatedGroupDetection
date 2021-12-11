@@ -5,11 +5,37 @@ Stop point 1: when finding a pattern satisfying the requirements
 Stop point 2: when the cardinality is too small
 
 difference from newalg_1:
-change undertermined from -1 to -2, since medical dataset has -1 values but no smaller values
+change undertermined from -1 to -2, since medical dataset has -1 values but no smaller values!!!
+
+!!!ATTENTION!!!
+when non-deterministic attributes are -2, use this script.
+When they are -1, use NewAlg_1!!!
 """
+
+
 
 from Algorithms import pattern_count
 import time
+from Algorithms import NaiveAlg_2_20211020 as naivealg
+import pandas as pd
+
+
+
+def ComparePatternSets(set1, set2):
+    len1 = len(set1)
+    len2 = len(set2)
+    if len1 != len2:
+        return False
+    for p in set1:
+        found = False
+        for q in set2:
+            if PatternEqual(p, q):
+                found = True
+                break
+        if found is False:
+            return False
+    return True
+
 
 
 def P1DominatedByP2(P1, P2):
@@ -140,6 +166,5 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
           num_patterns_skipped_by_size, num_patterns_with_2size_check))
     return pattern_with_low_accuracy, sizes_of_patterns, fairness_values_of_patterns,\
            num_calculation, time2-time1
-
 
 
