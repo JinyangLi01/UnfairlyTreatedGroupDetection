@@ -76,7 +76,7 @@ mis_data_file = "../../../../InputData/AdultDataset/ForClassification/CleanAdult
 mis_data = pd.read_csv(mis_data_file)
 
 
-time_limit = 20*60
+time_limit = 10*60
 execution_time1 = list()
 
 num_calculation1 = list()

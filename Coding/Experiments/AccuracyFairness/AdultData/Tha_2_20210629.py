@@ -70,7 +70,7 @@ original_data = pd.read_csv(original_data_file)
 mis_data_file = "../../../../InputData/AdultDataset/ForClassification/CleanAdult_numerical_mis_cat.csv"
 mis_data = pd.read_csv(mis_data_file)
 
-time_limit = 20 * 60
+time_limit = 10 * 60
 execution_time = list()
 num_calculations = list()
 num_patterns_checked2 = list()
