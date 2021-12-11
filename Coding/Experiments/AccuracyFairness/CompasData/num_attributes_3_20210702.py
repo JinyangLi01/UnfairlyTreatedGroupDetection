@@ -234,7 +234,7 @@ plt.ylabel('execution time (s)')
 plt.xticks(x_new)
 plt.subplots_adjust(bottom=0.15, left=0.18)
 plt.legend()
-plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/num_att_time_18att.png")
+plt.savefig("../../../../OutputData/LowAccDetection/CompasDataset/num_att_time.png")
 plt.show()
 
 
