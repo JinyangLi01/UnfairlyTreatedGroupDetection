@@ -206,7 +206,7 @@ for number_attributes in range(num_att_max_naive, num_att_max):
 
 
 
-output_path = r'../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/num_attribute_18att.txt'
+output_path = r'../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/num_attribute.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -214,7 +214,7 @@ output_file.write("execution time\n")
 for n in range(num_att_min, num_att_max_naive):
     output_file.write('{} {} {}\n'.format(n, execution_time1[n-num_att_min], execution_time2[n-num_att_min]))
 for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {}\n'.format(n, execution_time1[n - num_att_max_naive]))
+    output_file.write('{} {}\n'.format(n, execution_time1[n - num_att_min]))
 #output_file.write('\n'.join('{} {} {}'.format(index + num_att_min, x, y) for index, x, y in enumerate(execution_time1) and execution_time2))
 
 
@@ -222,7 +222,7 @@ output_file.write("\n\nnumber of patterns checked\n")
 for n in range(num_att_min, num_att_max_naive):
     output_file.write('{} {} {}\n'.format(n, num_calculation1[n-num_att_min], num_calculation2[n-num_att_min]))
 for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {}\n'.format(n, num_calculation1[n-num_att_max_naive]))
+    output_file.write('{} {}\n'.format(n, num_calculation1[n-num_att_min]))
 
 #output_file.write('\n'.join('{} {} {}'.format(index + num_att_min, x, y) for index, x, y in enumerate(num_calculation1) and num_calculation2))
 
