@@ -147,10 +147,10 @@ time_limit = 10*60
 
 # with 7 att, naive alg needs 40 s
 # with 8 att, naive alg time out (over 10min)
-# with 14 att, new alg over time > 10min
+# with 13 att, new alg over time > 10min
 num_att_max_naive = 8
 num_att_min = 3
-num_att_max = 14
+num_att_max = 13
 execution_time1 = list()
 execution_time2 = list()
 num_calculation1 = list()
@@ -213,7 +213,7 @@ for number_attributes in range(num_att_max_naive, num_att_max):
 
 
 
-output_path = r'../../../../OutputData/General_withStopCond/CreditcardDataset/num_attribute_14att.txt'
+output_path = r'../../../../OutputData/General_withStopCond/CreditcardDataset/num_attribute.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -223,20 +223,20 @@ output_file.write("execution time\n")
 for n in range(num_att_min, num_att_max_naive):
     output_file.write('{} {} {}\n'.format(n, execution_time1[n-num_att_min], execution_time2[n-num_att_min]))
 for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {}\n'.format(n, execution_time1[n - num_att_max_naive]))
+    output_file.write('{} {}\n'.format(n, execution_time1[n - num_att_min]))
 
 
 output_file.write("\n\nnumber of patterns checked\n")
 for n in range(num_att_min, num_att_max_naive):
     output_file.write('{} {} {}\n'.format(n, num_calculation1[n-num_att_min], num_calculation2[n-num_att_min]))
 for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {}\n'.format(n, num_calculation1[n-num_att_max_naive]))
+    output_file.write('{} {}\n'.format(n, num_calculation1[n-num_att_min]))
 
 
 
 output_file.write("\n\nnumber of patterns found\n")
-for n in range(num_att_min, num_att_max_naive):
-    output_file.write('{} {} \n {}\n'.format(n, num_patterns_found[n], patterns_found[n]))
+for n in range(num_att_min, num_att_max):
+    output_file.write('{} {} \n {}\n'.format(n, num_patterns_found[n-num_att_min], patterns_found[n-num_att_min]))
 
 
 
@@ -257,7 +257,7 @@ plt.plot(x_naive, execution_time2 , line_style[1], color=color[1], label=label[1
           markersize=marker_size)
 plt.xlabel('Number of attributes')
 plt.ylabel('Execution time (s)')
-plt.xticks([2, 4, 6, 8, 10, 12, 14])
+plt.xticks([2, 4, 6, 8, 10, 12])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
@@ -277,7 +277,7 @@ plt.plot(x_naive, num_calculation2, line_style[1], color=color[1], label=label[1
 plt.xlabel('Number of attributes')
 plt.ylabel('Number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-plt.xticks([2, 4, 6, 8, 10, 12, 14])
+plt.xticks([2, 4, 6, 8, 10, 12])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
