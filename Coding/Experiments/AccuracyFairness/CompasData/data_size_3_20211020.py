@@ -103,9 +103,9 @@ def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes):
 
 
     if execution_time1 > time_limit:
-        print("new alg exceeds time limit")
+        raise Exception("new alg exceeds time limit")
     if execution_time2 > time_limit:
-        print("naive alg exceeds time limit")
+        raise Exception("naive alg exceeds time limit")
 
 
     return execution_time1, num_calculation1, execution_time2, num_calculation2, pattern_with_low_accuracy1, overall_acc, tha
