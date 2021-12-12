@@ -69,7 +69,7 @@ TN_data_file = "../../../../InputData/CreditcardDataset/ForClassification/credit
 TN = pd.read_csv(TN_data_file)[selected_attributes]
 
 overall_FPR = len(FP) / (len(FP) + len(TN))
-time_limit = 5*60
+time_limit = 10*60
 
 
 execution_time = list()

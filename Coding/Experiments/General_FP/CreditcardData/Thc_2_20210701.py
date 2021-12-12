@@ -86,7 +86,7 @@ TN_data_file = "../../../../InputData/CreditcardDataset/ForClassification/credit
 TN = pd.read_csv(TN_data_file)[selected_attributes]
 
 overall_FPR = len(FP) / (len(FP) + len(TN))
-time_limit = 5*60
+time_limit = 10*60
 
 execution_time1 = list()
 
@@ -137,7 +137,7 @@ for thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/General_withStopCond/CreditcardDataset/thc_optimized.txt'
+output_path = r'../../../../OutputData/General_withStopCond/CreditcardDataset/thc.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -168,7 +168,7 @@ plt.xticks(Thc_list)
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/General_withStopCond/CreditcardDataset/thc_time_optimized.png",
+plt.savefig("../../../../OutputData/General_withStopCond/CreditcardDataset/thc_time.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -186,7 +186,7 @@ plt.xticks(Thc_list)
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/General_withStopCond/CreditcardDataset/thc_calculations_optimized.png",
+plt.savefig("../../../../OutputData/General_withStopCond/CreditcardDataset/thc_calculations.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
