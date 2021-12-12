@@ -75,19 +75,19 @@ all_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_deg
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
-original_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified.csv"
+original_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_17att_classified.csv"
 less_attribute_data = pd.read_csv(original_data_file)[all_attributes]
-FP_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_FP.csv"
+FP_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_17att_classified_FP.csv"
 FP = pd.read_csv(FP_data_file)[all_attributes]
-TP_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_TP.csv"
+TP_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_17att_classified_TP.csv"
 TP = pd.read_csv(TP_data_file)[all_attributes]
-FN_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_FN.csv"
+FN_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_17att_classified_FN.csv"
 FN = pd.read_csv(FN_data_file)[all_attributes]
-TN_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_TN.csv"
+TN_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_17att_classified_TN.csv"
 TN = pd.read_csv(TN_data_file)[all_attributes]
 
 overall_FPR = len(FP) / (len(FP) + len(TN))
-time_limit = 5*60
+time_limit = 10*60
 execution_time1 = list()
 
 num_calculation1 = list()
@@ -122,7 +122,7 @@ for thc in Thc_list:
 
 
         if t1_ > time_limit:
-            print("new alg exceeds time limit")
+            raise Exception("new alg exceeds time limit")
 
         if l == 0:
             result_cardinality = len(pattern_with_low_fairness1)
