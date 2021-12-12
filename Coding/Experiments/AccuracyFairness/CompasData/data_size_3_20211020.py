@@ -20,27 +20,37 @@ threshold of minority group accuracy: overall acc - 20
 """
 
 
+
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlg_1_20210529 as newalg
+from Algorithms import NewAlg_1_20210529 as newalg # when deterministic attributes are -1, use NewAlg_1, when -2, use NewALg_2
 from Algorithms import NaiveAlg_2_20211020 as naivealg
-from Algorithms import NaiveAlg_1_20210528 as naivealg_without_stop_cond
 import matplotlib.pyplot as plt
+import seaborn as sns
 from matplotlib.ticker import FuncFormatter
-SMALL_SIZE = 8
-MEDIUM_SIZE = 10
-BIGGER_SIZE = 20
-plt.rc('figure', figsize=(7, 5.6))
 
-plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
-plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
-plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
-plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=BIGGER_SIZE)    # legend fontsize
-plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
 
+
+sns.set_palette("Paired")
+# sns.set_palette("deep")
+sns.set_context("poster", font_scale=2)
+sns.set_style("whitegrid")
+# sns.palplot(sns.color_palette("deep", 10))
+# sns.palplot(sns.color_palette("Paired", 9))
+
+line_style = ['o-', 's--', '^:', '-.p']
+color = ['C0', 'C1', 'C2', 'C3', 'C4']
+plt_title = ["BlueNile", "COMPAS", "Credit Card"]
+
+label = ["Optimized", "Naive"]
+line_width = 8
+marker_size = 15
+# f_size = (14, 10)
+
+f_size = (14, 10)
 
 def ComparePatternSets(set1, set2):
     len1 = len(set1)
@@ -74,9 +84,9 @@ def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes):
 
     tha = overall_acc - 0.2
     print("tha = {}, thc = {}".format(tha, thc))
-    pattern_with_low_accuracy1, num_calculation1, execution_time1 = newalg.GraphTraverse(less_attribute_data,
-                                                                                         mis_class_data, tha,
-                                                                                         thc, time_limit)
+    pattern_with_low_accuracy1, num_calculation1, execution_time1 \
+        = newalg.GraphTraverse(less_attribute_data, mis_class_data, tha, thc, time_limit)
+
     print("newalg, time = {} s, num_calculation = {}".format(execution_time1, num_calculation1), "\n",
           pattern_with_low_accuracy1)
 
@@ -86,14 +96,8 @@ def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes):
     print("naivealg, time = {} s, num_calculation = {}".format(execution_time2, num_calculation2), "\n",
           pattern_with_low_accuracy2)
 
-    pattern_with_low_accuracy3, num_calculation3, execution_time3 = naivealg_without_stop_cond.NaiveAlg(less_attribute_data,
-                                                                                      mis_class_data, tha,
-                                                                                      thc, time_limit)
-    print("naivealg_without_stop_cond, time = {} s, num_calculation = {}".format(execution_time3, num_calculation3), "\n",
-          pattern_with_low_accuracy3)
-
     if ComparePatternSets(pattern_with_low_accuracy1, pattern_with_low_accuracy2) is False:
-        print("sanity check fails!")
+        raise Exception("sanity check fails!")
 
     print("{} patterns with low accuracy: \n {}".format(len(pattern_with_low_accuracy1), pattern_with_low_accuracy1))
 
@@ -114,7 +118,7 @@ original_data_file_pathprefix = "../../../../InputData/CompasData/LargerDatasets
 
 
 
-time_limit = 20*60
+time_limit = 10*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
 # so for naive alg, we only do when number of attributes <= 7
 execution_time1 = list()
@@ -178,33 +182,45 @@ for n in range(len(data_sizes)):
 
 
 
-fig, ax = plt.subplots()
-plt.plot(data_sizes, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
-plt.plot(data_sizes, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
-plt.xlabel('data size (K)')
-plt.ylabel('execution time (s)')
+fig, ax = plt.subplots(1, 1, figsize=f_size)
+plt.plot(data_sizes, execution_time1, line_style[0], color=color[0], label=label[0], linewidth=line_width,
+          markersize=marker_size)
+plt.plot(data_sizes, execution_time2, line_style[1], color=color[1], label=label[1], linewidth=line_width,
+             markersize=marker_size)
+plt.xlabel('Data size (K)')
 plt.xticks([6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-plt.subplots_adjust(bottom=0.15, left=0.18)
-plt.legend()
-plt.savefig("../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/datasize_time.png")
+plt.ylabel('Execution time (s)')
+plt.legend(loc='best')
+plt.grid(True)
+fig.tight_layout()
+plt.savefig("../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/datasize_time.png",
+            bbox_inches='tight')
 plt.show()
-
-
-fig, ax = plt.subplots()
-plt.plot(data_sizes, num_patterns_checked1, label="optimized algorithm", color='blue', linewidth=3.4)
-plt.plot(data_sizes, num_patterns_checked2, label="naive algorithm", color='orange', linewidth=3.4)
-plt.xlabel('data size (K)')
-plt.xticks([6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000])
-ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-plt.ylabel('number of patterns visited (K)')
-ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-plt.subplots_adjust(bottom=0.15, left=0.18)
-plt.legend()
-plt.savefig("../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/datasize_calculations.png")
-plt.show()
-
-
 plt.close()
+
+
+
+
+fig, ax = plt.subplots(1, 1, figsize=f_size)
+plt.plot(data_sizes, num_patterns_checked1, line_style[0], color=color[0], label=label[0], linewidth=line_width,
+          markersize=marker_size)
+plt.plot(data_sizes, num_patterns_checked2, line_style[1], color=color[1], label=label[1], linewidth=line_width,
+             markersize=marker_size)
+plt.xlabel('Data size (K)')
+plt.xticks([6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000])
+ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
+plt.ylabel('Number of patterns visited (K)')
+ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
+plt.legend(loc='best')
+plt.grid(True)
+fig.tight_layout()
+plt.savefig("../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/datasize_calculations.png",
+            bbox_inches='tight')
+plt.show()
+plt.close()
+
+
+
 plt.clf()
 
