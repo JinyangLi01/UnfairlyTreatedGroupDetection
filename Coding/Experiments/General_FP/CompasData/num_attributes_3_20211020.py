@@ -17,22 +17,34 @@ import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
 from Algorithms import NewAlgGeneral_1_20210528 as newalg
-from Algorithms import NaiveAlgGeneral_1_202105258 as naivealg
+from Algorithms import NaiveAlgGeneral_2_20211020 as naivealg
 from Algorithms import Predict_0_20210127 as predict
-import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter
-SMALL_SIZE = 8
-MEDIUM_SIZE = 10
-BIGGER_SIZE = 20
-plt.rc('figure', figsize=(7, 5.6))
 
-plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
-plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
-plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
-plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=BIGGER_SIZE)    # legend fontsize
-plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib.ticker import FuncFormatter
+
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
+
+
+sns.set_palette("Paired")
+# sns.set_palette("deep")
+sns.set_context("poster", font_scale=2)
+sns.set_style("whitegrid")
+# sns.palplot(sns.color_palette("deep", 10))
+# sns.palplot(sns.color_palette("Paired", 9))
+
+line_style = ['o-', 's--', '^:', '-.p']
+color = ['C0', 'C1', 'C2', 'C3', 'C4']
+plt_title = ["BlueNile", "COMPAS", "Credit Card"]
+
+label = ["Optimized", "Naive"]
+line_width = 8
+marker_size = 15
+# f_size = (14, 10)
+
+f_size = (14, 10)
 
 
 
@@ -78,8 +90,11 @@ def GridSearch(original_data, TP, TN, FP, FN, all_attributes, thc, number_attrib
         pattern_with_low_fairness1, num_calculation1, execution_time1 = newalg.GraphTraverse(less_attribute_data,
                                                                                 TP, TN, FP, FN, delta_thf,
                                                                                 thc, time_limit, fairness_definition)
+        print("newalg, time = {} s, num_calculation = {}".format(execution_time1, num_calculation1))
 
         print("{} patterns with low accuracy: \n {}".format(len(pattern_with_low_fairness1), pattern_with_low_fairness1))
+        if execution_time1 > time_limit:
+            raise Exception("new alg over time")
         return execution_time1, num_calculation1, 0, 0, pattern_with_low_fairness1
 
 
@@ -96,33 +111,36 @@ def GridSearch(original_data, TP, TN, FP, FN, all_attributes, thc, number_attrib
           pattern_with_low_fairness2)
 
     if ComparePatternSets(pattern_with_low_fairness1, pattern_with_low_fairness2) is False:
-        print("sanity check fails!")
+        raise Exception("sanity check fails!")
 
 
     print("{} patterns with low accuracy: \n {}".format(len(pattern_with_low_fairness1), pattern_with_low_fairness1))
 
     if execution_time1 > time_limit:
-        print("new alg exceeds time limit")
+        raise Exception("new alg exceeds time limit")
     if execution_time2 > time_limit:
-        print("naive alg exceeds time limit")
+        raise Exception("naive alg exceeds time limit")
 
     return execution_time1, num_calculation1, execution_time2, num_calculation2, \
            pattern_with_low_fairness1
 
 all_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score',
                 'c_days_from_compas_C',
-                'juv_fel_count_C', 'juv_misd_count_C', 'juv_other_count_C']
+                'juv_fel_count_C', 'juv_misd_count_C', 'juv_other_count_C', 'start_C', 'end_C',
+                  'v_decile_score_C', 'Violence_score_C', 'event_C']
+
+
 thc = 50
 
-original_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified.csv"
+original_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_17att_classified.csv"
 original_data = pd.read_csv(original_data_file)
-FP_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_FP.csv"
+FP_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_17att_classified_FP.csv"
 FP = pd.read_csv(FP_data_file)
-TP_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_TP.csv"
+TP_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_17att_classified_TP.csv"
 TP = pd.read_csv(TP_data_file)
-FN_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_FN.csv"
+FN_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_17att_classified_FN.csv"
 FN = pd.read_csv(FN_data_file)
-TN_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_13att_classified_TN.csv"
+TN_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_17att_classified_TN.csv"
 TN = pd.read_csv(TN_data_file)
 
 overall_FPR = len(FP) / (len(FP) + len(TN))
@@ -130,11 +148,13 @@ overall_FPR = len(FP) / (len(FP) + len(TN))
 time_limit = 10*60
 
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
-# so for naive alg, we only do when number of attributes <= 7
-# when there are 6 att, naive alg runs faster than new alg with 13 att
-num_att_max_naive = 8
+# with 7 att, naive alg needs 11 s
+# with 8 att, naive alg needs 117 s
+# with 9 att, naive alg needs 474 s
+num_att_max_naive = 10
 num_att_min = 3
-num_att_max = 12
+num_att_max = 17
+# with 15 att, new alg needs 157 s
 execution_time1 = list()
 execution_time2 = list()
 num_calculation1 = list()
@@ -208,20 +228,20 @@ output_file.write("execution time\n")
 for n in range(num_att_min, num_att_max_naive):
     output_file.write('{} {} {}\n'.format(n, execution_time1[n-num_att_min], execution_time2[n-num_att_min]))
 for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {}\n'.format(n, execution_time1[n - num_att_max_naive]))
+    output_file.write('{} {}\n'.format(n, execution_time1[n - num_att_min]))
 
 
 output_file.write("\n\nnumber of patterns checked\n")
 for n in range(num_att_min, num_att_max_naive):
     output_file.write('{} {} {}\n'.format(n, num_calculation1[n-num_att_min], num_calculation2[n-num_att_min]))
 for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {}\n'.format(n, num_calculation1[n-num_att_max_naive]))
+    output_file.write('{} {}\n'.format(n, num_calculation1[n-num_att_min]))
 
 
 
 output_file.write("\n\nnumber of patterns found\n")
-for n in range(num_att_min, num_att_max_naive):
-    output_file.write('{} {} \n {}\n'.format(n, num_patterns_found[n], patterns_found[n]))
+for n in range(num_att_min, num_att_max):
+    output_file.write('{} {} \n {}\n'.format(n, num_patterns_found[n-num_att_min], patterns_found[n-num_att_min]))
 
 
 
@@ -232,32 +252,46 @@ x_new = list(range(num_att_min, num_att_max))
 x_naive = list(range(num_att_min, num_att_max_naive))
 
 
-plt.plot(x_new, execution_time1, label="new algorithm", color='blue', linewidth = 3.4)
-plt.plot(x_naive, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
 
-plt.xlabel('number of attributes')
-plt.ylabel('execution time (s)')
-plt.xticks(x_new)
-plt.subplots_adjust(bottom=0.15, left=0.18)
-plt.legend()
-plt.savefig("../../../../OutputData/General_withStopCond/CompasDataset/num_att_time.png")
+
+
+
+
+fig, ax = plt.subplots(1, 1, figsize=f_size)
+plt.plot(x_new, execution_time1, line_style[0], color=color[0], label=label[0], linewidth=line_width,
+          markersize=marker_size)
+plt.plot(x_naive, execution_time2 , line_style[1], color=color[1], label=label[1], linewidth=line_width,
+          markersize=marker_size)
+plt.xlabel('Number of attributes')
+plt.ylabel('Execution time (s)')
+plt.xticks([2, 4, 6, 8, 10, 12, 14, 16])
+plt.legend(loc='best')
+plt.grid(True)
+fig.tight_layout()
+plt.savefig("../../../../OutputData/General_withStopCond/CompasDataset/num_att_time.png", bbox_inches='tight')
 plt.show()
-
-
-fig, ax = plt.subplots()
-plt.plot(x_new, num_calculation1, label="optimized algorithm", color='blue', linewidth = 3.4)
-plt.plot(x_naive, num_calculation2, label="optimized algorithm", color='orange', linewidth = 3.4)
-plt.xlabel('number of attributes')
-plt.ylabel('number of patterns visited (K)')
-ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-
-
-plt.xticks(x_new)
-plt.subplots_adjust(bottom=0.15, left=0.18)
-plt.legend()
-plt.savefig("../../../../OutputData/General_withStopCond/CompasDataset/num_att_calculations.png")
-plt.show()
-
 plt.close()
+
+
+
+
+
+fig, ax = plt.subplots(1, 1, figsize=f_size)
+plt.plot(x_new, num_calculation1, line_style[0], color=color[0], label=label[0], linewidth=line_width,
+          markersize=marker_size)
+plt.plot(x_naive, num_calculation2, line_style[1], color=color[1], label=label[1], linewidth=line_width,
+          markersize=marker_size)
+plt.xlabel('Number of attributes')
+plt.ylabel('Number of patterns visited (K)')
+ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
+plt.xticks([2, 4, 6, 8, 10, 12, 14, 16])
+plt.legend(loc='best')
+plt.grid(True)
+fig.tight_layout()
+plt.savefig("../../../../OutputData/General_withStopCond/CompasDataset/num_att_calculations.png", bbox_inches='tight')
+plt.show()
+plt.close()
+
+
 plt.clf()
 
