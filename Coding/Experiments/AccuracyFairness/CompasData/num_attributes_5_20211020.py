@@ -78,6 +78,10 @@ def GridSearch(original_data, mis_data, all_attributes, thc, number_attributes, 
         pattern_with_low_accuracy1, num_calculation1, execution_time1 = newalg.GraphTraverse(less_attribute_data,
                                                                               mis_class_data, tha,
                                                                               thc, time_limit)
+        print("newalg, time = {} s, num_calculation = {}".format(execution_time1, num_calculation1), "\n",
+              pattern_with_low_accuracy1)
+        if execution_time1 > time_limit:
+            raise Exception("new alg over time")
         print("{} patterns with low accuracy: \n {}".format(len(pattern_with_low_accuracy1), pattern_with_low_accuracy1))
         return execution_time1, num_calculation1, 0, 0, pattern_with_low_accuracy1
 
@@ -114,19 +118,16 @@ def GridSearch(original_data, mis_data, all_attributes, thc, number_attributes, 
 
 
 
-all_attributes = ['sex_binary', 'age_binary', 'race_C', 'MarriageStatus_C', 'priors_count_C',
-                    'c_charge_degree_C', 'decile_score_C', 'c_days_from_compas_C','juv_fel_count_C', 'juv_misd_count_C',
-                  'juv_other_count_C', 'days_b_screening_arrest_C',
-                  'v_decile_score_C', 'start_C', 'end_C', 'event_C',
-                  'Violence_score', 'Recidivism_score']
-
-
+all_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C', 'c_charge_degree', 'decile_score',
+                'c_days_from_compas_C',
+                'juv_fel_count_C', 'juv_misd_count_C', 'juv_other_count_C', 'start_C', 'end_C',
+                  'v_decile_score_C', 'Violence_score_C', 'event_C']
 
 Thc = 50
 
-original_data_file = "../../../../InputData/CompasData/general/compas_data_cat_predictors.csv"
+original_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_17att_classified_testdata.csv"
 original_data = pd.read_csv(original_data_file)
-mis_data_file = "../../../../InputData/CompasData/general/compas_data_cat_predictors_mis.csv"
+mis_data_file = "../../../../InputData/CompasData/Preprocessed_classified/RecidivismData_17att_classified_mis.csv"
 mis_data = pd.read_csv(mis_data_file)
 
 
@@ -138,9 +139,8 @@ overall_acc = 1 - len(mis_data) / len(original_data)
 time_limit = 10*60
 # when there are 12 attributes, naive time out
 # with 11 att, naive needs 137 s
-# with 10 att, naive needs 38 s
-# naive alg out of time when num_att_max_naive = 13 !!! (with 10min time-out)
-num_att_max_naive = 12
+# with 10 att, naive time out > 10 min
+num_att_max_naive = 10
 num_att_min = 3
 num_att_max = 17
 execution_time1 = list()
