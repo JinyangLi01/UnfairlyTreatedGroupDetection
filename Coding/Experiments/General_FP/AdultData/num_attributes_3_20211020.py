@@ -233,14 +233,14 @@ output_file.write("execution time\n")
 for n in range(num_att_min, num_att_max_naive):
     output_file.write('{} {} {}\n'.format(n, execution_time1[n-num_att_min], execution_time2[n-num_att_min]))
 for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {}\n'.format(n, execution_time1[n - num_att_max_naive]))
+    output_file.write('{} {}\n'.format(n, execution_time1[n - num_att_min]))
 
 
 output_file.write("\n\nnumber of patterns checked\n")
 for n in range(num_att_min, num_att_max_naive):
     output_file.write('{} {} {}\n'.format(n, num_calculation1[n-num_att_min], num_calculation2[n-num_att_min]))
 for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {}\n'.format(n, num_calculation1[n-num_att_max_naive]))
+    output_file.write('{} {}\n'.format(n, num_calculation1[n-num_att_min]))
 
 
 
