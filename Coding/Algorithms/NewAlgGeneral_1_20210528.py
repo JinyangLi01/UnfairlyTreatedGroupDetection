@@ -88,7 +88,6 @@ def Predictive_parity(whole_data, TPdata, FPdata,
     pc_TP.parse_data()
     pc_FP = pattern_count.PatternCounter(FPdata, encoded=False)
     pc_FP.parse_data()
-    time3 = time.time()
 
     whole_data_frame = whole_data.describe()
     attributes = whole_data_frame.columns.values.tolist()
@@ -109,32 +108,24 @@ def Predictive_parity(whole_data, TPdata, FPdata,
     num_patterns_skipped_by_tp = 0
     num_patterns_generate_children = 0
 
-    time4 = time.time()
     while len(S) > 0:
         if time.time() - time1 > time_limit:
             print("newalg overtime")
             break
-        time5 = time.time()
         P = S.pop()
         st = num2string(P)
-        time6 = time.time()
         whole_cardinality = pc_whole_data.pattern_count(st)
-        time7 = time.time()
         num_patterns += 1
         if whole_cardinality < Thc:
             num_patterns_skipped_by_size += 1
             continue
 
-        time8 = time.time()
         tp = pc_TP.pattern_count(st)
-        time9 = time.time()
         if tp == 0:
             num_patterns_skipped_by_tp += 1
             continue
         fp = pc_FP.pattern_count(st)
         correct_positive_prediction = tp / (tp + fp)
-        time10 = time.time()
-        # print(time6-time5, time7-time6, time8-time7, time9-time8, time10-time9)
         if correct_positive_prediction <= Thf:
             children = GenerateChildren(P, whole_data_frame, attributes)
             S = S + children
@@ -188,9 +179,6 @@ def False_positive_error_rate_balance_greater_than(whole_data, FPdata, TNdata,
             break
         P = S.pop()
         st = num2string(P)
-
-        # if P == [-1, -1, 5]:
-        #     print(P)
 
         whole_cardinality = pc_whole_data.pattern_count(st)
         num_patterns += 1
