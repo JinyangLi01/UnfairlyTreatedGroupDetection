@@ -1,28 +1,14 @@
 """
-Naive algorithm for group detection in ranking
-fairness definition: the number of a group members in top-k should be proportional to the group size, k_min <= k
-We don't include k_max here !
-
-Expected output: most general patterns treated unfairly, w.r.t. lower bound
-Difference from definition 1: in definition 1, we find most specific patterns for upper bound,
-most general for lower bound, and all patterns have same bounds.
-
-But here, patterns have different bounds depending on their sizes. We only do lower bound.
+naive alg for ranking
 
 """
 
-"""
-naive alg:
-for each k, we iterate the whole process again, go top down.
-"""
-
-
-
-import time
+from itertools import combinations
 import pandas as pd
+from Algorithms import pattern_count
+import time
 import numpy as np
 
-from Algorithms import pattern_count
 
 
 def DFSattributes(cur, last, comb, pattern, all_p, mcdes, attributes):
@@ -133,7 +119,7 @@ def GenerateChildren(P, whole_data_frame, ranked_data, attributes):
     return children
 
 
-def CheckDominationAndAdd(pattern, pattern_treated_unfairly):
+def CheckDominationAndAddForLowerBound(pattern, pattern_treated_unfairly):
     to_remove = []
     for p in pattern_treated_unfairly:
         if PatternEqual(p, pattern):
@@ -148,36 +134,19 @@ def CheckDominationAndAdd(pattern, pattern_treated_unfairly):
 
 
 
+def CheckDominationAndAddForUpperbound(pattern, pattern_treated_unfairly):
+    to_remove = []
+    for p in pattern_treated_unfairly:
+        if PatternEqual(p, pattern):
+            return
+        if P1DominatedByP2(pattern, p):
+            to_remove.append(p)
+        elif P1DominatedByP2(p, pattern):
+            return
+    for p in to_remove:
+        pattern_treated_unfairly.remove(p)
+    pattern_treated_unfairly.append(pattern)
 
-def string2num(st):
-    p = list()
-    idx = 0
-    item = ''
-    i = ''
-    for i in st:
-        if i == '|':
-            if item == '':
-                p.append(-1)
-            else:
-                p.append(int(item))
-                item = ''
-            idx += 1
-        else:
-            item += i
-    if i != '|':
-        p.append(int(item))
-    else:
-        p.append(-1)
-    return p
-
-
-def PatternInSet(p, set):
-    if isinstance(p, str):
-        p = string2num(p)
-    for q in set:
-        if PatternEqual(p, q):
-            return True
-    return False
 
 
 """
@@ -187,26 +156,21 @@ Tha: delta fairness value
 Thc: size threshold
 """
 
-def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
+def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min, k_max, time_limit):
     time0 = time.time()
-    data_size = len(ranked_data)
     pc_whole_data = pattern_count.PatternCounter(ranked_data, encoded=False)
     pc_whole_data.parse_data()
     whole_data_frame = ranked_data.describe(include='all')
     num_patterns_visited = 0
-    pattern_treated_unfairly = []
+    pattern_treated_unfairly_lowerbound = []
+    pattern_treated_unfairly_upperbound = []
     overtime_flag = False
-
     for k in range(k_min, k_max):
-        # print("k={}".format(k))
-        # if q in pattern_treated_unfairly:
-        #     print("q in!!")
-        # else:
-        #     print("q not in ... ")
         if overtime_flag:
             print("naive overtime, exiting the loop of k")
             break
-        result_set = []
+        result_set_lowerbound = []
+        result_set_upperbound = []
         root = [-1] * (len(attributes))
         S = GenerateChildren(root, whole_data_frame, ranked_data, attributes)
         patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
@@ -220,72 +184,85 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
                 break
             P = S.pop(0)
             st = num2string(P)
-            # if PatternEqual(P, q) and k == 12:
-            #     print("st = {}\n".format(st))
-            #     print("stop here naive alg")
-
             num_patterns_visited += 1
             whole_cardinality = pc_whole_data.pattern_count(st)
             # print("P={}, whole size={}".format(P, whole_cardinality))
             if whole_cardinality < Thc:
                 continue
             num_top_k = patterns_top_kmin.pattern_count(st)
-            lowerbound = (whole_cardinality / data_size - alpha) * k
-            if num_top_k < lowerbound:
+            if num_top_k < Lowerbounds[k - k_min]:
                 # if PatternEqual(P, [-1, -1, 1, -1]):
                 #     print("k={}, pattern equal = {}, num_top_k = {}".format(k, P, num_top_k))
-                CheckDominationAndAdd(P, result_set)
+                CheckDominationAndAddForLowerBound(P, result_set_lowerbound)
             else:
-                time1 = time.time()
                 children = GenerateChildren(P, whole_data_frame, ranked_data, attributes)
-                time2 = time.time()
-                # print("time for GenerateChildren = {}".format(time2 - time1))
                 S = children + S
                 continue
-        pattern_treated_unfairly.append(result_set)
+        # upper bound
+        S = GenerateChildren(root, whole_data_frame, ranked_data, attributes)
+        parent_candidate_for_upperbound = []
+        while len(S) > 0:
+            if time.time() - time0 > time_limit:
+                overtime_flag = True
+                print("naive overtime")
+                break
+            P = S.pop(0)
+            st = num2string(P)
+            num_patterns_visited += 1
+            whole_cardinality = pc_whole_data.pattern_count(st)
+            if whole_cardinality < Thc:
+                if len(parent_candidate_for_upperbound) > 0:
+                    CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, result_set_upperbound)
+                    parent_candidate_for_upperbound = []
+                continue
+            num_top_k = patterns_top_kmin.pattern_count(st)
+            if num_top_k > Upperbounds[k - k_min]:
+                parent_candidate_for_upperbound = P
+                children = GenerateChildren(P, whole_data_frame, ranked_data, attributes)
+                S = children + S
+                if len(children) == 0:
+                    CheckDominationAndAddForUpperbound(P, result_set_upperbound)
+                    parent_candidate_for_upperbound = []
+            else:
+                if len(parent_candidate_for_upperbound) > 0:
+                    CheckDominationAndAddForUpperbound(parent_candidate_for_upperbound, result_set_upperbound)
+                    parent_candidate_for_upperbound = []
+        pattern_treated_unfairly_upperbound.append(result_set_upperbound)
+        pattern_treated_unfairly_lowerbound.append(result_set_lowerbound)
     time1 = time.time()
-    return pattern_treated_unfairly, num_patterns_visited, time1 - time0
+    return pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, time1 - time0
 
 
+# selected_attributes = ["sex_binary", "age_binary", "race_C", "age_bucketized"]
 #
-# all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
-#                   'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C',
-#                   'failures_C', 'schoolsup_C', 'famsup_C', 'paid_C', 'activities_C', 'nursery_C', 'higher_C',
-#                   'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
-#                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
+# original_file = r"../../InputData/CompasData/ForRanking/SmallDataset/CompasData_ranked_5att_1000.csv"
+# ranked_data = pd.read_csv(original_file)
+# ranked_data = ranked_data.drop('rank', axis=1)
 #
-# selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
-#                        'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C']
-#
-# original_data_file = r"../../InputData/StudentDataset/ForRanking_1/student-mat_cat_ranked.csv"
-#
-# ranked_data = pd.read_csv(original_data_file)
-# ranked_data = ranked_data[selected_attributes]
-#
-# time_limit = 5 * 60
-# k_min = 10
-# k_max = 16
-# Thc = 30
-#
-# List_k = list(range(k_min, k_max))
-#
-# alpha = 0.1
+# # def GraphTraverse(ranked_data, Thc, Lowerbounds, Upperbounds, k_min, k_max, time_limit):
 #
 #
+# time_limit = 20 * 60
+# k_min = 40
+# k_max = 50
+# Thc = 10
+# Lowerbounds = [1, 1, 2, 2, 2, 3, 3, 3, 3, 4]
+# Upperbounds = [5,5,6,7,8, 9,10,11,11, 12, 12]
 #
-# pattern_treated_unfairly, num_patterns_visited, running_time = \
-#     NaiveAlg(ranked_data, selected_attributes, Thc,
-#                      alpha,
-#                      k_min, k_max, time_limit)
+# print(ranked_data[:k_max])
+#
+# pattern_treated_unfairly_lowerbound, pattern_treated_unfairly_upperbound, num_patterns_visited, running_time = NaiveAlg(ranked_data, selected_attributes, Thc,
+#                                                                      Lowerbounds, Upperbounds,
+#                                                                      k_min, k_max, time_limit)
 #
 # print("num_patterns_visited = {}".format(num_patterns_visited))
-# print("time = {} s, num of pattern_treated_unfairly = {}".format(running_time,
-#         len(pattern_treated_unfairly)), "\n", "patterns:\n",
-#       "lower bound ", pattern_treated_unfairly)
+# print("time = {} s, num of pattern_treated_unfairly_lowerbound = {}, num of pattern_treated_unfairly_upperbound = {} ".format(running_time,
+#         len(pattern_treated_unfairly_lowerbound), len(pattern_treated_unfairly_upperbound)), "\n", "patterns:\n",
+#       pattern_treated_unfairly_lowerbound, "\n", pattern_treated_unfairly_upperbound)
 #
-# print("dominated by pattern_treated_unfairly:")
-# for p in pattern_treated_unfairly:
-#     if PDominatedByM(p, pattern_treated_unfairly)[0]:
-#         print(p)
-#
+# print("dominates pattern_treated_unfairly_upperbound:")
+# for p in pattern_treated_unfairly_upperbound:
+#     t, m = PDominatesM(p, pattern_treated_unfairly_upperbound)
+#     if t:
+#         print(p, m)
 #
