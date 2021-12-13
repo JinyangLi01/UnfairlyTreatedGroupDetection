@@ -317,9 +317,9 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
             print("newalg overtime")
             break
         P = S.pop(0)
-        if PatternEqual(P, [-1, 0, -1, -1, 1]):
-            print("k={}, pattern equal = {}".format(k, P))
-            print("\n")
+        # if PatternEqual(P, [1, -1, -1, -1, -1, -1]):
+        #     print("k={}, pattern equal = {}".format(k, P))
+        #     print("\n")
         st = num2string(P)
         num_patterns_visited += 1
         add_children = False
@@ -377,7 +377,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
         patterns_top_k = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_k.parse_data()
         new_tuple = ranked_data.iloc[[k - 1]].values.flatten().tolist()
-        print("k={}, new tuple = {}".format(k, new_tuple))
+        # print("k={}, new tuple = {}".format(k, new_tuple))
         # top down for related patterns, using similar methods as k_min, add to result set if needed
         # ancestors are patterns checked in AddNewTuple() function, to avoid checking them again
         ancestors, num_patterns_visited = AddNewTuple(new_tuple, Thc, result_set_lowerbound, result_set_upperbound,
@@ -386,10 +386,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
                                                       patterns_size_whole, Lowerbounds, Upperbounds, num_att,
                                                       attributes, dominated_by_lowerbound_result)
         # suppose Lowerbounds and Upperbounds monotonically increases
-        st = "|0||0|"
-        if st in patterns_searched_lowest_level_lowerbound:
-            print("after AddNewTuple, {} in stop set".format(st))
-        checked_patterns = set()
+
         if Lowerbounds[k - k_min] > Lowerbounds[k - 1 - k_min] or Upperbounds[k - k_min] > Upperbounds[k - 1 - k_min]:
             num_patterns_visited, patterns_searched_lowest_level_lowerbound, patterns_searched_lowest_level_upperbound, \
             checked_patterns \
@@ -452,16 +449,17 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound, result_set_upperbound,
     S = children
     parent_candidate_for_upperbound = []
     add_to_lowerbound = []
-
+    new_tuple_only = [True] * len(S)
     while len(S) > 0:
         P = S.pop(0)
         st = num2string(P)
-        if PatternEqual(P, [-1, 0, -1, -1, 1]):
-            print("AddNewTuple, P={}".format(P))
-            print("\n")
+        # if PatternEqual(P, [1, 0, -1, -1, -1, -1]):
+        #     print("AddNewTuple, P={}".format(P))
+        #     print("\n")
         num_patterns_visited += 1
         add_children = False
         children = []
+        nto = new_tuple_only.pop(0)
         if st in patterns_size_whole:
             whole_cardinality = patterns_size_whole[st]
         else:
@@ -479,24 +477,35 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound, result_set_upperbound,
                     add_to_lowerbound.append(P)
                     # CheckDominationAndAddForLowerbound(P, result_set_lowerbound)
             else:
+                how_to_generate = []
                 if P in result_set_lowerbound:
                     result_set_lowerbound.remove(P)
                     children = GenerateChildren(P, whole_data_frame, attributes)
+                    how_to_generate = [False] * len(children)
                 elif P in dominated_by_lowerbound_result:
                     dominated_by_lowerbound_result.remove(P)
                     children = GenerateChildren(P, whole_data_frame, attributes)
+                    how_to_generate = [False] * len(children)
                 else:
                     if P[num_att - 1] == -1:
-                        children = GenerateChildrenRelatedToTuple(P, new_tuple)
+                        if nto:
+                            children = GenerateChildrenRelatedToTuple(P, new_tuple)
+                            how_to_generate = [True] * len(children)
+                        else:
+                            children = GenerateChildren(P, whole_data_frame, attributes)
+                            how_to_generate = [False] * len(children)
                 if len(children) != 0:
                     S = children + S
+                    new_tuple_only = how_to_generate + new_tuple_only
                     ancestors = ancestors + children
                     add_children = True
             if num_top_k > Upperbounds[k - k_min]:
                 parent_candidate_for_upperbound = P
                 if not add_children and P[num_att - 1] == -1:
                     children = GenerateChildrenRelatedToTuple(P, new_tuple)
+                    how_to_generate = [True] * len(children)
                     S = children + S
+                    new_tuple_only = how_to_generate + new_tuple_only
                     ancestors = ancestors + children
                 if P[num_att - 1] != -1:  # no children
                     CheckDominationAndAddForUpperbound(P, result_set_upperbound)
@@ -511,26 +520,34 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound, result_set_upperbound,
     return ancestors, num_patterns_visited
 
 #
-# all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
-#                   'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C',
-#                   'failures_C', 'schoolsup_C', 'famsup_C', 'paid_C', 'activities_C', 'nursery_C', 'higher_C',
-#                   'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
-#                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
+# #
+# # all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
+# #                   'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C',
+# #                   'failures_C', 'schoolsup_C', 'famsup_C', 'paid_C', 'activities_C', 'nursery_C', 'higher_C',
+# #                   'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
+# #                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
+# #
+# # selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
+# #                        'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C']
+# #
+# # original_data_file = r"../../InputData/StudentDataset/ForRanking_1/student-mat_cat_ranked.csv"
 #
-# selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
-#                        'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C']
 #
 #
+# all_attributes = ["age_binary","sex_binary","race_C","MarriageStatus_C","juv_fel_count_C",
+#                   "decile_score_C", "juv_misd_count_C","juv_other_count_C","priors_count_C","days_b_screening_arrest_C",
+#                   "c_days_from_compas_C","c_charge_degree_C","v_decile_score_C","start_C","end_C",
+#                   "event_C"]
 #
-#
-# original_data_file = r"../../InputData/StudentDataset/ForRanking_1/student-mat_cat_ranked.csv"
+# original_data_file = r"../../InputData/CompasData/general/compas_data_cat_necessary_att_ranked.csv"
+# selected_attributes = all_attributes[:6]
 #
 # ranked_data = pd.read_csv(original_data_file)
 # ranked_data = ranked_data[selected_attributes]
 #
 # time_limit = 10 * 60
-# k_min = 5
-# k_max = 65
+# k_min = 18
+# k_max = 50
 # Thc = 50
 #
 # List_k = list(range(k_min, k_max))
@@ -633,6 +650,6 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound, result_set_upperbound,
 #             print(p)
 #
 #
-
+#
 
 
