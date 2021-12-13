@@ -165,7 +165,6 @@ plt.plot(Thc_list, execution_time1, line_style[0], color=color[0], label=label[0
 plt.xlabel('Size threshold')
 plt.ylabel('Execution time (s)')
 plt.xticks(Thc_list)
-plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
 plt.savefig("../../../../OutputData/General_withStopCond/CreditcardDataset/thc_time.png",
@@ -183,7 +182,6 @@ plt.xlabel('Size threshold')
 plt.ylabel('Number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.xticks(Thc_list)
-plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
 plt.savefig("../../../../OutputData/General_withStopCond/CreditcardDataset/thc_calculations.png",

@@ -115,7 +115,7 @@ for dif in diff_acc:
 
 
 
-output_path = r'../../../../OutputData/LowAccDetection_withStopCond/AdultDataset/tha.txt'
+output_path = r'../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/tha.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time)
 
@@ -148,7 +148,6 @@ plt.plot(diff_acc, execution_time, line_style[0], color=color[0], label=label[0]
 plt.xlabel('Delta fairness value')
 plt.ylabel('Execution time (s)')
 plt.xticks(diff_acc)
-plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
 plt.savefig("../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/tha_time.png", bbox_inches='tight')
@@ -167,16 +166,11 @@ plt.xlabel('Delta fairness value')
 plt.ylabel('Number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.xticks(diff_acc)
-plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
 plt.savefig("../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/tha_calculations.png", bbox_inches='tight')
 plt.show()
 plt.close()
-
-
-
-
 
 
 plt.clf()

@@ -138,7 +138,7 @@ for thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/thc_optimized.txt'
+output_path = r'../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/thc.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -166,10 +166,9 @@ plt.plot(Thc_list, execution_time1, line_style[0], color=color[0], label=label[0
 plt.xlabel('Size threshold')
 plt.ylabel('Execution time (s)')
 plt.xticks(Thc_list)
-plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/thc_time_optimized.png",
+plt.savefig("../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/thc_time.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -183,10 +182,9 @@ plt.xlabel('Size threshold')
 plt.ylabel('Number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.xticks(Thc_list)
-plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/thc_calculations_optimized.png",
+plt.savefig("../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/thc_calculations.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
