@@ -179,23 +179,22 @@ def CheckRepeatingAndAppend(pattern, pattern_lowest_level):
     pattern_lowest_level.append(pattern)
 
 
-def CheckDominationAndAddForLowerbound(pattern, pattern_treated_unfairly, dominated_by_lowerbound_result):
+def CheckDominationAndAddForLowerbound(pattern, pattern_treated_unfairly, dominated_by_lowerbound_result, second_backup):
     to_remove = []
     for p in pattern_treated_unfairly:
         # if PatternEqual(p, pattern):
         #     return
         if P1DominatedByP2(pattern, p):
-            if pattern not in dominated_by_lowerbound_result:
-                dominated_by_lowerbound_result.append(pattern)
+            AddToBackup(pattern, dominated_by_lowerbound_result, second_backup)
             return
         elif P1DominatedByP2(p, pattern):
             to_remove.append(p)
     for p in to_remove:
         pattern_treated_unfairly.remove(p)
-        dominated_by_lowerbound_result.append(p)
+        AddToBackup(p, dominated_by_lowerbound_result, second_backup)
     pattern_treated_unfairly.append(pattern)
-    if pattern in dominated_by_lowerbound_result:
-        dominated_by_lowerbound_result.remove(pattern)
+    RemoveFromBackup(pattern, dominated_by_lowerbound_result, second_backup)
+
 
 
 def CheckDominationAndAddForUpperbound(pattern, pattern_treated_unfairly):
@@ -212,13 +211,63 @@ def CheckDominationAndAddForUpperbound(pattern, pattern_treated_unfairly):
     pattern_treated_unfairly.append(pattern)
 
 
+def AddToBackup(pattern, dominated_by_lowerbound_result, second_backup):
+    if pattern in dominated_by_lowerbound_result or pattern in second_backup:
+        return
+    move_to_second = []
+    for p in dominated_by_lowerbound_result:
+        if P1DominatedByP2(pattern, p):
+            second_backup.append(pattern)
+            return
+        elif P1DominatedByP2(p, pattern):
+            move_to_second.append(p)
+    for p in move_to_second:
+        dominated_by_lowerbound_result.remove(p)
+        if p not in second_backup:
+            second_backup.append(p)
+    dominated_by_lowerbound_result.append(pattern)
+
+
+
+def RemoveFromBackup(pattern, dominated_by_lowerbound_result, second_backup):
+    if pattern in second_backup:
+        second_backup.remove(pattern)
+        return True
+    elif pattern in dominated_by_lowerbound_result:
+        dominated_by_lowerbound_result.remove(pattern)
+        remove_from_second_backup = []
+        for s in second_backup:
+            if P1DominatedByP2(s, pattern):
+                if PDominatedByM(s, dominated_by_lowerbound_result)[0] is False:
+                    level_up = True
+                    remove_back = []
+                    for r in remove_from_second_backup:
+                        if P1DominatedByP2(s, r):
+                            level_up = False
+                            break
+                        elif P1DominatedByP2(r, s):
+                            remove_back.append(r)
+                    if level_up:
+                        dominated_by_lowerbound_result.append(s)
+                        remove_from_second_backup.append(s)
+                        for t in remove_back:
+                            remove_from_second_backup.remove(t)
+                            dominated_by_lowerbound_result.remove(t)
+        for t in remove_from_second_backup:
+            second_backup.remove(t)
+        return True
+    return False
+
+
+
+
 # only need to check the lower bound of parents
 def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerbound,
                              patterns_searched_lowest_level_upperbound, root, root_str,
                              result_set_lowerbound, result_set_upperbound, k,
                              k_min, pc_whole_data, patterns_top_k, patterns_size_whole,
                              Lowerbounds, Upperbounds, num_att, whole_data_frame,
-                             attributes, num_patterns_visited, Thc, dominated_by_lowerbound_result):
+                             attributes, num_patterns_visited, Thc, dominated_by_lowerbound_result, second_backup):
     to_remove = set()
     to_append = set()
     checked_patterns = set()
@@ -253,7 +302,7 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
         parent_str = findParentForStr(child_str)
         child = string2num(child_str)
         if parent_str == root_str:
-            CheckDominationAndAddForLowerbound(child, result_set_lowerbound, dominated_by_lowerbound_result)
+            CheckDominationAndAddForLowerbound(child, result_set_lowerbound, dominated_by_lowerbound_result, second_backup)
             to_remove.add(child_str)  # child need removing
             continue
         checked_patterns.add(parent_str)
@@ -267,12 +316,12 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
                 parent_str = findParentForStr(child_str)
                 checked_patterns.add(parent_str)
             else:
-                CheckDominationAndAddForLowerbound(child, result_set_lowerbound, dominated_by_lowerbound_result)
+                CheckDominationAndAddForLowerbound(child, result_set_lowerbound, dominated_by_lowerbound_result, second_backup)
                 to_remove.add(st)
                 to_append.add(parent_str)
                 break
         if parent_str == root_str:
-            CheckDominationAndAddForLowerbound(child, result_set_lowerbound, dominated_by_lowerbound_result)
+            CheckDominationAndAddForLowerbound(child, result_set_lowerbound, dominated_by_lowerbound_result, second_backup)
             continue
     for p_str in to_remove:
         patterns_searched_lowest_level_lowerbound.remove(p_str)
@@ -306,7 +355,8 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
     patterns_searched_lowest_level_upperbound = set()
 
     parent_candidate_for_upperbound = []
-    dominated_by_lowerbound_result = []
+    dominated_by_lowerbound_result = []  # first backup
+    second_backup = []
 
     result_set_lowerbound = []
     result_set_upperbound = []
@@ -317,9 +367,9 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
             print("newalg overtime")
             break
         P = S.pop(0)
-        # if PatternEqual(P, [1, -1, -1, -1, -1, -1]):
-        #     print("k={}, pattern equal = {}".format(k, P))
-        #     print("\n")
+        if PatternEqual(P, [0, 0, 0, -1, -1, -1]):
+            print("k={}, pattern equal = {}".format(k, P))
+            print("\n")
         st = num2string(P)
         num_patterns_visited += 1
         add_children = False
@@ -344,7 +394,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
             parent_str = num2string(parent)
             if parent_str != root_str:
                 patterns_searched_lowest_level_lowerbound.add(parent_str)
-            CheckDominationAndAddForLowerbound(P, result_set_lowerbound, dominated_by_lowerbound_result)
+            CheckDominationAndAddForLowerbound(P, result_set_lowerbound, dominated_by_lowerbound_result, second_backup)
         else:
             if P[num_att-1] != -1:
                 patterns_searched_lowest_level_lowerbound.add(st)
@@ -367,7 +417,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
                 parent_candidate_for_upperbound = []
     pattern_treated_unfairly_upperbound.append(result_set_upperbound)
     pattern_treated_unfairly_lowerbound.append(result_set_lowerbound)
-
+    print("time for k_min = {}".format(time.time() - time0))
     for k in range(k_min + 1, k_max):
         if time.time() - time0 > time_limit:
             print("newalg overtime")
@@ -380,14 +430,30 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
         # print("k={}, new tuple = {}".format(k, new_tuple))
         # top down for related patterns, using similar methods as k_min, add to result set if needed
         # ancestors are patterns checked in AddNewTuple() function, to avoid checking them again
+        # p = [0, 0, 0, -1, -1, -1]
+        # if p in second_backup:
+        #     print("{} in second backup")
+        # if PDominatedByM(p, dominated_by_lowerbound_result)[0]:
+        #     print("{} dominated by primary backup")
+        # else:
+        #     print("{} not dominated by primary backup")
+        time1 = time.time()
         ancestors, num_patterns_visited = AddNewTuple(new_tuple, Thc, result_set_lowerbound, result_set_upperbound,
                                                       whole_data_frame, patterns_top_k, k, k_min, pc_whole_data,
                                                       num_patterns_visited,
                                                       patterns_size_whole, Lowerbounds, Upperbounds, num_att,
-                                                      attributes, dominated_by_lowerbound_result)
+                                                      attributes, dominated_by_lowerbound_result, second_backup)
+        time2 = time.time()
+        # if p in second_backup:
+        #     print("{} in second backup")
+        # if PDominatedByM(p, dominated_by_lowerbound_result)[0]:
+        #     print("{} dominated by primary backup")
+        # else:
+        #     print("{} not dominated by primary backup")
         # suppose Lowerbounds and Upperbounds monotonically increases
-
+        print("time for AddNewTuple = {}".format(time2 - time1))
         if Lowerbounds[k - k_min] > Lowerbounds[k - 1 - k_min] or Upperbounds[k - k_min] > Upperbounds[k - 1 - k_min]:
+            time3 = time.time()
             num_patterns_visited, patterns_searched_lowest_level_lowerbound, patterns_searched_lowest_level_upperbound, \
             checked_patterns \
                 = CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerbound,
@@ -395,38 +461,47 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
                                            result_set_lowerbound, result_set_upperbound, k,
                                            k_min, pc_whole_data, patterns_top_k, patterns_size_whole,
                                            Lowerbounds, Upperbounds, num_att, whole_data_frame,
-                                           attributes, num_patterns_visited, Thc, dominated_by_lowerbound_result)
+                                           attributes, num_patterns_visited, Thc, dominated_by_lowerbound_result,
+                                           second_backup)
+            time4 = time.time()
+            print("time for CheckCandidatesForBounds = {}".format(time4 - time3))
         # check dominated_by_lowerbound_result
-        move_out = []
-        move_in = []
+        time5 = time.time()
+        move_out_of_result = []
+        move_to_result = []
         for p in dominated_by_lowerbound_result:
             can_add = True
             if p in ancestors:
                 continue
-            if PDominatedByM(p, move_in)[0]:
+            if PDominatedByM(p, move_to_result)[0]:
                 continue
             for q in result_set_lowerbound:
                 if P1DominatedByP2(p, q):
                     can_add = False
                     break
                 elif P1DominatedByP2(q, p):
-                    move_out.append(q)
+                    move_out_of_result.append(q)
             if can_add:
                 remove_from_movein = []
-                for t in move_in:
+                for t in move_to_result:
                     if P1DominatedByP2(t, p):
                         remove_from_movein.append(t)
+                    if P1DominatedByP2(p, t):
+                        can_add = False
+                        break
+                if can_add is False:
+                    continue
                 for t in remove_from_movein:
-                    move_in.remove(t)
-                move_in.append(p)
-        for s in move_out:
+                    move_to_result.remove(t)
+                move_to_result.append(p)
+        for s in move_out_of_result:
             result_set_lowerbound.remove(s)
-            if s not in dominated_by_lowerbound_result:
-                dominated_by_lowerbound_result.append(s)
-        for s in move_in:
+            AddToBackup(s, dominated_by_lowerbound_result, second_backup)
+        for s in move_to_result:
             result_set_lowerbound.append(s)
-            dominated_by_lowerbound_result.remove(s)
-
+            RemoveFromBackup(s, dominated_by_lowerbound_result, second_backup)
+        time6 = time.time()
+        print("time for checking dominated_by_lowerbound_result = {}".format(time6 - time5))
         pattern_treated_unfairly_upperbound.append(result_set_upperbound)
         pattern_treated_unfairly_lowerbound.append(result_set_lowerbound)
     time1 = time.time()
@@ -442,7 +517,8 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, Upperbounds, k_min,
 # add to result set if they are outliers
 def AddNewTuple(new_tuple, Thc, result_set_lowerbound, result_set_upperbound,
                 whole_data_frame, patterns_top_k, k, k_min, pc_whole_data, num_patterns_visited,
-                patterns_size_whole, Lowerbounds, Upperbounds, num_att, attributes, dominated_by_lowerbound_result):
+                patterns_size_whole, Lowerbounds, Upperbounds, num_att, attributes,
+                dominated_by_lowerbound_result, second_backup):
     ancestors = []
     root = [-1] * num_att
     children = GenerateChildrenRelatedToTuple(root, new_tuple)  # pattern with one deternimistic attribute
@@ -453,9 +529,9 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound, result_set_upperbound,
     while len(S) > 0:
         P = S.pop(0)
         st = num2string(P)
-        # if PatternEqual(P, [1, 0, -1, -1, -1, -1]):
-        #     print("AddNewTuple, P={}".format(P))
-        #     print("\n")
+        if PatternEqual(P, [0, 0, 0, -1, -1, -1]):
+            print("AddNewTuple, P={}".format(P))
+            print("\n")
         num_patterns_visited += 1
         add_children = False
         children = []
@@ -474,7 +550,20 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound, result_set_upperbound,
             num_top_k = patterns_top_k.pattern_count(st)
             if num_top_k < Lowerbounds[k - k_min]:
                 if P not in result_set_lowerbound:
-                    add_to_lowerbound.append(P)
+                    to_move_to_dominated_set = []
+                    add_P = True
+                    for m in add_to_lowerbound:
+                        if P1DominatedByP2(m, P):
+                            to_move_to_dominated_set.append(m)
+                        elif P1DominatedByP2(P, m):
+                            AddToBackup(P, dominated_by_lowerbound_result, second_backup)
+                            add_P = False
+                            break
+                    if add_P:
+                        add_to_lowerbound.append(P)
+                        for s in to_move_to_dominated_set:
+                            add_to_lowerbound.remove(s)
+                            AddToBackup(s, dominated_by_lowerbound_result, second_backup)
                     # CheckDominationAndAddForLowerbound(P, result_set_lowerbound)
             else:
                 how_to_generate = []
@@ -482,8 +571,7 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound, result_set_upperbound,
                     result_set_lowerbound.remove(P)
                     children = GenerateChildren(P, whole_data_frame, attributes)
                     how_to_generate = [False] * len(children)
-                elif P in dominated_by_lowerbound_result:
-                    dominated_by_lowerbound_result.remove(P)
+                elif RemoveFromBackup(P, dominated_by_lowerbound_result, second_backup):
                     children = GenerateChildren(P, whole_data_frame, attributes)
                     how_to_generate = [False] * len(children)
                 else:
@@ -516,9 +604,11 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound, result_set_upperbound,
                                                        result_set_upperbound)
                     parent_candidate_for_upperbound = []
     for p in add_to_lowerbound:
-        CheckDominationAndAddForLowerbound(p, result_set_lowerbound, dominated_by_lowerbound_result)
+        CheckDominationAndAddForLowerbound(p, result_set_lowerbound, dominated_by_lowerbound_result, second_backup)
     return ancestors, num_patterns_visited
 
+
+#
 #
 # #
 # # all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
@@ -540,22 +630,21 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound, result_set_upperbound,
 #                   "event_C"]
 #
 # original_data_file = r"../../InputData/CompasData/general/compas_data_cat_necessary_att_ranked.csv"
-# selected_attributes = all_attributes[:6]
+# selected_attributes = all_attributes[:12]
 #
 # ranked_data = pd.read_csv(original_data_file)
 # ranked_data = ranked_data[selected_attributes]
 #
 # time_limit = 10 * 60
-# k_min = 18
-# k_max = 50
+# k_min = 10
+# k_max = 100
 # Thc = 50
 #
 # List_k = list(range(k_min, k_max))
 #
 #
 # def lowerbound(x):
-#     return 5  # int((x-3)/4)
-#
+#     return 10  # int((x-3)/4)
 #
 # def upperbound(x):
 #     return 25  # int(3+(x-k_min+1)/3)
@@ -651,5 +740,5 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound, result_set_upperbound,
 #
 #
 #
-
-
+#
+#
