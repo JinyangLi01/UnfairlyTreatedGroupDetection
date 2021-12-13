@@ -16,23 +16,35 @@ threshold of minority group accuracy: overall acc - 20
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_8_20210702 as newalg
-from Algorithms import NaiveAlgRanking_2_20210701 as naivealg
+from Algorithms import NewAlgRanking_10_20211212 as newalg
+from Algorithms import NaiveAlgRanking_3_20211212 as naivealg
 from Algorithms import Predict_0_20210127 as predict
-import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter
-SMALL_SIZE = 8
-MEDIUM_SIZE = 10
-BIGGER_SIZE = 20
-plt.rc('figure', figsize=(7, 5.6))
 
-plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
-plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
-plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
-plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=BIGGER_SIZE)    # legend fontsize
-plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib.ticker import FuncFormatter
+
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
+
+sns.set_palette("Paired")
+# sns.set_palette("deep")
+sns.set_context("poster", font_scale=2)
+sns.set_style("whitegrid")
+# sns.palplot(sns.color_palette("deep", 10))
+# sns.palplot(sns.color_palette("Paired", 9))
+
+line_style = ['o-', 's--', '^:', '-.p']
+color = ['C0', 'C1', 'C2', 'C3', 'C4']
+plt_title = ["BlueNile", "COMPAS", "Credit Card"]
+
+label = ["Optimized", "Naive"]
+line_width = 8
+marker_size = 15
+# f_size = (14, 10)
+
+f_size = (14, 10)
 
 
 
@@ -228,7 +240,7 @@ for number_attributes in range(num_att_min, num_att_max):
 
 
 
-output_path = r'../../../../OutputData/Ranking2/CompasData/num_att.txt'
+output_path = r'../../../../OutputData/Ranking/CompasData/num_att.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -294,5 +306,46 @@ plt.savefig("../../../../OutputData/Ranking2/CompasData/num_att_calculations.png
 plt.show()
 
 plt.close()
+
+
+
+
+
+
+
+fig, ax = plt.subplots(1, 1, figsize=f_size)
+plt.plot(Thc_list, execution_time1, line_style[0], color=color[0], label=label[0], linewidth=line_width,
+         markersize=marker_size)
+plt.xlabel('Size threshold')
+plt.ylabel('Execution time (s)')
+plt.xticks(Thc_list)
+plt.legend(loc='best')
+plt.grid(True)
+fig.tight_layout()
+plt.savefig("../../../../OutputData/General_withStopCond/CreditcardDataset/thc_time.png",
+            bbox_inches='tight')
+plt.show()
+plt.close()
+
+
+
+
+fig, ax = plt.subplots(1, 1, figsize=f_size)
+plt.plot(Thc_list, num_calculation1, line_style[0], color=color[0], label=label[0], linewidth=line_width,
+         markersize=marker_size)
+plt.xlabel('Size threshold')
+plt.ylabel('Number of patterns visited (K)')
+ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
+plt.xticks(Thc_list)
+plt.legend(loc='best')
+plt.grid(True)
+fig.tight_layout()
+plt.savefig("../../../../OutputData/General_withStopCond/CreditcardDataset/thc_calculations.png",
+            bbox_inches='tight')
+plt.show()
+plt.close()
+
+
+
 plt.clf()
 
