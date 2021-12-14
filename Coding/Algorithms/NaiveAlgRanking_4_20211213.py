@@ -195,6 +195,8 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_limit
                 S = S + children
                 continue
         pattern_treated_unfairly_lowerbound.append(result_set_lowerbound)
+        print("k={}, num_patterns_visited = {}".format(k, num_patterns_visited))
+
     time1 = time.time()
     return pattern_treated_unfairly_lowerbound, num_patterns_visited, time1 - time0
 
