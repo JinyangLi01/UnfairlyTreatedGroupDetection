@@ -8,13 +8,9 @@ This is the final algorithm for this fairness definition in ranking
 Go top-down, find two result sets: for lower bound
 For lower bound: most general pattern
 
-This script is different from NewAlgRanking_10_20210702.py:
-1. we only do lower bound
-2. we check stop set and patterns related to new tuple
-3. stop set is where we stopped not its parents
+This script is different from NewAlgRanking_11_20210702.py:
+1. bound does or doesn't change, these two cases are seperated.
 
-This script is the final one. It use set() for stop set.
-NewAlgRanking_11 use list for stop set for sake of debugging.
 
 
 """
@@ -246,6 +242,7 @@ def RemoveFromBackup(pattern, dominated_by_lowerbound_result, second_backup):
     return False
 
 
+
 # only need to check the lower bound of parents
 def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerbound,
                              root, root_str,
@@ -254,7 +251,7 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
                              Lowerbounds, num_att, whole_data_frame,
                              attributes, num_patterns_visited, Thc):
     to_remove = set()
-    to_append = set()
+    to_append = []
     checked_patterns = set()
     # st = "|0||0|"
     # if st in patterns_searched_lowest_level_lowerbound:
@@ -274,13 +271,6 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
         if p in ancestors or p in result_set_lowerbound:  # already checked
             continue
         num_patterns_visited += 1
-        if st in patterns_size_whole:
-            whole_cardinality = patterns_size_whole[st]
-        else:
-            whole_cardinality = pc_whole_data.pattern_count(st)
-        if whole_cardinality < Thc:
-            continue
-
         pattern_size_in_topk = patterns_top_k.pattern_count(st)
         if pattern_size_in_topk >= Lowerbounds[k - k_min]:
             if p[num_att - 1] == -1:
@@ -307,17 +297,50 @@ def CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerboun
                 checked_patterns.add(parent_str)
             else:
                 CheckDominationAndAddForLowerbound(child, result_set_lowerbound)
-                to_remove.add(st)
-                to_append.add(child_str)
+                if st != child_str:
+                    to_remove.add(st)
+                    to_append.append(child_str)
                 break
         if parent_str == root_str:
             CheckDominationAndAddForLowerbound(child, result_set_lowerbound)
-            to_append.add(child_str)
+            to_append.append(child_str)
             continue
     for p_str in to_remove:
         patterns_searched_lowest_level_lowerbound.remove(p_str)
-    patterns_searched_lowest_level_lowerbound = patterns_searched_lowest_level_lowerbound | to_append
+    patterns_searched_lowest_level_lowerbound = patterns_searched_lowest_level_lowerbound + to_append
 
+    return num_patterns_visited, patterns_searched_lowest_level_lowerbound, checked_patterns
+
+
+
+# when bound doesn't change, check stop set only, don't go up
+def CheckStopSet(ancestors, patterns_searched_lowest_level_lowerbound,
+                             root, root_str,
+                             result_set_lowerbound, k,
+                             k_min, pc_whole_data, patterns_top_k, patterns_size_whole,
+                             Lowerbounds, num_att, whole_data_frame,
+                             attributes, num_patterns_visited, Thc):
+    to_remove = set()
+    to_append = []
+    checked_patterns = set()
+    # st = "|0||0|"
+    # if st in patterns_searched_lowest_level_lowerbound:
+    #     print("in CheckCandidatesForBounds, {} in stop set".format(st))
+    for st in patterns_searched_lowest_level_lowerbound:  # st is a string
+        if st in checked_patterns:
+            continue
+        checked_patterns.add(st)
+        p = string2num(st)
+        if p in ancestors or p in result_set_lowerbound:  # already checked
+            continue
+        num_patterns_visited += 1
+        pattern_size_in_topk = patterns_top_k.pattern_count(st)
+        if pattern_size_in_topk >= Lowerbounds[k - k_min]:
+            if p[num_att - 1] == -1:
+                raise Exception("why is this pattern {} in stop set ???".format(p))
+            continue
+        # this node is below lower bound
+        CheckDominationAndAddForLowerbound(p, result_set_lowerbound)
     return num_patterns_visited, patterns_searched_lowest_level_lowerbound, checked_patterns
 
 
@@ -340,7 +363,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
     patterns_top_kmin.parse_data()
     patterns_size_whole = dict()
     k = k_min
-    patterns_searched_lowest_level_lowerbound = set()
+    patterns_searched_lowest_level_lowerbound = []
     result_set_lowerbound = []
 
     # DFS
@@ -349,7 +372,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
         if time.time() - time0 > time_limit:
             print("newalg overtime")
             break
-        P = S.pop()
+        P = S.pop(0)
         # if PatternEqual(P, [-1, -1, 0, -1, -1, -1]):
         #     print("k={}, pattern equal = {}".format(k, P))
         #     print("\n")
@@ -358,26 +381,27 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
         whole_cardinality = pc_whole_data.pattern_count(st)
         patterns_size_whole[st] = whole_cardinality
         if whole_cardinality < Thc:
-            patterns_searched_lowest_level_lowerbound.add(st)
+            patterns_searched_lowest_level_lowerbound.append(st)
             continue
         num_top_k = patterns_top_kmin.pattern_count(st)
         if num_top_k < Lowerbounds[k - k_min]:
-            patterns_searched_lowest_level_lowerbound.add(st)
+            patterns_searched_lowest_level_lowerbound.append(st)
             CheckDominationAndAddForLowerbound(P, result_set_lowerbound)
         else:
             if P[num_att - 1] != -1:  # no children
-                patterns_searched_lowest_level_lowerbound.add(st)
+                patterns_searched_lowest_level_lowerbound.append(st)
             else:
                 children = GenerateChildren(P, whole_data_frame, attributes)
                 S = S + children
 
     pattern_treated_unfairly_lowerbound.append(result_set_lowerbound)
-    print("time for k_min = {}".format(time.time() - time0))
+    # print("time for k_min = {}".format(time.time() - time0))
+    # print("num pattern visited in k_min = {}".format(num_patterns_visited))
     for k in range(k_min + 1, k_max):
         if time.time() - time0 > time_limit:
             print("newalg overtime")
             break
-        print("k={}, num_patterns_visited = {}".format(k-1, num_patterns_visited))
+        # print("k={}, num_patterns_visited = {}".format(k-1, num_patterns_visited))
         result_set_lowerbound = result_set_lowerbound.copy()
         patterns_top_k = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_k.parse_data()
@@ -391,25 +415,39 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
         # if p in result_set_lowerbound:
         #     print("before AddNewTuple {} in result set".format(p))
         # time1 = time.time()
-        ancestors, num_patterns_visited = AddNewTuple(new_tuple, Thc, result_set_lowerbound,
+        ancestors, num_patterns_visited_addnewtuple = AddNewTuple(new_tuple, Thc, result_set_lowerbound,
                                                       whole_data_frame, patterns_top_k, k, k_min, pc_whole_data,
-                                                      num_patterns_visited,
+                                                      0,
                                                       patterns_size_whole, Lowerbounds, num_att,
                                                       attributes, patterns_searched_lowest_level_lowerbound)
+
         # time2 = time.time()
         # print("time for AddNewTuple = {}".format(time2 - time1))
         # if p in patterns_searched_lowest_level_lowerbound:
         #     print("after AddNewTuple {} in stop set".format(p))
         # if p in result_set_lowerbound:
         #     print("after AddNewTuple {} in result set".format(p))
-        num_patterns_visited, patterns_searched_lowest_level_lowerbound, \
-        checked_patterns \
-            = CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerbound,
-                                       root, root_str,
-                                       result_set_lowerbound, k,
-                                       k_min, pc_whole_data, patterns_top_k, patterns_size_whole,
-                                       Lowerbounds, num_att, whole_data_frame,
-                                       attributes, num_patterns_visited, Thc)
+        if Lowerbounds[k - k_min] > Lowerbounds[k - 1 - k_min]:
+            num_patterns_visited_checkbound, patterns_searched_lowest_level_lowerbound, \
+            checked_patterns \
+                = CheckCandidatesForBounds(ancestors, patterns_searched_lowest_level_lowerbound,
+                                           root, root_str,
+                                           result_set_lowerbound, k,
+                                           k_min, pc_whole_data, patterns_top_k, patterns_size_whole,
+                                           Lowerbounds, num_att, whole_data_frame,
+                                           attributes, 0, Thc)
+        else:
+            num_patterns_visited_checkbound, patterns_searched_lowest_level_lowerbound, \
+            checked_patterns \
+                = CheckStopSet(ancestors, patterns_searched_lowest_level_lowerbound,
+                                           root, root_str,
+                                           result_set_lowerbound, k,
+                                           k_min, pc_whole_data, patterns_top_k, patterns_size_whole,
+                                           Lowerbounds, num_att, whole_data_frame,
+                                           attributes, 0, Thc)
+        # print("k = {}, number of pattern visited: {}, {}".format(k, num_patterns_visited_addnewtuple,
+        #                                                  num_patterns_visited_checkbound))
+        num_patterns_visited += num_patterns_visited_checkbound + num_patterns_visited_addnewtuple
         pattern_treated_unfairly_lowerbound.append(result_set_lowerbound)
         # if p in patterns_searched_lowest_level_lowerbound:
         #     print("after CheckCandidatesForBounds {} in stop set".format(p))
@@ -428,14 +466,14 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound,
                 patterns_size_whole, Lowerbounds, num_att,
                 attributes,
                 patterns_searched_lowest_level_lowerbound):
-    ancestors = []
     root = [-1] * num_att
     children = GenerateChildrenRelatedToTuple(root, new_tuple)  # pattern with one deternimistic attribute
     S = children
+    ancestors = S
     new_tuple_only = [True] * len(S)
     while len(S) > 0:
         time1 = time.time()
-        P = S.pop()
+        P = S.pop(0)
         nto = new_tuple_only.pop()
         st = num2string(P)
         # if PatternEqual(P, [-1, -1, 0, -1, -1, -1]):
@@ -449,7 +487,7 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound,
             whole_cardinality = pc_whole_data.pattern_count(st)
 
         if whole_cardinality < Thc:
-            patterns_searched_lowest_level_lowerbound.add(st)
+            patterns_searched_lowest_level_lowerbound.append(st)
             continue
         else:
             num_top_k = patterns_top_k.pattern_count(st)
@@ -458,7 +496,8 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound,
             if num_top_k < Lowerbounds[k - k_min]:
                 if P not in result_set_lowerbound:
                     CheckDominationAndAddForLowerbound(P, result_set_lowerbound)
-                patterns_searched_lowest_level_lowerbound.add(st)
+                if st not in patterns_searched_lowest_level_lowerbound:
+                    patterns_searched_lowest_level_lowerbound.append(st)
                 continue
             else:
                 how_to_generate = []
@@ -470,7 +509,8 @@ def AddNewTuple(new_tuple, Thc, result_set_lowerbound,
                         patterns_searched_lowest_level_lowerbound.remove(st)
                 else:
                     if P[num_att - 1] != -1:  # no children
-                        patterns_searched_lowest_level_lowerbound.add(st)
+                        if st not in patterns_searched_lowest_level_lowerbound:
+                            patterns_searched_lowest_level_lowerbound.append(st)
                     else:
                         if st in patterns_searched_lowest_level_lowerbound:  # < lower bound last time
                             children = GenerateChildren(P, whole_data_frame, attributes)
@@ -514,14 +554,14 @@ original_data_file = r"../../InputData/CompasData/general/compas_data_cat_necess
 # original_data_file = "../../InputData/CompasData/ForRanking/LargeDatasets/8000.csv"
 
 
-selected_attributes = all_attributes[:3]
+selected_attributes = all_attributes[:10]
 
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data[selected_attributes]
 
 time_limit = 10 * 60
 k_min = 5
-k_max = 18
+k_max = 50
 Thc = 30
 
 List_k = list(range(k_min, k_max))

@@ -168,6 +168,8 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_limit
         if overtime_flag:
             print("naive overtime, exiting the loop of k")
             break
+        time2 = time.time()
+        num_patterns_visited_k = 0
         result_set_lowerbound = []
         root = [-1] * (len(attributes))
         S = GenerateChildren(root, whole_data_frame, ranked_data, attributes)
@@ -180,9 +182,9 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_limit
                 overtime_flag = True
                 print("naive overtime")
                 break
-            P = S.pop()
+            P = S.pop(0)
             st = num2string(P)
-            num_patterns_visited += 1
+            num_patterns_visited_k += 1
             whole_cardinality = pc_whole_data.pattern_count(st)
             # print("P={}, whole size={}".format(P, whole_cardinality))
             if whole_cardinality < Thc:
@@ -195,8 +197,10 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_limit
                 S = S + children
                 continue
         pattern_treated_unfairly_lowerbound.append(result_set_lowerbound)
-        print("k={}, num_patterns_visited = {}".format(k, num_patterns_visited))
-
+        # print("k={}, num_patterns_visited = {}".format(k, num_patterns_visited_k))
+        num_patterns_visited += num_patterns_visited_k
+        time3 = time.time()
+        print("k={}, time = {}".format(k, time3-time2))
     time1 = time.time()
     return pattern_treated_unfairly_lowerbound, num_patterns_visited, time1 - time0
 
