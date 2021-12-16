@@ -689,84 +689,8 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
     return pattern_treated_unfairly_lowerbound, num_patterns_visited, time1 - time0
 
 
-# search top-down to go over all patterns related to new_tuple
-# using similar checking methods as k_min
-# add to result set if they are outliers
-# def AddNewTuple(new_tuple, Thc, result_set_lowerbound,
-#                 whole_data_frame, patterns_top_k, k, k_min, pc_whole_data,
-#                 num_patterns_visited,
-#                 patterns_size_whole, Lowerbounds, num_att,
-#                 attributes,
-#                 patterns_should_be_in_result_set,
-#                 patterns_small_size, patterns_no_children):
-#     root = [-1] * num_att
-#     children = GenerateChildrenRelatedToTuple(root, new_tuple)  # pattern with one deternimistic attribute
-#     S = children
-#     ancestors = S
-#     new_tuple_only = [True] * len(S)
-#     while len(S) > 0:
-#         time1 = time.time()
-#         P = S.pop(0)
-#         nto = new_tuple_only.pop()
-#         st = num2string(P)
-#         # if PatternEqual(P, [-1, -1, 0, -1, -1, -1]):
-#         #     print("AddNewTuple, P={}".format(P))
-#         #     print("\n")
-#         num_patterns_visited += 1
-#         children = []
-#         if st in patterns_size_whole:
-#             whole_cardinality = patterns_size_whole[st]
-#         else:
-#             whole_cardinality = pc_whole_data.pattern_count(st)
-#         if whole_cardinality < Thc:
-#             continue
-#         else:
-#             num_top_k = patterns_top_k.pattern_count(st)
-#             time2 = time.time()
-#             # print("time2-1 = {}".format(time2 - time1))
-#             if num_top_k < Lowerbounds[k - k_min]:
-#                 if P not in result_set_lowerbound:
-#                     CheckDominationAndAddForLowerbound(P, result_set_lowerbound)
-#                 if st not in patterns_should_be_in_result_set:
-#                     patterns_should_be_in_result_set.append(st)
-#                 if st in patterns_no_children:
-#                     patterns_no_children.remove(st)
-#                 continue
-#             else:
-#                 how_to_generate = []
-#                 if P in result_set_lowerbound:
-#                     result_set_lowerbound.remove(P)
-#                     patterns_should_be_in_result_set.remove(st)
-#                     if P[num_att - 1] == -1:  # has children
-#                         children = GenerateChildren(P, whole_data_frame, attributes)
-#                         how_to_generate = [False] * len(children)
-#                     else:
-#                         patterns_no_children.append(st)
-#                 else:
-#                     if P[num_att - 1] != -1:  # no children
-#                         if st not in patterns_no_children:
-#                             patterns_no_children.append(st)
-#                     else:
-#                         if st in patterns_should_be_in_result_set:  # < lower bound last time
-#                             children = GenerateChildren(P, whole_data_frame, attributes)
-#                             how_to_generate = [False] * len(children)
-#                             patterns_should_be_in_result_set.remove(st)
-#                         elif nto:
-#                             children = GenerateChildrenRelatedToTuple(P, new_tuple)
-#                             how_to_generate = [True] * len(children)
-#                         else:
-#                             children = GenerateChildren(P, whole_data_frame, attributes)
-#                             how_to_generate = [False] * len(children)
-#                 if len(children) != 0:
-#                     S = S + children
-#                     new_tuple_only = new_tuple_only + how_to_generate
-#                     ancestors = ancestors + children
-#                 time3 = time.time()
-#                 # print("time2-3 = {}".format(time3 - time2))
-#     return ancestors, num_patterns_visited
-#
 
-# go down to p's all descendants
+
 def GoDownForResultSet(p, st, k, patterns_top_k, result_set_lowerbound, patterns_size_whole, pc_whole_data, whole_data_frame,
            attributes, Thc, lowerbound, num_att,
            to_append_patterns_dominated_by_result, patterns_children_small_size, to_append_patterns_no_children,
@@ -879,10 +803,13 @@ List_k = list(range(k_min, k_max))
 
 
 def lowerbound(x):
-    return int((x+7)/2)
+    return int((x+7)/2) + int((x+1)/2)
+
 
 
 Lowerbounds = [lowerbound(x) for x in List_k]
+
+
 
 print(Lowerbounds)
 
@@ -932,3 +859,5 @@ for k in range(0, k_max - k_min):
                 print("k=", k + k_min)
                 k_printed = True
             print(p)
+
+
