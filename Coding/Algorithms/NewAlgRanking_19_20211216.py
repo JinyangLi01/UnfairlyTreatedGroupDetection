@@ -486,7 +486,6 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
     # 3. no children
     patterns_dominated_by_result = []  # doesn't include patterns in result set
     patterns_children_small_size = []
-    patterns_no_children = []
 
     # DFS
     # this part is the main time consumption
@@ -512,11 +511,10 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
             if not CheckDominationAndAddForLowerbound_topdown_search(P, result_set_lowerbound):
                 patterns_dominated_by_result.append(st)
         else:
-            if P[num_att - 1] != -1:  # no children
-                patterns_no_children.append(st)
-            else:
+            if P[num_att - 1] == -1:  # no children
                 children = GenerateChildren(P, whole_data_frame, attributes)
                 S = S + children
+
 
     pattern_treated_unfairly_lowerbound.append(result_set_lowerbound)
     # print("time for k_min = {}".format(time.time() - time0))
@@ -529,14 +527,13 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
         patterns_top_k = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_k.parse_data()
         new_tuple = ranked_data.iloc[[k - 1]].values.flatten().tolist()
-        print("k={}, new tuple = {}".format(k, new_tuple))
+        # print("k={}, new tuple = {}".format(k, new_tuple))
 
         if Lowerbounds[k - k_min] > Lowerbounds[k - 1 - k_min]:
             time3 = time.time()
             result_set_lowerbound = []
             patterns_dominated_by_result = []  # doesn't include patterns in result set
             patterns_children_small_size = []
-            patterns_no_children = []
             S = GenerateChildren(root, whole_data_frame, attributes)
             while len(S) > 0:
                 if time.time() - time0 > time_limit:
@@ -557,9 +554,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
                     if not CheckDominationAndAddForLowerbound_topdown_search(P, result_set_lowerbound):
                         patterns_dominated_by_result.append(st)
                 else:
-                    if P[num_att - 1] != -1:  # no children
-                        patterns_no_children.append(st)
-                    else:
+                    if P[num_att - 1] == -1:
                         children = GenerateChildren(P, whole_data_frame, attributes)
                         S = S + children
             pattern_treated_unfairly_lowerbound.append(result_set_lowerbound)
@@ -568,28 +563,23 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
         else:
             # the bound doesn't change
             # check resul set
-            to_remove = []
+            patterns_resultset_now_removed = []
             to_append_patterns_dominated_by_result = set()
-            to_append_patterns_no_children = set()
 
             to_search_down = []
-            num_pattern_visited_here = 0
             for p in result_set_lowerbound:
                 num_patterns_visited += 1
-                num_pattern_visited_here += 1
                 # if PatternEqual(p, [0, 0, 0, -1, -1, 0, -1, -1, -1, -1]):
                 #     print("checking result_set_lowerbound, p={}".format(p))
                 st = num2string(p)
                 if TSatisfiesP(new_tuple, p, num_att):
                     num_top_k = patterns_top_k.pattern_count(st)
                     if num_top_k >= Lowerbounds[k - k_min]:
-                        to_remove.append(p)
-                        if p[num_att - 1] != -1:
-                            to_append_patterns_no_children.add(st)
-                        else:
+                        patterns_resultset_now_removed.append(p)
+                        if p[num_att - 1] == -1:
                             # go down from here
                             to_search_down = to_search_down + GenerateChildren(p, whole_data_frame, attributes)
-            for p in to_remove:
+            for p in patterns_resultset_now_removed:
                 result_set_lowerbound.remove(p)
             to_append = []
             num_patterns_visited, to_append_patterns_dominated_by_result = \
@@ -597,14 +587,12 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
                                    whole_data_frame, to_search_down,
                                    attributes, Thc, Lowerbounds[k - k_min], num_att,
                                    to_append_patterns_dominated_by_result, patterns_children_small_size,
-                                   to_append_patterns_no_children,
                                    num_patterns_visited, to_append)
-            print("num_pattern_visited_here: ", num_pattern_visited_here)
             for p in to_append:
                 result_set_lowerbound.append(p)
             # don't need to check patterns_children_small_size or patterns_no_children
             # check patterns_dominated_by_result
-            to_remove = []
+            to_remove_from_dominted_set = []
             to_append = []
             # print("patterns_dominated_by_result: ", patterns_dominated_by_result)
             for st in patterns_dominated_by_result:
@@ -618,10 +606,8 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
                 # if st == '0||0|||0||||0':
                 #     print("checking result_set_lowerbound, st={}".format(st))
                 if num_top_k >= Lowerbounds[k - k_min]:
-                    to_remove.append(st)
-                    if p[num_att - 1] != -1:
-                        to_append_patterns_no_children.add(st)
-                    else:
+                    to_remove_from_dominted_set.append(st)
+                    if p[num_att - 1] == -1:
                         num_patterns_visited2 = GoDownForDominatedByResult(p, st, k, patterns_top_k,
                                                                            result_set_lowerbound,
                                                                            patterns_size_whole, pc_whole_data,
@@ -630,9 +616,9 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
                                                                            num_att,
                                                                            patterns_dominated_by_result,
                                                                            patterns_children_small_size,
-                                                                           to_append_patterns_no_children, 0, to_append)
+                                                                           0, to_append)
                         num_patterns_visited += num_patterns_visited2
-                else:
+                elif PDominatedByM(p, patterns_resultset_now_removed):
                     to_remove_from_resultset = []
                     can_add = True
                     for r in result_set_lowerbound:
@@ -644,18 +630,16 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
                             to_remove_from_resultset.append(r)
                     if can_add:
                         result_set_lowerbound.append(p)
-                        to_remove.append(st)
+                        to_remove_from_dominted_set.append(st)
                         for s in to_remove_from_resultset:
                             result_set_lowerbound.remove(s)
                             to_append.append(num2string(s))
-            for st in to_remove:
+            for st in to_remove_from_dominted_set:
                 patterns_dominated_by_result.remove(st)
             for st in to_append:
                 patterns_dominated_by_result.append(st)
             for st in to_append_patterns_dominated_by_result:
                 patterns_dominated_by_result.append(st)
-            for st in to_append_patterns_no_children:
-                patterns_no_children.append(st)
             pattern_treated_unfairly_lowerbound.append(result_set_lowerbound)
         # if p in patterns_searched_lowest_level_lowerbound:
         #     print("after CheckCandidatesForBounds {} in stop set".format(p))
@@ -670,7 +654,6 @@ def GoDownForResultSet(k, patterns_top_k, result_set_lowerbound, patterns_size_w
                        whole_data_frame, to_search_down,
                        attributes, Thc, lowerbound, num_att,
                        to_append_patterns_dominated_by_result, patterns_children_small_size,
-                       to_append_patterns_no_children,
                        num_patterns_visited, to_append):
     S = to_search_down
     while len(S) > 0:
@@ -705,9 +688,7 @@ def GoDownForResultSet(k, patterns_top_k, result_set_lowerbound, patterns_size_w
                 if not dominated:
                     to_append.append(P)
         else:
-            if P[num_att - 1] != -1:  # no children
-                to_append_patterns_no_children.add(st)
-            else:
+            if P[num_att - 1] == -1:  # no children
                 children = GenerateChildren(P, whole_data_frame, attributes)
                 S = S + children
     return num_patterns_visited, to_append_patterns_dominated_by_result
@@ -718,7 +699,6 @@ def GoDownForDominatedByResult(p, st, k, patterns_top_k, result_set_lowerbound, 
                                whole_data_frame,
                                attributes, Thc, lowerbound, num_att,
                                patterns_dominated_by_result, patterns_children_small_size,
-                               to_append_patterns_no_children,
                                num_patterns_visited, to_append):
     S = GenerateChildren(p, whole_data_frame, attributes)
     while len(S) > 0:
@@ -737,9 +717,7 @@ def GoDownForDominatedByResult(p, st, k, patterns_top_k, result_set_lowerbound, 
             if CheckDominationAndAddForLowerbound_topdown_search(P, result_set_lowerbound) is False:
                 to_append.append(st)
         else:
-            if P[num_att - 1] != -1:  # no children
-                to_append_patterns_no_children.add(st)
-            else:
+            if P[num_att - 1] == -1:  # no children
                 children = GenerateChildren(P, whole_data_frame, attributes)
                 S = S + children
     return num_patterns_visited
@@ -768,14 +746,14 @@ original_data_file = r"../../InputData/CompasData/general/compas_data_cat_necess
 # original_data_file = "../../InputData/CompasData/ForRanking/LargeDatasets/8000.csv"
 
 # with 14 attributes, naive alg over time, new alg needs 117 s
-selected_attributes = all_attributes[:4]
+selected_attributes = all_attributes[:8]
 
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data[selected_attributes]
 
 time_limit = 10 * 60
-k_min = 6
-k_max = 9
+k_min = 5
+k_max = 50
 Thc = 50
 
 List_k = list(range(k_min, k_max))
@@ -785,7 +763,7 @@ def lowerbound(x):
     return int((x + 3) / 2) + int((x - 5) / 2)
 
 
-Lowerbounds = [lowerbound(x) for x in List_k]
+Lowerbounds = [10] * 20 + [20] * 30 # [lowerbound(x) for x in List_k]
 
 print(Lowerbounds)
 
