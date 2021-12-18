@@ -485,7 +485,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
     # 2. if size too small, add its parent
     # 3. no children
     patterns_dominated_by_result = []  # doesn't include patterns in result set
-    patterns_children_small_size = []
+    # patterns_children_small_size = []
 
     # DFS
     # this part is the main time consumption
@@ -499,9 +499,9 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
         whole_cardinality = pc_whole_data.pattern_count(st)
         patterns_size_whole[st] = whole_cardinality
         if whole_cardinality < Thc:
-            parent_str = findParentForStr(st)
-            if parent_str != root_str:
-                patterns_children_small_size.append(parent_str)
+            # parent_str = findParentForStr(st)
+            # if parent_str != root_str:
+            #     patterns_children_small_size.append(parent_str)
             continue
         num_top_k = patterns_top_kmin.pattern_count(st)
         if num_top_k < Lowerbounds[k - k_min]:
@@ -529,7 +529,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
         if Lowerbounds[k - k_min] > Lowerbounds[k - 1 - k_min]:
             result_set_lowerbound = []
             patterns_dominated_by_result = []  # doesn't include patterns in result set
-            patterns_children_small_size = []
+            # patterns_children_small_size = []
             S = GenerateChildren(root, whole_data_frame, attributes)
             while len(S) > 0:
                 if time.time() - time0 > time_limit:
@@ -541,9 +541,9 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
                 whole_cardinality = pc_whole_data.pattern_count(st)
                 patterns_size_whole[st] = whole_cardinality
                 if whole_cardinality < Thc:
-                    parent_str = findParentForStr(st)
-                    if parent_str != root_str:
-                        patterns_children_small_size.append(parent_str)
+                    # parent_str = findParentForStr(st)
+                    # if parent_str != root_str:
+                    #     patterns_children_small_size.append(parent_str)
                     continue
                 num_top_k = patterns_top_k.pattern_count(st)
                 if num_top_k < Lowerbounds[k - k_min]:
@@ -578,7 +578,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
                 GoDownForResultSet(k, patterns_top_k, result_set_lowerbound, patterns_size_whole, pc_whole_data,
                                    whole_data_frame, to_search_down,
                                    attributes, Thc, Lowerbounds[k - k_min], num_att,
-                                   to_append_patterns_dominated_by_result, patterns_children_small_size,
+                                   to_append_patterns_dominated_by_result,
                                    num_patterns_visited, to_append_to_result_set)
             for p in to_append_to_result_set:
                 result_set_lowerbound.append(p)
@@ -600,7 +600,6 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
                                                                            attributes, Thc, Lowerbounds[k - k_min],
                                                                            num_att,
                                                                            patterns_dominated_by_result,
-                                                                           patterns_children_small_size,
                                                                            0, to_append)
                         num_patterns_visited += num_patterns_visited2
                 elif PDominatedByM(p, patterns_resultset_now_removed):
@@ -633,7 +632,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
 def GoDownForResultSet(k, patterns_top_k, result_set_lowerbound, patterns_size_whole, pc_whole_data,
                        whole_data_frame, to_search_down,
                        attributes, Thc, lowerbound, num_att,
-                       to_append_patterns_dominated_by_result, patterns_children_small_size,
+                       to_append_patterns_dominated_by_result,
                        num_patterns_visited, to_append_to_result_set):
     S = to_search_down
     while len(S) > 0:
@@ -643,7 +642,7 @@ def GoDownForResultSet(k, patterns_top_k, result_set_lowerbound, patterns_size_w
         whole_cardinality = pc_whole_data.pattern_count(st)
         patterns_size_whole[st] = whole_cardinality
         if whole_cardinality < Thc:
-            patterns_children_small_size.append(findParentForStr(st))
+            # patterns_children_small_size.append(findParentForStr(st))
             continue
         num_top_k = patterns_top_k.pattern_count(st)
         if num_top_k < lowerbound:
@@ -678,7 +677,7 @@ def GoDownForResultSet(k, patterns_top_k, result_set_lowerbound, patterns_size_w
 def GoDownForDominatedByResult(p, st, k, patterns_top_k, result_set_lowerbound, patterns_size_whole, pc_whole_data,
                                whole_data_frame,
                                attributes, Thc, lowerbound, num_att,
-                               patterns_dominated_by_result, patterns_children_small_size,
+                               patterns_dominated_by_result,
                                num_patterns_visited, to_append):
     S = GenerateChildren(p, whole_data_frame, attributes)
     while len(S) > 0:
@@ -688,9 +687,9 @@ def GoDownForDominatedByResult(p, st, k, patterns_top_k, result_set_lowerbound, 
         whole_cardinality = pc_whole_data.pattern_count(st)
         patterns_size_whole[st] = whole_cardinality
         if whole_cardinality < Thc:
-            parentstr = findParentForStr(st)
-            if parentstr not in patterns_children_small_size:
-                patterns_children_small_size.append(parentstr)
+            # parentstr = findParentForStr(st)
+            # if parentstr not in patterns_children_small_size:
+            #     patterns_children_small_size.append(parentstr)
             continue
         num_top_k = patterns_top_k.pattern_count(st)
         if num_top_k < lowerbound:
@@ -724,14 +723,14 @@ original_data_file = r"../../InputData/StudentDataset/ForRanking_1/student-mat_c
 # original_data_file = "../../InputData/CompasData/ForRanking/LargeDatasets/8000.csv"
 
 # with 14 attributes, naive alg over time, new alg needs 117 s
-selected_attributes = all_attributes[:28]
+selected_attributes = all_attributes[:30]
 
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data[selected_attributes]
 
 time_limit = 10 * 60
 k_min = 10
-k_max = 30
+k_max = 50
 Thc = 50
 
 List_k = list(range(k_min, k_max))
