@@ -573,14 +573,14 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
                             to_search_down = to_search_down + GenerateChildren(p, whole_data_frame, attributes)
             for p in patterns_resultset_now_removed:
                 result_set_lowerbound.remove(p)
-            to_append = []
+            to_append_to_result_set = []
             num_patterns_visited, to_append_patterns_dominated_by_result = \
                 GoDownForResultSet(k, patterns_top_k, result_set_lowerbound, patterns_size_whole, pc_whole_data,
                                    whole_data_frame, to_search_down,
                                    attributes, Thc, Lowerbounds[k - k_min], num_att,
                                    to_append_patterns_dominated_by_result, patterns_children_small_size,
-                                   num_patterns_visited, to_append)
-            for p in to_append:
+                                   num_patterns_visited, to_append_to_result_set)
+            for p in to_append_to_result_set:
                 result_set_lowerbound.append(p)
             # don't need to check patterns_children_small_size or patterns_no_children
             # check patterns_dominated_by_result
@@ -634,7 +634,7 @@ def GoDownForResultSet(k, patterns_top_k, result_set_lowerbound, patterns_size_w
                        whole_data_frame, to_search_down,
                        attributes, Thc, lowerbound, num_att,
                        to_append_patterns_dominated_by_result, patterns_children_small_size,
-                       num_patterns_visited, to_append):
+                       num_patterns_visited, to_append_to_result_set):
     S = to_search_down
     while len(S) > 0:
         P = S.pop(0)
@@ -649,13 +649,14 @@ def GoDownForResultSet(k, patterns_top_k, result_set_lowerbound, patterns_size_w
         if num_top_k < lowerbound:
             dominated = False
             for r in result_set_lowerbound:
+                # r is impossible to be dominated by P
                 if P1DominatedByP2(P, r):
                     dominated = True
                     to_append_patterns_dominated_by_result.add(st)  # in case r is removed later
                     break
             if not dominated:
                 to_delete_from_to_append = []
-                for s in to_append:
+                for s in to_append_to_result_set:
                     if P1DominatedByP2(P, s):
                         dominated = True
                         to_append_patterns_dominated_by_result.add(st)
@@ -663,7 +664,9 @@ def GoDownForResultSet(k, patterns_top_k, result_set_lowerbound, patterns_size_w
                     elif P1DominatedByP2(s, P):
                         to_delete_from_to_append.append(s)
                 if not dominated:
-                    to_append.append(P)
+                    to_append_to_result_set.append(P)
+                for r in to_delete_from_to_append:
+                    to_append_to_result_set.remove(r)
         else:
             if P[num_att - 1] == -1:  # no children
                 children = GenerateChildren(P, whole_data_frame, attributes)
@@ -699,96 +702,91 @@ def GoDownForDominatedByResult(p, st, k, patterns_top_k, result_set_lowerbound, 
                 S = S + children
     return num_patterns_visited
 
-#
-# #
-# # all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
-# #                   'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C',
-# #                   'failures_C', 'schoolsup_C', 'famsup_C', 'paid_C', 'activities_C', 'nursery_C', 'higher_C',
-# #                   'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
-# #                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
-# #
-# # selected_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
-# #                        'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C']
-# #
-# # original_data_file = r"../../InputData/StudentDataset/ForRanking_1/student-mat_cat_ranked.csv"
-#
-#
+
+
+all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
+                  'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C',
+                  'failures_C', 'schoolsup_C', 'famsup_C', 'paid_C', 'activities_C', 'nursery_C', 'higher_C',
+                  'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
+                  'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
+
+
+original_data_file = r"../../InputData/StudentDataset/ForRanking_1/student-mat_cat_ranked.csv"
+
+
 # all_attributes = ["age_binary", "sex_binary", "race_C", "MarriageStatus_C", "juv_fel_count_C",
 #                   "decile_score_C", "juv_misd_count_C", "juv_other_count_C", "priors_count_C",
 #                   "days_b_screening_arrest_C",
 #                   "c_days_from_compas_C", "c_charge_degree_C", "v_decile_score_C", "start_C", "end_C",
 #                   "event_C"]
-#
-# #original_data_file = r"../../InputData/CompasData/general/compas_data_cat_necessary_att_ranked.csv"
+
+#original_data_file = r"../../InputData/CompasData/general/compas_data_cat_necessary_att_ranked.csv"
 # original_data_file = "../../InputData/CompasData/ForRanking/LargeDatasets/8000.csv"
-#
-# # with 14 attributes, naive alg over time, new alg needs 117 s
-# selected_attributes = all_attributes[:4]
-#
-# ranked_data = pd.read_csv(original_data_file)
-# ranked_data = ranked_data[selected_attributes]
-#
-# time_limit = 10 * 60
-# k_min = 5
-# k_max = 20
-# Thc = 50
-#
-# List_k = list(range(k_min, k_max))
-#
-#
-# def lowerbound(x):
-#     return int((x + 3) / 2) + int((x - 5) / 2)
-#
-#
-# Lowerbounds = [10] * 20 + [20] * 30 + [40] * 20  # [lowerbound(x) for x in List_k]
-#
-# print(Lowerbounds)
-#
-# print("start the new alg")
-#
-# pattern_treated_unfairly_lowerbound, num_patterns_visited, running_time = \
-#     GraphTraverse(ranked_data, selected_attributes, Thc,
-#                   Lowerbounds,
-#                   k_min, k_max, time_limit)
-#
-# print("num_patterns_visited = {}".format(num_patterns_visited))
-# print("time = {} s".format(running_time))
-# # for k in range(0, k_max - k_min):
-# #     print("k = {}, num = {}, patterns =".format(k + k_min, len(pattern_treated_unfairly_lowerbound[k])),
-# #           pattern_treated_unfairly_lowerbound[k])
-#
-# print("start the naive alg")
-#
-# pattern_treated_unfairly_lowerbound2, \
-# num_patterns_visited2, running_time2 = naiveranking.NaiveAlg(ranked_data, selected_attributes, Thc,
-#                                                              Lowerbounds,
-#                                                              k_min, k_max, time_limit)
-#
-# print("num_patterns_visited = {}".format(num_patterns_visited2))
-# print("time = {} s".format(running_time2))
-# # for k in range(0, k_max - k_min):
-# #     print("k = {}, num = {}, patterns =".format(k + k_min, len(pattern_treated_unfairly_lowerbound2[k])),
-# #           pattern_treated_unfairly_lowerbound2[k])
-# #
-#
-# k_printed = False
-# print("p in pattern_treated_unfairly_lowerbound but not in pattern_treated_unfairly_lowerbound2:")
+
+# with 14 attributes, naive alg over time, new alg needs 117 s
+selected_attributes = all_attributes[:28]
+
+ranked_data = pd.read_csv(original_data_file)
+ranked_data = ranked_data[selected_attributes]
+
+time_limit = 10 * 60
+k_min = 10
+k_max = 30
+Thc = 50
+
+List_k = list(range(k_min, k_max))
+
+
+
+Lowerbounds = [10] * 10 + [20] * 10 + [30] * 10 + [40] * 10  # [lowerbound(x) for x in List_k]
+
+print(Lowerbounds)
+
+print("start the new alg")
+
+pattern_treated_unfairly_lowerbound, num_patterns_visited, running_time = \
+    GraphTraverse(ranked_data, selected_attributes, Thc,
+                  Lowerbounds,
+                  k_min, k_max, time_limit)
+
+print("num_patterns_visited = {}".format(num_patterns_visited))
+print("time = {} s".format(running_time))
 # for k in range(0, k_max - k_min):
-#     for p in pattern_treated_unfairly_lowerbound[k]:
-#         if p not in pattern_treated_unfairly_lowerbound2[k]:
-#             if k_printed is False:
-#                 print("k=", k + k_min)
-#                 k_printed = True
-#             print(p)
-#
-# k_printed = False
-# print("p in pattern_treated_unfairly_lowerbound2 but not in pattern_treated_unfairly_lowerbound:")
+#     print("k = {}, num = {}, patterns =".format(k + k_min, len(pattern_treated_unfairly_lowerbound[k])),
+#           pattern_treated_unfairly_lowerbound[k])
+
+print("start the naive alg")
+
+pattern_treated_unfairly_lowerbound2, \
+num_patterns_visited2, running_time2 = naiveranking.NaiveAlg(ranked_data, selected_attributes, Thc,
+                                                             Lowerbounds,
+                                                             k_min, k_max, time_limit)
+
+print("num_patterns_visited = {}".format(num_patterns_visited2))
+print("time = {} s".format(running_time2))
 # for k in range(0, k_max - k_min):
-#     for p in pattern_treated_unfairly_lowerbound2[k]:
-#         if p not in pattern_treated_unfairly_lowerbound[k]:
-#             if k_printed is False:
-#                 print("k=", k + k_min)
-#                 k_printed = True
-#             print(p)
+#     print("k = {}, num = {}, patterns =".format(k + k_min, len(pattern_treated_unfairly_lowerbound2[k])),
+#           pattern_treated_unfairly_lowerbound2[k])
+#
+
+k_printed = False
+print("p in pattern_treated_unfairly_lowerbound but not in pattern_treated_unfairly_lowerbound2:")
+for k in range(0, k_max - k_min):
+    for p in pattern_treated_unfairly_lowerbound[k]:
+        if p not in pattern_treated_unfairly_lowerbound2[k]:
+            if k_printed is False:
+                print("k=", k + k_min)
+                k_printed = True
+            print(p)
+
+k_printed = False
+print("p in pattern_treated_unfairly_lowerbound2 but not in pattern_treated_unfairly_lowerbound:")
+for k in range(0, k_max - k_min):
+    for p in pattern_treated_unfairly_lowerbound2[k]:
+        if p not in pattern_treated_unfairly_lowerbound[k]:
+            if k_printed is False:
+                print("k=", k + k_min)
+                k_printed = True
+            print(p)
 
 
