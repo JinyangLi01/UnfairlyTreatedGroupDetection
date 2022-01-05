@@ -69,6 +69,8 @@ def GenerateChildren(P, whole_data_frame, attributes):
     if P[i] == -2:
         i -= 1
     for j in range(i+1, length, 1):
+        # print("j={}, att={}, min={}, max={}".format(j, attributes[j], whole_data_frame[attributes[j]]['min'],
+        #                                             whole_data_frame[attributes[j]]['max']))
         for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max'])+1):
             s = P.copy()
             s[j] = a
@@ -119,7 +121,7 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
 
     num_calculation = 0
     root = [-2] * (len(attributes))
-    S = [root]
+    S = GenerateChildren(root, whole_data_frame, attributes)
     pattern_with_low_accuracy = []
     sizes_of_patterns = []
     fairness_values_of_patterns = []
@@ -142,7 +144,7 @@ def GraphTraverse(whole_data, mis_class_data, Tha, Thc, time_limit):
         if mis_class_cardinality < (1 - Tha) * Thc:
             num_patterns_skipped_by_misclassified += 1
             continue
-
+        # print("P={}".format(P))
         whole_cardinality = pc_whole_data.pattern_count(st)
 
         if whole_cardinality < Thc:
