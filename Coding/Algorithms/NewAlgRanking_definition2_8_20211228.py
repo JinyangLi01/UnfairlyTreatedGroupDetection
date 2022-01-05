@@ -792,11 +792,11 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_ma
                 smallest_valid_k = k_max + 1
             elif smallest_valid_k < k_min:
                 smallest_valid_k = k_min - 1
-            old_k = math.floor((num_top_k - 1) / ((whole_cardinality / data_size) - alpha))
-            if old_k > k_max:
-                old_k = k_max + 1
-            elif old_k < k_min:
-                old_k = k_min - 1
+            # old_k = math.floor((num_top_k - 1) / ((whole_cardinality / data_size) - alpha))
+            # if old_k > k_max:
+            #     old_k = k_max + 1
+            # elif old_k < k_min:
+            #     old_k = k_min - 1
             if num_top_k < lowerbound:
                 Update_or_add_node_w_smaller_k(nodes_dict, k_dict, smallest_valid_k, P, st)
                 if P in result_set:
