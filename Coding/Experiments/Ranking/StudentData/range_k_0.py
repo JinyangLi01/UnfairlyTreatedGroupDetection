@@ -166,7 +166,7 @@ for range_k in range_k_list:
 
 
 
-output_path = r'../../../../OutputData/Ranking/StudentData/num_k.txt'
+output_path = r'../../../../OutputData/Ranking_0/StudentData/num_k.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 

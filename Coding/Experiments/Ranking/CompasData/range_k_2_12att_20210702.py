@@ -182,7 +182,7 @@ for range_k in range_k_list:
 
 
 
-output_path = r'../../../../OutputData/Ranking/CompasData/num_k_12att.txt'
+output_path = r'../../../../OutputData/Ranking_0/CompasData/num_k_12att.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
