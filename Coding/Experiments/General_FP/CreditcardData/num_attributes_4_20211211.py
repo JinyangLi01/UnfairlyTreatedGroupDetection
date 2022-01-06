@@ -213,7 +213,7 @@ for number_attributes in range(num_att_max_naive, num_att_max):
 
 
 
-output_path = r'../../../../OutputData/General_withStopCond/CreditcardDataset/num_attribute.txt'
+output_path = r'../../../../OutputData/General_1_withStopCond/CreditcardDataset/num_attribute.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
