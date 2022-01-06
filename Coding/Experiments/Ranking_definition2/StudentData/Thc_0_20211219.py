@@ -161,7 +161,7 @@ for Thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition2/StudentData/thc_15att.txt'
+output_path = r'../../../../OutputData/Ranking_definition2_0/StudentData/thc_15att.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
