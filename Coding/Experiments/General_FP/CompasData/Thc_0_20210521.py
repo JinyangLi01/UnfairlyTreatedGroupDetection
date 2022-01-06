@@ -132,7 +132,7 @@ for thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/General/CompasDataset/thc.txt'
+output_path = r'../../../../OutputData/General_0/CompasDataset/thc.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 

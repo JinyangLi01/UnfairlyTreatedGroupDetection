@@ -168,7 +168,7 @@ for number_attributes in range(num_att_min, num_att_max):
 
 
 
-output_path = r'../../../../OutputData/General/CreditcardDataset/num_attribute_optimized.txt'
+output_path = r'../../../../OutputData/General_0/CreditcardDataset/num_attribute_optimized.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 

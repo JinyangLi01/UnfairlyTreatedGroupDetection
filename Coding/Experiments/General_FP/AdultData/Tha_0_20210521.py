@@ -99,7 +99,7 @@ for dif in diff_acc:
 
 
 
-output_path = r'../../../../OutputData/General/AdultDataset/tha.txt'
+output_path = r'../../../../OutputData/General_0/AdultDataset/tha.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time)
 

@@ -1,47 +1,35 @@
-"""
-This script is to do experiment on the data size.
-
-CleanAdult2.txt: 45222 rows
-data sizes: 100, 500, 1000, 5000, 10000, 40000
-selected randomly, and generate files in InputData/DifferentDataSizes/
-
-
-
-two charts: running time, number of patterns checked
-y axis: running time, number of patterns checked
-
-x axis: data sizes: 100, 500, 1000, 5000, 10000, 40000
-
-Other parameters:
-selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass']
-size threshold Thc = 30
-threshold of minority group accuracy: overall acc - 20
-
-"""
-
-
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgGeneral_1_20210528 as newalg
-from Algorithms import NaiveAlgGeneral_1_202105258 as naivealg
+from Algorithms import NewAlgGeneral_2_20211219 as newalg
+from Algorithms import NaiveAlgGeneral_3_20211219 as naivealg
 from Algorithms import Predict_0_20210127 as predict
+
 import matplotlib.pyplot as plt
+import seaborn as sns
 from matplotlib.ticker import FuncFormatter
-SMALL_SIZE = 8
-MEDIUM_SIZE = 10
-BIGGER_SIZE = 20
-plt.rc('figure', figsize=(7, 5.6))
 
-plt.rc('font', size=BIGGER_SIZE)          # controls default text sizes
-plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
-plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
-plt.rc('xtick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('ytick', labelsize=BIGGER_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=BIGGER_SIZE)    # legend fontsize
-plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+plt.rc('text', usetex=True)
+plt.rc('font', family='serif')
 
 
+sns.set_palette("Paired")
+# sns.set_palette("deep")
+sns.set_context("poster", font_scale=2)
+sns.set_style("whitegrid")
+# sns.palplot(sns.color_palette("deep", 10))
+# sns.palplot(sns.color_palette("Paired", 9))
+
+line_style = ['o-', 's--', '^:', '-.p']
+color = ['C0', 'C1', 'C2', 'C3', 'C4']
+plt_title = ["BlueNile", "COMPAS", "Credit Card"]
+
+label = ["Optimized", "Naive"]
+line_width = 8
+marker_size = 15
+# f_size = (14, 10)
+
+f_size = (14, 10)
 
 def ComparePatternSets(set1, set2):
     len1 = len(set1)
@@ -62,7 +50,6 @@ def ComparePatternSets(set1, set2):
 def thousands_formatter(x, pos):
     return int(x/1000)
 
-
 def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes):
     original_data_file = original_data_file_pathpre + str(datasize) + ".csv"
     less_attribute_data = pd.read_csv(original_data_file)[selected_attributes]
@@ -75,49 +62,62 @@ def GridSearch(original_data_file_pathpre, datasize, thc, selected_attributes):
     TN_data_file = original_data_file_pathpre + str(datasize) + "_TN.csv"
     TN = pd.read_csv(TN_data_file)[selected_attributes]
 
-
     original_thf_FPR = len(FP) / (len(FP) + len(TN))
 
     delta_thf = 0.2
     fairness_definition = 1
 
-
     pattern_with_low_fairness1, num_calculation1, execution_time1 = newalg.GraphTraverse(less_attribute_data,
-                                                                                TP, TN, FP, FN, delta_thf,
-                                                                                thc, time_limit, fairness_definition)
+                                                                                         TP, TN, FP, FN, delta_thf,
+                                                                                         thc, time_limit,
+                                                                                         fairness_definition)
 
     print("newalg, time = {} s, num_calculation = {}".format(execution_time1, num_calculation1), "\n",
           pattern_with_low_fairness1)
 
+    if execution_time1 > time_limit:
+        raise Exception("optimized alg exceeds time limit")
+
     pattern_with_low_fairness2, num_calculation2, execution_time2 = naivealg.NaiveAlg(less_attribute_data,
-                                                                     TP, TN, FP, FN, delta_thf,
-                                                                     thc, time_limit, fairness_definition)
+                                                                                      TP, TN, FP, FN, delta_thf,
+                                                                                      thc, time_limit,
+                                                                                      fairness_definition)
 
     print("naivealg, time = {} s, num_calculation = {}".format(execution_time2, num_calculation2), "\n",
           pattern_with_low_fairness2)
 
     if ComparePatternSets(pattern_with_low_fairness1, pattern_with_low_fairness2) is False:
-        print("sanity check fails!")
+        raise Exception("sanity check fails!")
 
     print("{} patterns with low accuracy: \n {}".format(len(pattern_with_low_fairness1), pattern_with_low_fairness2))
 
-
-    if execution_time1 > time_limit:
-        print("new alg exceeds time limit")
     if execution_time2 > time_limit:
-        print("naive alg exceeds time limit")
-
+        raise Exception("naive alg exceeds time limit")
 
     return execution_time1, num_calculation1, execution_time2, num_calculation2, pattern_with_low_fairness1
 
 
-selected_attributes = ['age', 'education', 'marital-status', 'race', 'gender', 'workclass']
 
-data_sizes = [50000, 55000, 60000, 65000, 70000, 75000, 80000, 85000, 90000, 95000, 100000]
+all_attributes = ['AGE_C', 'RACE', 'K6SUM42_C',
+                       'REGION', 'SEX', 'MARRY', 'FTSTU', 'ACTDTY',
+                       'HONRDC', 'RTHLTH', 'MNHLTH', 'HIBPDX', 'CHDDX',
+                       'ANGIDX', 'MIDX', 'OHRTDX', 'STRKDX', 'EMPHDX',
+                       'CHBRON', 'CHOLDX', 'CANCERDX', 'DIABDX', 'JTPAIN',
+                       'ARTHDX', 'ARTHTYPE', 'ASTHDX', 'ADHDADDX', 'PREGNT',
+                       'WLKLIM', 'ACTLIM', 'SOCLIM', 'COGLIM', 'DFHEAR42',
+                       'DFSEE42', 'ADSMOK42', 'PHQ242', 'EMPST', 'POVCAT',
+                       'INSCOV']
+
+
+# with 10 att???
+selected_attributes = all_attributes[:10]
+
+data_sizes = [8000, 10000, 12000, 14000, 16000, 18000, 20000]
 Thc = 50
-original_data_file_pathprefix = "../../../../InputData/AdultDataset/LargeDatasets_cat/"
+original_data_file_pathprefix = "../../../../InputData/MedicalDataset/LargerDataset/"
 
-time_limit = 5*60
+
+time_limit = 10*60
 # based on experiments with the above parameters, when number of attributes = 8, naive algorithm running time > 10min
 # so for naive alg, we only do when number of attributes <= 7
 execution_time1 = list()
@@ -157,49 +157,65 @@ for datasize in data_sizes:
 
 
 
-output_path = r'../../../../OutputData/General_0/AdultDataset/data_size.txt'
+output_path = r'../../../../OutputData/General_withStopCond/MedicalDataset/data_size.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
-
-
 
 output_file.write("execution time\n")
 for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], execution_time1[n], execution_time2[n]))
 
 
-output_file.write("\n\nnumber of calculations\n")
+output_file.write("\n\nnumber of patterns visited\n")
 for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], num_patterns_checked1[n], num_patterns_checked2[n]))
 
 
-fig, ax = plt.subplots()
-plt.plot(data_sizes, execution_time1, label="optimized algorithm", color='blue', linewidth = 3.4)
-plt.plot(data_sizes, execution_time2, label="naive algorithm", color='orange', linewidth = 3.4)
-plt.xlabel('data size (K)')
-plt.ylabel('execution time (s)')
-plt.xticks([50000, 60000, 70000, 80000, 90000, 100000])
+
+
+fig, ax = plt.subplots(1, 1, figsize=f_size)
+plt.plot(data_sizes, execution_time1, line_style[0], color=color[0], label=label[0], linewidth=line_width,
+          markersize=marker_size)
+plt.plot(data_sizes, execution_time2, line_style[1], color=color[1], label=label[1], linewidth=line_width,
+             markersize=marker_size)
+plt.xlabel('Data size (K)')
+plt.xticks(data_sizes)
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-plt.subplots_adjust(bottom=0.15, left=0.18)
-plt.legend()
-plt.savefig("../../../../OutputData/General/AdultDataset/datasize_time.png")
+plt.ylabel('Execution time (s)')
+plt.legend(loc='best')
+plt.grid(True)
+fig.tight_layout()
+plt.savefig("../../../../OutputData/General_withStopCond/MedicalDataset/datasize_time.png",
+            bbox_inches='tight')
 plt.show()
-
-
-fig, ax = plt.subplots()
-plt.plot(data_sizes, num_patterns_checked1, label="optimized algorithm", color='blue', linewidth=3.4)
-plt.plot(data_sizes, num_patterns_checked2, label="naive algorithm", color='orange', linewidth=3.4)
-plt.xlabel('data size (K)')
-plt.xticks([50000, 60000, 70000, 80000, 90000, 100000])
-ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-plt.ylabel('number of patterns visited (K)')
-ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
-plt.subplots_adjust(bottom=0.15, left=0.18)
-plt.legend()
-plt.savefig("../../../../OutputData/General/AdultDataset/datasize_calculations.png")
-plt.show()
-
-
 plt.close()
+
+
+
+
+
+
+fig, ax = plt.subplots(1, 1, figsize=f_size)
+plt.plot(data_sizes, num_patterns_checked1, line_style[0], color=color[0], label=label[0], linewidth=line_width,
+          markersize=marker_size)
+plt.plot(data_sizes, num_patterns_checked2, line_style[1], color=color[1], label=label[1], linewidth=line_width,
+             markersize=marker_size)
+plt.xlabel('Data size (K)')
+# data_sizes = [8000, 10000, 12000, 14000, 16000, 18000, 20000]
+plt.xticks(data_sizes)
+ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
+plt.ylabel('Number of patterns visited (K)')
+ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
+plt.legend(loc='best')
+plt.grid(True)
+fig.tight_layout()
+plt.savefig("../../../../OutputData/General_withStopCond/MedicalDataset/datasize_calculations.png",
+            bbox_inches='tight')
+plt.show()
+plt.close()
+
+
+
+
 plt.clf()
 
