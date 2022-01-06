@@ -122,7 +122,7 @@ for dif in diff_acc:
 
 
 
-output_path = r'../../../../OutputData/General_1_withStopCond/AdultDataset/tha.txt'
+output_path = r'../../../../OutputData/General_2/AdultDataset/tha.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time)
 
@@ -155,7 +155,7 @@ plt.ylabel('Execution time (s)')
 plt.xticks(diff_acc)
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/General_withStopCond/AdultDataset/tha_time.png", bbox_inches='tight')
+plt.savefig("../../../../OutputData/General_2/AdultDataset/tha_time.png", bbox_inches='tight')
 plt.show()
 plt.close()
 
@@ -172,7 +172,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.xticks(diff_acc)
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/General_withStopCond/AdultDataset/tha_calculations.png", bbox_inches='tight')
+plt.savefig("../../../../OutputData/General_2/AdultDataset/tha_calculations.png", bbox_inches='tight')
 plt.show()
 plt.close()
 

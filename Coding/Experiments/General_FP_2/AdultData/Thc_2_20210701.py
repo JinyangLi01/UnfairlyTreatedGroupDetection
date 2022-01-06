@@ -127,7 +127,7 @@ for thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/General_1_withStopCond/AdultDataset/thc.txt'
+output_path = r'../../../../OutputData/General_2/AdultDataset/thc.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -159,7 +159,7 @@ plt.ylabel('Execution time (s)')
 plt.xticks(Thc_list)
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/General_withStopCond/AdultDataset/thc_time.png",
+plt.savefig("../../../../OutputData/General_2/AdultDataset/thc_time.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -176,7 +176,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.xticks(Thc_list)
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/General_withStopCond/AdultDataset/thc_calculations.png",
+plt.savefig("../../../../OutputData/General_2/AdultDataset/thc_calculations.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
