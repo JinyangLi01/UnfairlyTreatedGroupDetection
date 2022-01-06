@@ -62,7 +62,7 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstat
 # with 15 att, ok
 # with 16 att, ok
 # with 17, over time
-selected_attributes = all_attributes[:16]
+selected_attributes = all_attributes[:15]
 
 thc = 50
 k_min = 10
@@ -151,7 +151,7 @@ for range_k in range_k_list:
     execution_time2.append(t2)
     num_patterns_visited2.append(num_patterns_visited2_thc)
 
-output_path = r'../../../../OutputData/Ranking_definition2_0/StudentData/range_k.txt'
+output_path = r'../../../../OutputData/Ranking_definition2_1/StudentData/range_k.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -178,7 +178,7 @@ plt.xticks([100, 200, 300, 350])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2/StudentData/range_k_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/range_k_time.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -195,7 +195,7 @@ plt.xticks([100, 200, 300, 350])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2/StudentData/range_k_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/range_k_calculations.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

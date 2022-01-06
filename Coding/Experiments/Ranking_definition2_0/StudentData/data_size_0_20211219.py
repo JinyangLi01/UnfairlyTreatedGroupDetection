@@ -106,7 +106,7 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C',
 # with 14 att, ok
 # with 18 att, ok
 # with 20 att ??
-selected_attributes = all_attributes[:20]
+selected_attributes = all_attributes[:15]
 
 
 data_sizes = [400, 500, 600, 700, 800, 900, 1000, 1100, 1200]
@@ -161,7 +161,7 @@ for datasize in data_sizes:
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition2_0/StudentData/data_size_20att.txt'
+output_path = r'../../../../OutputData/Ranking_definition2_1/StudentData/data_size_20att.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -190,7 +190,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2/StudentData/datasize_time_20att.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/datasize_time_20att.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -211,7 +211,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2/StudentData/datasize_calculations_20att.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/datasize_calculations_20att.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
