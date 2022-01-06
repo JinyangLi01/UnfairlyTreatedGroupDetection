@@ -98,11 +98,10 @@ all_attributes = ["age_binary","sex_binary","race_C","MarriageStatus_C","juv_fel
                   "c_days_from_compas_C","c_charge_degree_C","v_decile_score_C","start_C","end_C",
                   "event_C"]
 
-# with 10 att , ok
-# with 14 att, 8000, naive over time
-# with 12 att, over time
+# with 9 att , over time
 # with 11 att, over time
-selected_attributes = all_attributes[:10]
+# with 8 ??
+selected_attributes = all_attributes[:8]
 
 
 
@@ -158,7 +157,7 @@ for datasize in data_sizes:
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition2_0/CompasData/data_size_10att.txt'
+output_path = r'../../../../OutputData/Ranking_definition2_1/CompasData/data_size.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -188,7 +187,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2/CompasData/datasize_time_10att.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/datasize_time.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -210,7 +209,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2/CompasData/datasize_calculations_10att.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/datasize_calculations.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

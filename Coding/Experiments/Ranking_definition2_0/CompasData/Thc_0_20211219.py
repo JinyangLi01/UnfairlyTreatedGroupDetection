@@ -59,7 +59,8 @@ all_attributes = ["age_binary","sex_binary","race_C","MarriageStatus_C","juv_fel
 
 # with 12 att, ok
 # with 13 att, when thc = 10, naive over time
-selected_attributes = all_attributes[:12]
+# range_k can only handle 9
+selected_attributes = all_attributes[:8]
 
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -157,7 +158,7 @@ for Thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition2_0/CompasData/thc.txt'
+output_path = r'../../../../OutputData/Ranking_definition2_1/CompasData/thc.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -191,7 +192,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2/CompasData/thc_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/thc_time.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -213,7 +214,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2/CompasData/thc_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/thc_calculations.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
