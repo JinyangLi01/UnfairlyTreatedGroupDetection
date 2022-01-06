@@ -151,7 +151,7 @@ for range_k in range_k_list:
     execution_time2.append(t2)
     num_patterns_visited2.append(num_patterns_visited2_thc)
 
-output_path = r'../../../../OutputData/Ranking_definition2/StudentData/range_k.txt'
+output_path = r'../../../../OutputData/Ranking_definition2_0/StudentData/range_k.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 

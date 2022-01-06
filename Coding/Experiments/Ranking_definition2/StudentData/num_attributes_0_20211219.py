@@ -208,7 +208,7 @@ for number_attributes in range(num_att_max_naive, num_att_max):
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition2/StudentData/num_att_14.txt'
+output_path = r'../../../../OutputData/Ranking_definition2_0/StudentData/num_att_14.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
