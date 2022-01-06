@@ -119,7 +119,7 @@ for dif in diff_acc:
 
 
 
-output_path = r'../../../../OutputData/General_withStopCond/CreditcardDataset/tha.txt'
+output_path = r'../../../../OutputData/General_1_withStopCond/CreditcardDataset/tha.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time)
 

@@ -120,7 +120,7 @@ for dif in diff_acc:
     num_calculations.append(calculation1)
 
 
-output_path = r'../../../../OutputData/General_withStopCond/MedicalDataset/tha.txt'
+output_path = r'../../../../OutputData/General_1_withStopCond/MedicalDataset/tha.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time)
 

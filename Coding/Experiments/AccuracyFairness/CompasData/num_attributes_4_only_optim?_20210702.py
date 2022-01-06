@@ -191,7 +191,7 @@ for number_attributes in range(num_att_max_naive, num_att_max):
 
 
 
-output_path = r'../../../../OutputData/LowAccDetection/CompasDataset/num_attribute_18att_opt_only.txt'
+output_path = r'../../../../OutputData/LowAccDetection_0/CompasDataset/num_attribute_18att_opt_only.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 

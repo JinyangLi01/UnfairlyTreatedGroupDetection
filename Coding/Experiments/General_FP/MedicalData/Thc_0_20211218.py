@@ -139,7 +139,7 @@ for thc in Thc_list:
     execution_time1.append(t1)
     num_calculation1.append(calculation1)
 
-output_path = r'../../../../OutputData/General_withStopCond/MedicalDataset/thc_att.txt'
+output_path = r'../../../../OutputData/General_1_withStopCond/MedicalDataset/thc_att.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
