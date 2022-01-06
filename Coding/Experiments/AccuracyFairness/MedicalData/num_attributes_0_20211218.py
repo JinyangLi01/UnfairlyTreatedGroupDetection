@@ -194,7 +194,7 @@ for number_attributes in range(num_att_max_naive, num_att_max):
     execution_time1.append(t1)
     num_calculation1.append(calculation1)
 
-output_path = r'../../../../OutputData/LowAccDetection_withStopCond/MedicalDataset/num_attribute.txt'
+output_path = r'../../../../OutputData/LowAccDetection_1_withStopCond/MedicalDataset/num_attribute.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 

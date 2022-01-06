@@ -115,7 +115,7 @@ for dif in diff_acc:
 
 
 
-output_path = r'../../../../OutputData/LowAccDetection_withStopCond/CompasDataset/tha.txt'
+output_path = r'../../../../OutputData/LowAccDetection_1_withStopCond/CompasDataset/tha.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time)
 
