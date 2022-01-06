@@ -99,7 +99,7 @@ all_attributes = ['sexC', 'ageC', 'raceC', 'MC', 'priors_count_C',
 
 ### compute total number of att
 
-number_attributes = 16
+number_attributes = 8
 selected_attributes = all_attributes[:number_attributes]
 
 

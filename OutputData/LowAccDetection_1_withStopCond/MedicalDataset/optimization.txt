@@ -1,0 +1,12 @@
+overall accuracy: 0.8234996841440303
+execution time
+9 1.6339426040649414 89.81486797332764
+
+
+number of patterns checked
+9 34503.0 1781999.0
+
+
+number of patterns found
+0 0 
+ []

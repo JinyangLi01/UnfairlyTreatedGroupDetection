@@ -62,7 +62,7 @@ all_attributes = ["age_binary", "sex_binary", "race_C", "MarriageStatus_C", "juv
 # with 12 att, when k = 10-100, naive needs 540 s, when k is larger, naive over time
 # with 11 att, when k = 50-300, naive over time
 # with 9, ok
-selected_attributes = all_attributes[:9]
+selected_attributes = all_attributes[:8]
 
 print("num of att = {}".format(len(selected_attributes)))
 
