@@ -25,7 +25,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["Optimized", "Naive"]
+label = ["Optimized", "IterTD"]
 line_width = 8
 marker_size = 15
 # f_size = (14, 10)
@@ -87,6 +87,8 @@ def GridSearch(original_data, all_attributes, thc, Lowerbounds, number_attribute
         Lowerbounds,
         k_min, k_max, time_limit)
 
+    if t1_ > time_limit:
+        raise Exception("new alg exceeds time limit")
     print("newalg, num_patterns_visited = {}".format(num_patterns_visited1_))
     print("time = {} s, num of pattern_treated_unfairly_lowerbound = {}".format(
             t1_, len(pattern_treated_unfairly_lowerbound1)))
@@ -102,8 +104,6 @@ def GridSearch(original_data, all_attributes, thc, Lowerbounds, number_attribute
             t2_, len(pattern_treated_unfairly_lowerbound2)))
 
 
-    if t1_ > time_limit:
-        raise Exception("new alg exceeds time limit")
     if t2_ > time_limit:
         raise Exception("naive alg exceeds time limit")
 
@@ -210,7 +210,7 @@ for number_attributes in range(num_att_max_naive, num_att_max):
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition1_0/CompasData/num_att.txt'
+output_path = r'../../../../OutputData/Ranking_definition1_1/CompasData/num_att.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -219,14 +219,14 @@ output_file.write("execution time\n")
 for n in range(num_att_min, num_att_max_naive):
     output_file.write('{} {} {}\n'.format(n, execution_time1[ n -num_att_min], execution_time2[ n -num_att_min]))
 for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {}\n'.format(n, execution_time1[n - num_att_max_naive]))
+    output_file.write('{} {}\n'.format(n, execution_time1[n - num_att_min]))
 
 
 output_file.write("\n\nnumber of patterns checked\n")
 for n in range(num_att_min, num_att_max_naive):
     output_file.write('{} {} {}\n'.format(n, num_calculation1[ n -num_att_min], num_calculation2[ n -num_att_min]))
 for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {}\n'.format(n, num_calculation1[ n -num_att_max_naive]))
+    output_file.write('{} {}\n'.format(n, num_calculation1[ n -num_att_min]))
 
 
 
@@ -258,7 +258,7 @@ plt.xticks([2, 4, 6, 8, 10, 12, 14, 16])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking/CompasData/num_att_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/num_att_time.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -277,7 +277,7 @@ plt.xticks([2, 4, 6, 8, 10, 12, 14, 16])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking/CompasData/num_att_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/num_att_calculations.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

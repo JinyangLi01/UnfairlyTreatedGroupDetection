@@ -23,7 +23,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["Optimized", "Naive"]
+label = ["Optimized", "IterTD"]
 line_width = 8
 marker_size = 15
 # f_size = (14, 10)
@@ -162,7 +162,7 @@ for range_k in range_k_list:
     execution_time2.append(t2)
     num_patterns_visited2.append(num_patterns_visited2_thc)
 
-output_path = r'../../../../OutputData/Ranking_definition1_0/CompasData/range_k.txt'
+output_path = r'../../../../OutputData/Ranking_definition1_1/CompasData/range_k.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -197,7 +197,7 @@ plt.xticks([200, 400, 600, 800, 1000])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking/CompasData/range_k_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/range_k_time.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -216,7 +216,7 @@ plt.xticks([200, 400, 600, 800, 1000])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking/CompasData/range_k_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/range_k_calculations.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

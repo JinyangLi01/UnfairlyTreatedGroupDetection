@@ -25,7 +25,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["Optimized", "Naive"]
+label = ["Optimized", "IterTD"]
 line_width = 8
 marker_size = 15
 # f_size = (14, 10)
@@ -160,7 +160,7 @@ for Thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition1_0/CompasData/thc.txt'
+output_path = r'../../../../OutputData/Ranking_definition1_1/CompasData/thc.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -194,7 +194,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking/CompasData/thc_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/thc_time.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -216,7 +216,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking/CompasData/thc_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/thc_calculations.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
