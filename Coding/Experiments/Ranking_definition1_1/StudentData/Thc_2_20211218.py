@@ -25,7 +25,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["Optimized", "Naive"]
+label = ["Optimized", "IterTD"]
 line_width = 8
 marker_size = 15
 # f_size = (14, 10)
@@ -122,6 +122,8 @@ for Thc in Thc_list:
         print("time = {} s, num of pattern_treated_unfairly_lowerbound = {} ".format(
             t1_, len(result1)))
 
+        if t1_ > time_limit:
+            raise Exception("new alg exceeds time limit")
         t1 += t1_
         num_patterns_visited1_thc += num_patterns_visited1_
 
@@ -137,8 +139,6 @@ for Thc in Thc_list:
         t2 += t2_
         num_patterns_visited2_thc += num_patterns_visited2_
 
-        if t1_ > time_limit:
-            raise Exception("new alg exceeds time limit")
         if t2_ > time_limit:
             raise Exception("naive alg exceeds time limit")
 
@@ -165,7 +165,7 @@ for Thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition1_0/StudentData/thc_32att.txt'
+output_path = r'../../../../OutputData/Ranking_definition1_1/StudentData/thc.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -199,7 +199,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking/StudentData/thc_time_32att.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/thc_time.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -220,7 +220,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking/StudentData/thc_calculations_32att.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/thc_calculations.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
