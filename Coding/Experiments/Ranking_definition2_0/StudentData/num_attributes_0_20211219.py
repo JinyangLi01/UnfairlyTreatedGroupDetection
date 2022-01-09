@@ -25,7 +25,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["Optimized", "Naive"]
+label = ["Optimized", "IterTD"]
 line_width = 8
 marker_size = 15
 # f_size = (14, 10)
@@ -208,7 +208,7 @@ for number_attributes in range(num_att_max_naive, num_att_max):
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition2_0/StudentData/num_att_14.txt'
+output_path = r'../../../../OutputData/Ranking_definition2_1/StudentData/num_att.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -217,22 +217,15 @@ output_file.write("execution time\n")
 for n in range(num_att_min, num_att_max_naive):
     output_file.write('{} {} {}\n'.format(n, execution_time1[ n -num_att_min], execution_time2[ n -num_att_min]))
 for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {}\n'.format(n, execution_time1[n - num_att_max_naive]))
+    output_file.write('{} {}\n'.format(n, execution_time1[n - num_att_min]))
 
 
 output_file.write("\n\nnumber of patterns checked\n")
 for n in range(num_att_min, num_att_max_naive):
     output_file.write('{} {} {}\n'.format(n, num_calculation1[ n -num_att_min], num_calculation2[ n -num_att_min]))
 for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {}\n'.format(n, num_calculation1[ n -num_att_max_naive]))
+    output_file.write('{} {}\n'.format(n, num_calculation1[ n -num_att_min]))
 
-
-
-output_file.write("\n\nnumber of patterns checked\n")
-for n in range(num_att_min, num_att_max_naive):
-    output_file.write('{} {} {}\n'.format(n, num_calculation1[n-num_att_min], num_calculation2[n-num_att_min]))
-for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {}\n'.format(n, num_calculation1[n-num_att_max_naive]))
 
 
 output_file.write("\n\nnumber of patterns found\n")
@@ -268,7 +261,7 @@ plt.xticks([2, 4, 6, 8, 10, 12, 14])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2/StudentData/num_att_time_14.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/num_att_time.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -287,7 +280,7 @@ plt.xticks([2, 4, 6, 8, 10, 12, 14])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2/StudentData/num_att_calculations_14.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/num_att_calculations.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
