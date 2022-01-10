@@ -66,9 +66,12 @@ def GridSearch(original_data_file_pathpre, datasize, Thc, selected_attributes, L
         Lowerbounds,
         k_min, k_max, time_limit)
 
+    if t1_ > time_limit:
+        raise Exception("new alg exceeds time limit")
     print("newalg, num_patterns_visited = {}".format(num_patterns_visited1_))
     print("time = {} s, num of pattern_treated_unfairly_lowerbound = {} ".format(
         t1_, len(pattern_treated_unfairly_lowerbound1)))
+    # print(pattern_treated_unfairly_lowerbound1)
 
 
     pattern_treated_unfairly_lowerbound2, \
@@ -82,8 +85,6 @@ def GridSearch(original_data_file_pathpre, datasize, Thc, selected_attributes, L
 
 
 
-    if t1_ > time_limit:
-        raise Exception("new alg exceeds time limit")
     if t2_ > time_limit:
         raise Exception("naive alg exceeds time limit")
 
@@ -110,10 +111,13 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C',
 # with 33 att, ok. 33 is the total number
 selected_attributes = all_attributes[:30]
 
-data_sizes = [400, 500, 600, 700, 800, 900, 1000, 1100, 1200]
+# data_sizes = [400, 500, 600, 700, 800, 900, 1000, 1100, 1200]
+
+data_sizes = [600, 700, 800, 900, 1000, 1100, 1200]
+
 
 Thc = 50
-original_data_file_pathprefix = "../../../../InputData/StudentDataset/LargeDatasets/"
+original_data_file_pathprefix = "../../../../InputData/StudentDataset/LargeDatasets_2/"
 
 time_limit = 10*60
 
@@ -123,14 +127,14 @@ execution_time2 = list()
 num_patterns_checked1 = list()
 num_patterns_checked2 = list()
 num_patterns_found_lowerbound = list()
-patterns_found_lowerbound = list()
 num_loops = 1
 k_min = 10
 k_max = 50
-
+result = list()
 
 List_k = list(range(k_min, k_max))
 
+# Lowerbounds = [5] * 10 + [10] * 10 + [15] * 10 + [20] * 10
 Lowerbounds = [10] * 10 + [20] * 10 + [30] * 10 + [40] * 10
 
 for datasize in data_sizes:
@@ -148,7 +152,7 @@ for datasize in data_sizes:
         num_patterns_visited1_datasize += num_patterns_visited1_
         num_patterns_visited2_datasize += num_patterns_visited2_
         if l == 0:
-            patterns_found_lowerbound.append(pattern_treated_unfairly_lowerbound)
+            result.append(pattern_treated_unfairly_lowerbound)
             num_patterns_found_lowerbound.append(len(pattern_treated_unfairly_lowerbound))
 
 
@@ -163,7 +167,7 @@ for datasize in data_sizes:
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition1_1/StudentData/data_size.txt'
+output_path = r'../../../../OutputData/Ranking_definition1_1/StudentData/data_size_thc50.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -178,6 +182,13 @@ output_file.write("\n\nnumber of patterns\n")
 for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], num_patterns_checked1[n], num_patterns_checked2[n]))
 
+output_file.write("\n\npatterns in result\n")
+for n in range(len(data_sizes)):
+    output_file.write("data size = {}\n".format(n))
+    output_file.write("{}\n".format(result[n]))
+
+
+
 
 
 fig, ax = plt.subplots(1, 1, figsize=f_size)
@@ -186,12 +197,12 @@ plt.plot(data_sizes, execution_time1, line_style[0], color=color[0], label=label
 plt.plot(data_sizes, execution_time2, line_style[1], color=color[1], label=label[1], linewidth=line_width,
              markersize=marker_size)
 plt.xlabel('Data size (K)')
-plt.xticks([400, 600, 800, 1000, 1200])
+plt.xticks([600, 800, 1000, 1200])
 plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/datasize_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/datasize_time_thc50.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -207,13 +218,13 @@ plt.plot(data_sizes, num_patterns_checked1, line_style[0], color=color[0], label
 plt.plot(data_sizes, num_patterns_checked2, line_style[1], color=color[1], label=label[1], linewidth=line_width,
              markersize=marker_size)
 plt.xlabel('Data size (K)')
-plt.xticks([400, 600, 800, 1000, 1200])
+plt.xticks([600, 800, 1000, 1200])
 plt.ylabel('Number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/datasize_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/datasize_calculations_thc50.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
