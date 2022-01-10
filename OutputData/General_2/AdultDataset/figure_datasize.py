@@ -56,12 +56,12 @@ for line in Lines:
         continue
     if count < 2:
         continue
-    if count > 8 and count < 12:
+    if count > 12 and count < 16:
         continue
-    if count > 18:
+    if count > 26:
         break
     items = line.strip().split(' ')
-    if count < 11:
+    if count < 13:
         x_list.append(int(items[0]))
         execution_time1.append(float(items[1]))
         execution_time2.append(float(items[2]))
@@ -79,7 +79,7 @@ plt.plot(x_list, execution_time1, line_style[0], color=color[0], label=label[0],
 plt.plot(x_list, execution_time2, line_style[1], color=color[1], label=label[1], linewidth=line_width,
              markersize=marker_size)
 plt.xlabel('Data size (K)')
-plt.xticks([30000, 35000, 40000, 45000, 50000, 55000, 60000])
+plt.xticks([50000, 55000, 60000, 65000, 70000, 75000, 80000, 85000, 90000, 95000, 100000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
@@ -98,7 +98,7 @@ plt.plot(x_list, num_patterns_visited1, line_style[0], color=color[0], label=lab
 plt.plot(x_list, num_patterns_visited2, line_style[1], color=color[1], label=label[1], linewidth=line_width,
              markersize=marker_size)
 plt.xlabel('Data size (K)')
-plt.xticks([30000, 35000, 40000, 45000, 50000, 55000, 60000])
+plt.xticks([50000, 55000, 60000, 65000, 70000, 75000, 80000, 85000, 90000, 95000, 100000])
 ax.xaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.ylabel('Number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
