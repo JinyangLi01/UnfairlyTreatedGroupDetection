@@ -38,7 +38,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["Optimized", "Naive"]
+label = ["DUC", "Naive"]
 line_width = 8
 marker_size = 15
 # f_size = (14, 10)
@@ -90,7 +90,8 @@ def GridSearch(original_data, mis_data, all_attributes, thc, number_attributes, 
                                                                                          mis_class_data, tha,
                                                                                          thc, time_limit)
     print("newalg, time = {} s, num_calculation = {}".format(execution_time1, num_calculation1), "\n", pattern_with_low_accuracy1)
-
+    if execution_time1 > time_limit:
+        raise Exception("new alg exceeds time limit")
     pattern_with_low_accuracy2, num_calculation2, execution_time2 = naivealg.NaiveAlg(less_attribute_data,
                                                                        mis_class_data, tha,
                                                                        thc, time_limit)
@@ -105,8 +106,7 @@ def GridSearch(original_data, mis_data, all_attributes, thc, number_attributes, 
 
     print("{} patterns with low accuracy: \n {}".format(len(pattern_with_low_accuracy1), pattern_with_low_accuracy1))
 
-    if execution_time1 > time_limit:
-        raise Exception("new alg exceeds time limit")
+
     if execution_time2 > time_limit:
         raise Exception("naive alg exceeds time limit")
 
@@ -208,7 +208,7 @@ for number_attributes in range(num_att_max_naive, num_att_max):
 
 
 
-output_path = r'../../../../OutputData/LowAccDetection_2/AdultDataset/num_attribute_2.txt'
+output_path = r'../../../../OutputData/LowAccDetection_2/AdultDataset/num_att.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -262,7 +262,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/LowAccDetection_2/AdultDataset/num_att_time_2.png",
+plt.savefig("../../../../OutputData/LowAccDetection_2/AdultDataset/num_att_time.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -284,7 +284,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/LowAccDetection_2/AdultDataset/num_att_calculations_2.png",
+plt.savefig("../../../../OutputData/LowAccDetection_2/AdultDataset/num_att_calculations.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
