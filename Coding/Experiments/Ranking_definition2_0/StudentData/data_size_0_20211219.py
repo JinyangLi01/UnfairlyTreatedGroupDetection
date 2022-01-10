@@ -25,7 +25,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["Optimized", "IterTD"]
+label = ["UPR", "IterTD"]
 line_width = 8
 marker_size = 15
 # f_size = (14, 10)
@@ -112,7 +112,7 @@ selected_attributes = all_attributes[:15]
 data_sizes = [400, 500, 600, 700, 800, 900, 1000, 1100, 1200]
 
 Thc = 50
-original_data_file_pathprefix = "../../../../InputData/StudentDataset/LargeDatasets/"
+original_data_file_pathprefix = "../../../../InputData/StudentDataset/LargeDatasets_2/"
 
 time_limit = 10*60
 
