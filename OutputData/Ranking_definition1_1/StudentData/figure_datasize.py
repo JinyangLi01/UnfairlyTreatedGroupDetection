@@ -17,7 +17,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["Optimized", "IterTD"]
+label = ["URB", "IterTD"]
 line_width = 8
 marker_size = 15
 # f_size = (14, 10)
@@ -56,12 +56,12 @@ for line in Lines:
         continue
     if count < 2:
         continue
-    if count > 10 and count < 14:
+    if count > 9 and count < 13:
         continue
-    if count > 22:
+    if count > 20:
         break
     items = line.strip().split(' ')
-    if count < 13:
+    if count < 10:
         x_list.append(int(items[0]))
         execution_time1.append(float(items[1]))
         execution_time2.append(float(items[2]))
