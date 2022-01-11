@@ -109,7 +109,7 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C',
 selected_attributes = all_attributes[:15]
 
 
-data_sizes = [400, 500, 600, 700, 800, 900, 1000, 1100, 1200]
+data_sizes = [500, 600, 700, 800, 900, 1000, 1100, 1200]
 
 Thc = 50
 original_data_file_pathprefix = "../../../../InputData/StudentDataset/LargeDatasets_2/"

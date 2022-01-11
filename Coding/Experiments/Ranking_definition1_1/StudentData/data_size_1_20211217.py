@@ -113,7 +113,7 @@ selected_attributes = all_attributes[:30]
 
 # data_sizes = [400, 500, 600, 700, 800, 900, 1000, 1100, 1200]
 
-data_sizes = [600, 700, 800, 900, 1000, 1100, 1200]
+data_sizes = [500, 600, 700, 800, 900, 1000, 1100, 1200]
 
 
 Thc = 50
@@ -167,7 +167,7 @@ for datasize in data_sizes:
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition1_1/StudentData/data_size_thc50.txt'
+output_path = r'../../../../OutputData/Ranking_definition1_1/StudentData/data_size.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -197,12 +197,12 @@ plt.plot(data_sizes, execution_time1, line_style[0], color=color[0], label=label
 plt.plot(data_sizes, execution_time2, line_style[1], color=color[1], label=label[1], linewidth=line_width,
              markersize=marker_size)
 plt.xlabel('Data size (K)')
-plt.xticks([600, 800, 1000, 1200])
+plt.xticks([400, 600, 800, 1000, 1200])
 plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/datasize_time_thc50.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/datasize_time.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -218,13 +218,13 @@ plt.plot(data_sizes, num_patterns_checked1, line_style[0], color=color[0], label
 plt.plot(data_sizes, num_patterns_checked2, line_style[1], color=color[1], label=label[1], linewidth=line_width,
              markersize=marker_size)
 plt.xlabel('Data size (K)')
-plt.xticks([600, 800, 1000, 1200])
+plt.xticks([400, 600, 800, 1000, 1200])
 plt.ylabel('Number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/datasize_calculations_thc50.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/datasize_calculations.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
