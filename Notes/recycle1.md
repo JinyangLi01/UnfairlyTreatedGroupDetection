@@ -129,6 +129,110 @@ TODO:
 4. Good luck >_<
 
 
+# Dec. 18, 2021
+
+## Acc fairness
+Medical dataset
+1. data size: need new method to generate
+2. num att: done. 3, 10, 17
+3. tha: 16 att, done
+4. thc: 14 att, done
+
+
+## general fairness definition
+Medical dataset
+1. data size: 
+2. num att: done. 3, 10, 15
+3. tha: doing
+4. thc: done
+
+## ranking definition 1
+Compas dataset:
+1. data size: need new method to generate
+2. num att: done with 16 att 
+3. range k: done with 16 att (16 in total)
+4. thc: done, with 16 att
+
+Student dataset:
+1. data size: need new method to generate
+2. num att: 3, 33, 34, done
+3. range k: 31 att too many. 30 done
+4. thc: 32 done.
+
+
+## ranking definition 2
+Compas dataset:
+1. data size: 
+2. num att: done. 3, 14, 15
+3. range k: done with 9 att.
+4. thc: done with 12. 13 over time
+
+Student dataset:
+1. data size: 
+2. num att: done
+3. range k: done
+4. thc: done. 14 att
+
+
+
+# Number of attributes in experiments
+ 
+#### low acc
+Adult: 6 (data size) all done
+Compas: 8 (data size) all done
+Creditcard: 7 (data size) all done
+Medical: 9 (data size) all done
+
+
+maximum number of att each experiment can handle
+
+| low acc    |  data size   | num of att | acc threshold | size threshold |
+|------------|:------------:|-----------:|--------------:|---------------:|
+| adult      | need redoing |         ok |            ok |             ok |
+| compas     |      ok      |         ok |            ok |             ok |
+| creditcard |     6??      |         ok |            10 |            7?? |
+| medical    |      9       |         ok |            16 |         14 att |
+
+
+
+
+#### general
+Adult: 6 (data size) all done
+Compas: 7 (data size) all done
+Creditcard: 7 (data size) all done
+Medical: 8 (data size) all done
+
+
+
+| general    | data size  | num of att | acc threshold | size threshold |
+|------------|:----------:|-----------:|--------------:|---------------:|
+| adult      |     7      |         ok |             7 |              7 |
+| compas     |     7      |            |               |                |
+| creditcard |            |            |               |                |
+| medical    | 10 running |         ok |            ok |             ok |
+
+
+
+### ranking 1
+
+compas: 16. this is the total number of att. all done
+student: 30 (range_k) all done
+
+
+
+
+### ranking 2
+
+
+
+compas: 8 (data size)  need rerunning
+student: 15 (thc) all done
+
+
+
+
+
+
 
 
 
