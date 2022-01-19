@@ -144,6 +144,8 @@ output_path = r'../../../../OutputData/General_2/CompasDataset/thc.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
+output_file.write("overall FPR: {}\n".format(overall_FPR))
+
 output_file.write("execution time\n")
 for n in range(len(Thc_list)):
     output_file.write('{} {}\n'.format(Thc_list[n], execution_time1[n]))

@@ -123,6 +123,8 @@ output_path = r'../../../../OutputData/General_2/CreditcardDataset/tha.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time)
 
+output_file.write("overall FPR: {}\n".format(overall_FPR))
+
 output_file.write("execution time\n")
 for n in range(len(diff_acc)):
     output_file.write('{} {}\n'.format(diff_acc[n], execution_time[n]))

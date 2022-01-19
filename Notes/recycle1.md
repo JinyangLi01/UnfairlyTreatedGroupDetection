@@ -233,7 +233,10 @@ student: 15 (thc) all done
 
 
 
-
+### compress paper draft
+1. Figure 6, 7 merge into one graph, with 8 different colors.
+2. Figure 2a + 3a in one figure. Same type of color: dark, light
+3. 
 
 
 
