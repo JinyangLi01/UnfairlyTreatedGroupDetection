@@ -1,0 +1,14 @@
+selected_attributes: ['sex', 'race', 'age_cat', 'ground_truth']
+time = 43.1087429523468s
+=====================
+Slice description:age_cat:Greater than 45 race:Native American ---------------------
+effect_size: 0.5003116835673214---------------------
+metric: 0.9409528472469174size: 3
+=====================
+Slice description:age_cat:Greater than 45 race:Native American sex:Male ---------------------
+effect_size: 1.8912215968868202---------------------
+metric: 1.3012503017600554size: 1
+=====================
+Slice description:race:Native American age_cat:Greater than 45 sex:Male ---------------------
+effect_size: 1.8912215968868202---------------------
+metric: 1.3012503017600554size: 1

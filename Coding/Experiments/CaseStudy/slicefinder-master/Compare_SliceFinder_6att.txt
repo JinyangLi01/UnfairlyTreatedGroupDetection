@@ -1,0 +1,42 @@
+selected_attributes: ['age', 'charge', 'race', 'sex', '#prior', 'stay', 'class']
+time = 118.38154911994934s
+=====================
+Slice description:age:<25 race:Native American ---------------------
+effect_size: 0.7048148639130791---------------------
+metric: 1.0065706578169937size: 2
+=====================
+Slice description:#prior:>3 age:25-45 race:Asian ---------------------
+effect_size: 0.6189321747290016---------------------
+metric: 0.9045225784524923size: 2
+=====================
+Slice description:#prior:>3 race:Native American sex:Male ---------------------
+effect_size: 0.43679961834520836---------------------
+metric: 0.8009362498993873size: 2
+=====================
+Slice description:age:<25 race:Native American sex:Male ---------------------
+effect_size: 0.7048148639130791---------------------
+metric: 1.0065706578169937size: 2
+=====================
+Slice description:age:<25 race:Native American stay:<week ---------------------
+effect_size: 0.7048148639130791---------------------
+metric: 1.0065706578169937size: 2
+=====================
+Slice description:age:25-45 #prior:>3 race:Asian ---------------------
+effect_size: 0.6189321747290016---------------------
+metric: 0.9045225784524923size: 2
+=====================
+Slice description:race:Asian #prior:>3 age:25-45 ---------------------
+effect_size: 0.6189321747290016---------------------
+metric: 0.9045225784524923size: 2
+=====================
+Slice description:race:Native American #prior:>3 sex:Male ---------------------
+effect_size: 0.43679961834520836---------------------
+metric: 0.8009362498993873size: 2
+=====================
+Slice description:race:Native American age:<25 stay:<week ---------------------
+effect_size: 0.7048148639130791---------------------
+metric: 1.0065706578169937size: 2
+=====================
+Slice description:race:Native American age:<25 sex:Male ---------------------
+effect_size: 0.7048148639130791---------------------
+metric: 1.0065706578169937size: 2
