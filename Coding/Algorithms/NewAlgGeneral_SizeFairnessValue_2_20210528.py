@@ -8,7 +8,7 @@ Stop point 2: when the cardinality is too small
 from Algorithms import pattern_count
 import time
 from Algorithms import Predict_0_20210127 as predict
-
+import pandas as pd
 
 def P1DominatedByP2(P1, P2):
     length = len(P1)
@@ -48,6 +48,23 @@ def GenerateChildren(P, whole_data_frame, attributes):
     return children
 
 
+def GenerateChildrenNonNumeric(P, whole_data_frame, attributes, whole_data):
+    children = []
+    length = len(P)
+    i = 0
+    for i in range(length-1, -1, -1):
+        if P[i] != -1:
+            break
+    if P[i] == -1:
+        i -= 1
+    for j in range(i+1, length, 1):
+        possible_values = set(whole_data[attributes[j]].to_list())
+        for a in possible_values:
+        # for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max'])+1):
+            s = P.copy()
+            s[j] = a
+            children.append(s)
+    return children
 
 def num2string(pattern):
     st = ''
@@ -101,7 +118,7 @@ def Predictive_parity(whole_data, TPdata, FPdata,
 
     num_patterns = 0
     root = [-1] * (len(attributes))
-    initial_children = GenerateChildren(root, whole_data_frame, attributes)
+    initial_children = GenerateChildrenNonNumeric(root, whole_data_frame, attributes, whole_data)
     S = initial_children
     pattern_with_low_fairness = []
     sizes_of_patterns = []
@@ -175,21 +192,17 @@ def False_positive_error_rate_balance_greater_than(whole_data, FPdata, TNdata,
 
     num_patterns = 0
     root = [-1] * (len(attributes))
-    initial_children = GenerateChildren(root, whole_data_frame, attributes)
+    initial_children = GenerateChildrenNonNumeric(root, whole_data_frame, attributes, whole_data)
     S = initial_children
     pattern_with_low_fairness = []
     sizes_of_patterns = []
     fairness_values_of_patterns = []
-
     while len(S) > 0:
         if time.time() - time1 > time_limit:
             print("newalg overtime")
             break
         P = S.pop()
         st = num2string(P)
-
-        # if P == [-1, -1, 5]:
-        #     print(P)
 
         whole_cardinality = pc_whole_data.pattern_count(st)
         num_patterns += 1
@@ -205,7 +218,7 @@ def False_positive_error_rate_balance_greater_than(whole_data, FPdata, TNdata,
         FPR = fp / (fp + tn)
 
         if FPR <= Thf:
-            children = GenerateChildren(P, whole_data_frame, attributes)
+            children = GenerateChildrenNonNumeric(P, whole_data_frame, attributes, whole_data)
             S = S + children
             continue
 

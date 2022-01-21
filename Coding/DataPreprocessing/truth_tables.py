@@ -238,7 +238,7 @@ def create_two_year_files():
 rows = []
 rindex = 0
 people = []
-with open("../../InputData/Compas_republica/compas-analysis-master/cox-parsed.csv") as f:
+with open("../../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed.csv") as f:
     reader = PeekyReader(DictReader(f))
     try:
         while True:
