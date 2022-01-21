@@ -232,11 +232,57 @@ student: 15 (thc) all done
 
 
 
-
+# 2022.01.18
 ### compress paper draft
 1. Figure 6, 7 merge into one graph, with 8 different colors.
 2. Figure 2a + 3a in one figure. Same type of color: dark, light
 3. 
 
+
+# 2022.01.20
+Two experiments:
+### DivExplorer have tooo many results but our algorithm has a little
+Using COMPAS dataset pre-processed by DivExplorer.
+d_fpr > 0.1
+size = 0.01 / 61.72
+#### DivExplorer finds 196 patterns
+#### our alg finds 9 patterns:
+
+num of patterns detected = 10
+[-1, -1, -1, -1, -1, '>3Months'] 310 0.224
+
+[-1, -1, -1, -1, '>3', -1] 1811 0.21926910299003322
+
+[-1, -1, 'Afr-Am', -1, -1, '1w-3M'] 585 0.20772946859903382
+
+[-1, -1, 'Hispanic', 'Male', -1, '1w-3M'] 68 0.2
+
+['<25', -1, -1, -1, -1, '1w-3M'] 232 0.35064935064935066
+
+['<25', -1, -1, -1, '[1,3]', -1] 595 0.21395348837209302
+
+['<25', -1, -1, 'Male', -1, -1] 1101 0.18863636363636363
+
+['<25', -1, 'Afr-Am', -1, -1, -1] 809 0.20754716981132076
+
+['<25', -1, 'Hispanic', -1, -1, -1] 109 0.21428571428571427
+
+['<25', 'F', -1, -1, -1, -1] 968 0.20347394540942929
+
+
+# 2022.1.20
+Section 6
+1. compas by propublica, show results from 3 alg.
+Slice Finder find ... DivExplorer find xxx including our results and some subgroups.
+2. we want to say we provide more high level. they provide more detail.
+We use another preprocessing, DivExplorer have 196 patterns..
+
+3. draw a tree showing nodes for eg1.
+4. draw circles and dots for eg1. send these two figures to yuval
+
+5. read Intro. done
+6. read proof of proposition.
+7. go over example 4.3
+8. we need to cite Fairvis paper.
 
 
