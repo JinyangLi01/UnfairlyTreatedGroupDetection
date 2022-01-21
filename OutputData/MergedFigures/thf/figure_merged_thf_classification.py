@@ -14,7 +14,7 @@ sns.set_style("whitegrid")
 # sns.palplot(sns.color_palette("Paired", 9))
 
 line_style = ['o-', 's-', 'p-', '^-', 'o:', 's:', 'p:', '^:']
-color = ['green', 'red', 'gold', 'purple', 'green', 'red', 'gold', 'purple']
+color = ['C3', 'C5', sns.xkcd_rgb["amber"], 'C9', 'C3', 'C5', sns.xkcd_rgb["amber"], 'C9']
 
 label = ["Adult (acc)", "COMPAS (acc)", "Credit card (acc)", "Medical (acc)",
          "Adult (FPR)", "COMPAS (FPR)", "Credit card (FPR)", "Medical (FPR)"]
@@ -81,7 +81,7 @@ for i in range(8):
 # plt.plot(x_list, execution_time[4], line_style[4], color=color[4], label=label[4], linewidth=line_width,
 #           markersize=marker_size)
 plt.yscale('log')
-plt.xlabel('Size threshold')
+plt.xlabel('Delta fairness value')
 plt.xticks(x_list)
 plt.ylabel('Execution time (s)')
 # plt.yticks(([0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]))
@@ -100,7 +100,7 @@ fig, ax = plt.subplots(1, 1, figsize=f_size)
 for i in range(8):
     plt.plot(x_list, num_patterns_visited[i], line_style[i], color=color[i], label=label[i], linewidth=line_width,
           markersize=marker_size)
-plt.xlabel('Size threshold')
+plt.xlabel('Delta fairness value')
 plt.xticks(x_list)
 plt.ylabel('Number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))

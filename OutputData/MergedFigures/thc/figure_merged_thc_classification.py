@@ -14,7 +14,7 @@ sns.set_style("whitegrid")
 # sns.palplot(sns.color_palette("Paired", 9))
 
 line_style = ['o-', 's-', 'p-', '^-', 'o:', 's:', 'p:', '^:']
-color = ['green', 'red', 'gold', 'purple', 'green', 'red', 'gold', 'purple']
+color = ['C3', 'C5', sns.xkcd_rgb["amber"], 'C9', 'C3', 'C5', sns.xkcd_rgb["amber"], 'C9']
 # plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
 label = ["Adult (acc)", "COMPAS (acc)", "Credit card (acc)", "Medical (acc)",
