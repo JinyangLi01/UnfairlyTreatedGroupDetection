@@ -110,9 +110,9 @@ output_file.write("selected_attributes: {}\n".format(selected_attributes))
 
 
 
-thc = 100
+thc = 110
 time_limit = 5 * 60
-dif = 0.15
+dif = 0.1
 tha = overall_acc - dif
 
 print("\n\ndif = {}".format(dif))

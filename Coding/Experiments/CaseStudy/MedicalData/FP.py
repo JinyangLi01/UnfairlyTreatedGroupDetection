@@ -4,9 +4,6 @@ from itertools import combinations
 from Algorithms import pattern_count
 import time
 from Algorithms import NewAlgGeneral_SizeFairnessValue_3_20210111 as newalg
-from Algorithms import NaiveAlgGeneral_1_202105258 as naivealg
-from Algorithms import Predict_0_20210127 as predict
-
 
 """
 SEX:
@@ -83,18 +80,26 @@ def TranslatePatternsToNonNumeric(pattern_with_low_fairness, translation_file, s
 
 
 
-selected_attributes = ["SEX", "REGION", "MARRY", "RACE", "FTSTU", "ACTDTY", "HONRDC",
-                       "RTHLTH", "MNHLTH", "HIBPDX", "CHDDX", "ANGIDX", "MIDX"]
 
 
-# selected_attributes = ["REGION", "SEX", "MARRY", "RACE", "FTSTU", "ACTDTY", "HONRDC",
-#                        "RTHLTH", "MNHLTH", "HIBPDX", "CHDDX", "ANGIDX", "MIDX"]
+selected_attributes = ['SEX', 'REGION', 'MARRY', 'RACE', 'FTSTU',
+                       'ACTDTY', 'HONRDC', 'RTHLTH', 'MNHLTH', 'HIBPDX',
+                       'CHDDX', 'ANGIDX', 'MIDX']
+
+
 
 original_data_file = r"../../../../InputData/MedicalDataset/train/train_add_col2PREGNT.csv"
 TP_data_file = r"../../../../InputData/MedicalDataset/train/train_TP_add_col2PREGNT.csv"
 FP_data_file = r"../../../../InputData/MedicalDataset/train/train_FP_add_col2PREGNT.csv"
 TN_data_file = r"../../../../InputData/MedicalDataset/train/train_TN_add_col2PREGNT.csv"
 FN_data_file = r"../../../../InputData/MedicalDataset/train/train_FN_add_col2PREGNT.csv"
+
+
+# original_data_file = r"../../../../InputData/MedicalDataset/train/train_41att.csv"
+# TP_data_file = r"../../../../InputData/MedicalDataset/train/train_TP_41att.csv"
+# FP_data_file = r"../../../../InputData/MedicalDataset/train/train_FP_41att.csv"
+# TN_data_file = r"../../../../InputData/MedicalDataset/train/train_TN_41att.csv"
+# FN_data_file = r"../../../../InputData/MedicalDataset/train/train_FN_41att.csv"
 
 
 def read_with_att(original_data_file, selected_attributes):
