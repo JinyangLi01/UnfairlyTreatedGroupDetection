@@ -1,6 +1,6 @@
 selected_attributes: ['sex', 'age_cat', 'race']
-fairness_definition = 11, thc = 20, delta_thf = 0.1
-newalg, time = 0.04355502128601074 s, num_calculation = 65
+fairness_definition = 1, thc = 20, delta_thf = 0.1
+newalg, time = 0.07007098197937012 s, num_calculation = 65
 num of patterns detected = 2
-[-1, -1, 0]
-[-1, 0, -1]
+[-1, -1, 0] 3696 0.44846796657381616
+[-1, 0, -1] 1529 0.5413533834586466

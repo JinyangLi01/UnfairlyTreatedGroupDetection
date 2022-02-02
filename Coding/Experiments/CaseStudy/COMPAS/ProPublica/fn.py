@@ -3,7 +3,7 @@ import pandas as pd
 from itertools import combinations
 from Algorithms import pattern_count
 import time
-from Algorithms import NewAlgGeneral_1_20210528 as newalg
+from Algorithms import NewAlgGeneral_StatisticalSignificant_0_20220125 as newalg
 from Algorithms import NaiveAlgGeneral_1_202105258 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 
@@ -22,12 +22,11 @@ cox['race'].replace(to_replace=['African-American', 'Asian', 'Caucasian', 'Hispa
 selected_attributes = ["sex", "age_cat", "race"]
 
 
-
-original_data_file = r"../../../../../InputData/Compas_republica/compas-analysis-master/cox-parsed/cox-parsed_7214rows_cat.csv"
-TP_data_file = r"../../../../../InputData/Compas_republica/compas-analysis-master/cox-parsed/cox-parsed-TP-cat.csv"
-FP_data_file = r"../../../../../InputData/Compas_republica/compas-analysis-master/cox-parsed/cox-parsed-FP-cat.csv"
-TN_data_file = r"../../../../../InputData/Compas_republica/compas-analysis-master/cox-parsed/cox-parsed-TN-cat.csv"
-FN_data_file = r"../../../../../InputData/Compas_republica/compas-analysis-master/cox-parsed/cox-parsed-FN-cat.csv"
+original_data_file = r"../../../../../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed_7214rows_cat.csv"
+TP_data_file = r"../../../../../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed-TP-cat.csv"
+FP_data_file = r"../../../../../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed-FP-cat.csv"
+TN_data_file = r"../../../../../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed-TN-cat.csv"
+FN_data_file = r"../../../../../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed-FN-cat.csv"
 
 
 
@@ -66,24 +65,24 @@ output_file.write("fairness_definition = {}, thc = {}, delta_thf = {}\n".format(
 print("less_attribute_data")
 print(less_attribute_data)
 
-pattern_with_low_fairness1, calculation1_, t1_ = newalg.GraphTraverse(less_attribute_data,
-                                                                      TP, TN, FP, FN, delta_thf,
-                                                                      thc, time_limit, fairness_definition)
+pattern_with_low_fairness1, sizes_of_patterns, fairness_values_of_patterns, t_values_of_patterns, p_value_of_patterns, \
+num_patterns, t1_ = newalg.GraphTraverse(less_attribute_data,
+                                         TP, TN, FP, FN, delta_thf,
+                                         thc, time_limit, fairness_definition)
 
-
-print("newalg, time = {} s, num_calculation = {}\n".format(t1_, calculation1_))
+print("newalg, time = {} s, num_calculation = {}\n".format(t1_, num_patterns))
 print("num of patterns detected = {}".format(len(pattern_with_low_fairness1)))
-for p in pattern_with_low_fairness1:
-    print(p)
+for i in range(len(pattern_with_low_fairness1)):
+    print("{} {} {} {} {}\n".format(str(pattern_with_low_fairness1[i]),
+                                          sizes_of_patterns[i], fairness_values_of_patterns[i],
+                                          t_values_of_patterns[i],
+                                 p_value_of_patterns[i]))
 
-output_file.write("newalg, time = {} s, num_calculation = {}\n".format(t1_, calculation1_))
+
+output_file.write("newalg, time = {} s, num_calculation = {}\n".format(t1_, num_patterns))
 output_file.write("num of patterns detected = {}\n".format(len(pattern_with_low_fairness1)))
-for p in pattern_with_low_fairness1:
-    output_file.write(str(p))
-    output_file.write("\n")
-
-# pattern_with_low_accuracy2, calculation2_, t2_ = naivealg.NaiveAlg(less_attribute_data,
-#                                                                    mis_class_data, tha,
-#                                                                    thc, time_limit)
-# print("naivealg, time = {} s, num_calculation = {}".format(t2_, calculation2_), "\n",
-#       pattern_with_low_accuracy2)
+for i in range(len(pattern_with_low_fairness1)):
+    output_file.write("{} {} {} {} {}\n".format(str(pattern_with_low_fairness1[i]),
+                                          sizes_of_patterns[i], fairness_values_of_patterns[i],
+                                          t_values_of_patterns[i],
+                                             p_value_of_patterns[i]))

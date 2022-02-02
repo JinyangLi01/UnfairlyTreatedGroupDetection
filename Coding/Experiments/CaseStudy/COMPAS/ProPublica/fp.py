@@ -25,7 +25,7 @@ FP_data_file = r"../../../../../InputData/COMPAS_ProPublica/compas-analysis-mast
 TN_data_file = r"../../../../../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed-TN-cat.csv"
 FN_data_file = r"../../../../../InputData/COMPAS_ProPublica/compas-analysis-master/cox-parsed/cox-parsed-FN-cat.csv"
 
-output_path = r'../../../../../OutputData/CaseStudy/ProPublica/fp_greater_than_trying.txt'
+output_path = r'../../../../../OutputData/CaseStudy/ProPublica/fp_greater_than.txt'
 output_file = open(output_path, "w")
 
 output_file.write("selected_attributes: {}\n".format(selected_attributes))
