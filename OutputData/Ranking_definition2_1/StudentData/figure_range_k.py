@@ -22,7 +22,7 @@ line_width = 8
 marker_size = 15
 # f_size = (14, 10)
 
-f_size = (14, 10)
+f_size = (14, 8)
 
 x_list = list()
 x_naive = list()
@@ -68,6 +68,7 @@ plt.plot(x_list, execution_time2, line_style[1], color=color[1], label=label[1],
              markersize=marker_size)
 plt.xlabel('Range of K')
 plt.xticks([100, 200, 300, 350])
+plt.yticks([0, 200, 400])
 plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)

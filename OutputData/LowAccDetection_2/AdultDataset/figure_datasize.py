@@ -22,7 +22,7 @@ line_width = 8
 marker_size = 15
 # f_size = (14, 10)
 
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 
