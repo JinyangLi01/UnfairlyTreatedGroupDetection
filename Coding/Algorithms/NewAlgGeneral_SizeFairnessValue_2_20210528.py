@@ -147,7 +147,7 @@ def Predictive_parity(whole_data, TPdata, FPdata,
         correct_positive_prediction = tp / (tp + fp)
 
         if correct_positive_prediction <= Thf:
-            children = GenerateChildren(P, whole_data_frame, attributes)
+            children = GenerateChildrenNonNumeric(P, whole_data_frame, attributes, whole_data)
             S = S + children
             num_patterns_generate_children += 1
             continue
