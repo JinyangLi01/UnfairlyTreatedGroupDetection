@@ -282,7 +282,7 @@ We use another preprocessing, DivExplorer have 196 patterns..
 
 5. read Intro. done
 6. read proof of proposition.
-7. go over example 4.3
+7. go over example 4.3. done
 8. we need to cite Fairvis paper.
 
 
