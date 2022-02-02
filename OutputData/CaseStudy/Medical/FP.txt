@@ -1,7 +1,9 @@
-selected_attributes: ['SEX', 'REGION', 'MARRY', 'RACE', 'FTSTU', 'ACTDTY', 'HONRDC', 'RTHLTH', 'MNHLTH', 'HIBPDX', 'CHDDX', 'ANGIDX', 'MIDX']
+selected_attributes: ['SEX', 'REGION', 'MARRY', 'RACE', 'FTSTU',
+'ACTDTY', 'HONRDC', 'RTHLTH', 'MNHLTH', 'HIBPDX',
+'CHDDX', 'ANGIDX', 'MIDX']
 fairness_definition = 1, thc = 150, delta_thf = 0.1
 newalg, time = 58.74418783187866 s, num_calculation = 362858
 num of patterns detected = 3
-[2, 1, -2, -2, -2, -2, -2, -2, 3, -2, -2, -2, 2]
-[2, 1, -2, -2, -2, -2, -2, -2, 3, -2, -2, 2, -2]
-[2, 1, -2, -2, -2, -2, -2, 3, -2, -2, -2, -2, -2]
+[2, 1, -2, -2, -2,  -2, -2, -2, 3, -2,  -2, -2, 2]
+[2, 1, -2, -2, -2,  -2, -2, -2, 3, -2,  -2, 2, -2]
+[2, 1, -2, -2, -2,  -2, -2, 3, -2, -2,  -2, -2, -2]
