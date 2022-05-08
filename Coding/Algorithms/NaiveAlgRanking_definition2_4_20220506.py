@@ -14,7 +14,7 @@ But here, patterns have different bounds depending on their sizes. We only do lo
 """
 naive alg:
 for each k, we iterate the whole process again, go top down.
-lowerbound = (whole_cardinality / data_size - alpha) * k
+lowerbound = alpha * whole_cardinality * k / data_size
 """
 
 
@@ -221,9 +221,6 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
                 break
             P = S.pop(0)
             st = num2string(P)
-            # if PatternEqual(P, q) and k == 12:
-            #     print("st = {}\n".format(st))
-            #     print("stop here naive alg")
 
             num_patterns_visited += 1
             whole_cardinality = pc_whole_data.pattern_count(st)
@@ -231,7 +228,7 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
             if whole_cardinality < Thc:
                 continue
             num_top_k = patterns_top_kmin.pattern_count(st)
-            lowerbound = (whole_cardinality / data_size - alpha) * k
+            lowerbound = alpha * whole_cardinality * k / data_size  # (whole_cardinality / data_size - alpha) * k
             if num_top_k < lowerbound:
                 # if PatternEqual(P, [-1, -1, 1, -1]):
                 #     print("k={}, pattern equal = {}, num_top_k = {}".format(k, P, num_top_k))
