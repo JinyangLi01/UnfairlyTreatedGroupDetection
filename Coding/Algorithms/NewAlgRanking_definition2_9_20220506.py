@@ -26,7 +26,7 @@ import time
 import math
 import numpy as np
 import pandas as pd
-from Algorithms import NaiveAlgRanking_definition2_3_20211207 as naiveranking
+from Algorithms import NaiveAlgRanking_definition2_4_20220506 as naiveranking
 from Algorithms import pattern_count
 from sortedcontainers import SortedDict
 import cProfile
@@ -453,14 +453,14 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         k_dict[k] = []
     k = k_min
     while len(S) > 0:
-        if time.time() - time0 > time_limit:
-            print("newalg overtime")
-            break
+        # if time.time() - time0 > time_limit:
+        #     print("newalg overtime")
+        #     break
         time1 = time.time()
         P = S.pop(0)
         st = num2string(P)
         # print("GraphTraverse, st = {}".format(st))
-        # if PatternEqual(P, [-1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1]):
+        # if PatternEqual(P, [-1, 0, -1, 1, -1, 1, 0, -1, 0, -1, 0, -1]):
         #     print("GraphTraverse, st={}".format(st))
         #     print("\n")
         num_patterns_visited += 1
@@ -478,6 +478,7 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
             smallest_valid_k = k_min - 1
         # lowerbound = (whole_cardinality / data_size - alpha) * k
         lowerbound = alpha * whole_cardinality * k / data_size
+        # print("pattern {}, lb = {}, smallest_valid_k = {}".format(P, lowerbound, smallest_valid_k))
         if num_top_k < lowerbound:
             CheckDominationAndAddForLowerbound(P, result_set)
             Add_node_to_set(nodes_dict, k_dict, smallest_valid_k, P, st, num_att)
@@ -495,17 +496,17 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
                 time_Add_node_to_set += time12 - time11
             else:
                 raise Exception("st is impossible to be in nodes_dict.keys()")
-    # time1 = time.time()
-    # print("time for k_min = {}".format(time1 - time0))
-    # print("finish kmin")
-    # print(result_set)
+    time1 = time.time()
+    print("time for k_min = {}".format(time1 - time0))
+    print("finish kmin")
+    print(result_set)
     pattern_treated_unfairly.append(result_set)
 
     for k in range(k_min + 1, k_max):
         if time.time() - time0 > time_limit:
             print("newalg overtime")
             break
-        # time1 = time.time()
+        time1 = time.time()
         patterns_top_k = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_k.parse_data()
         new_tuple = ranked_data.iloc[[k - 1]].values.flatten().tolist()
@@ -527,14 +528,14 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
                                                       patterns_size_whole, alpha, num_att,
                                                       data_size, nodes_dict, k_dict, attributes, result_set)
 
-        # time2 = time.time()
+        time2 = time.time()
         # print("after addnewtuple")
         # if st in nodes_dict.keys():
         #     print("k of {} = {}".format(st, nodes_dict[st].smallest_valid_k))
         # else:
         #     print("st not in nodes_dict")
-        # print("time for AddNewTuple = {}".format(time2-time1))
-        # print("result_set after AddNewTuple: ", result_set)
+        print("time for AddNewTuple = {}".format(time2-time1))
+        print("result_set after AddNewTuple: ", result_set)
         time3 = time.time()
         for k_value in k_dict.keys():
             if k_value >= k:
@@ -547,9 +548,9 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
                 if p in result_set:
                     continue
                 CheckDominationAndAddForLowerbound(p, result_set)
-
-        # print("time for CheckCandidatesForKValues = {}".format(time4 - time3))
-        # print("result_set after CheckCandidatesForKValues: ", result_set)
+        time4 = time.time()
+        print("time for CheckCandidatesForKValues = {}".format(time4 - time3))
+        print("result_set after CheckCandidatesForKValues: ", result_set)
         pattern_treated_unfairly.append(result_set)
     time1 = time.time()
     return pattern_treated_unfairly, num_patterns_visited, time1 - time0
@@ -570,7 +571,6 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_ma
                 patterns_size_whole, alpha, num_att, data_size, nodes_dict, k_dict, attributes, result_set):
     ancestors = []
     root = [-1] * num_att
-    root_str = '|' * (num_att - 1)
     S = GenerateChildrenRelatedToTuple(root, new_tuple)  # pattern with one deterministic attribute
     # if the k values increases, go to function () without generating children
     # otherwise, generating children and add children to queue
@@ -648,7 +648,7 @@ ranked_data = ranked_data[selected_attributes]
 
 time_limit = 5 * 60
 k_min = 10
-k_max = 50
+k_max = 20
 Thc = 50
 
 List_k = list(range(k_min, k_max))
