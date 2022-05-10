@@ -21,14 +21,16 @@ for each k, we iterate the whole process again, go top down.
 This alg:
 lowerbound = alpha * whole_cardinality * k / data_size
 
-bug free but slow!!!
+difference from 11:
+store string instead of pattern list in result_set
+
 """
 
 import time
 import math
 import numpy as np
 import pandas as pd
-from Algorithms import NaiveAlgRanking_definition2_4_20220506 as naiveranking
+from Algorithms import NaiveAlgRanking_definition2_5_20220506 as naiveranking
 from Algorithms import pattern_count
 from sortedcontainers import SortedDict
 import cProfile
@@ -47,13 +49,13 @@ def P1DominatedByP2ForStr(str1, str2, num_att):
         p2 = str2.find("|", start_pos2)
         s1 = str1[start_pos1:p1]
         s2 = str2[start_pos2:p2]
-        if s1 != s2 and s2 != " ":
+        if s1 != s2 and s2 != '':
             return False
         start_pos1 = p1 + 1
         start_pos2 = p2 + 1
     s1 = str1[start_pos1:]
     s2 = str2[start_pos2:]
-    if s1 != s2 and s2 != " ":
+    if s1 != s2 and s2 != '':
         return False
     return True
 
@@ -415,27 +417,49 @@ def AddDominatedToLowerbound(pattern, pattern_treated_unfairly, dominated_by_res
     pattern_treated_unfairly.append(pattern)
     return True
 
+#
+# # return whether it is added or not, patterns are stored as list
+# def CheckDominationAndAddForLowerbound(pattern, pattern_treated_unfairly, dominated_by_result):
+#     to_remove = []
+#     for p in pattern_treated_unfairly:
+#         # if PatternEqual(p, pattern):
+#         #     return
+#         if P1DominatedByP2(pattern, p):
+#             if pattern not in dominated_by_result:
+#                 dominated_by_result.append(pattern)
+#             return False
+#         elif P1DominatedByP2(p, pattern):
+#             to_remove.append(p)
+#             if p not in dominated_by_result:
+#                 dominated_by_result.append(p)
+#     for p in to_remove:
+#         pattern_treated_unfairly.remove(p)
+#     if pattern in dominated_by_result:
+#         dominated_by_result.remove(pattern)
+#     pattern_treated_unfairly.append(pattern)
+#     return True
+#
 
 
-# return whether it is added or not
-def CheckDominationAndAddForLowerbound(pattern, pattern_treated_unfairly, dominated_by_result):
+# return whether it is added or not, strings are stored rather than patterns
+def CheckDominationAndAddForLowerbound(pattern_st, pattern_treated_unfairly, dominated_by_result, num_att):
     to_remove = []
-    for p in pattern_treated_unfairly:
+    for st in pattern_treated_unfairly:
         # if PatternEqual(p, pattern):
         #     return
-        if P1DominatedByP2(pattern, p):
-            if pattern not in dominated_by_result:
-                dominated_by_result.append(pattern)
+        if P1DominatedByP2ForStr(pattern_st, st, num_att):
+            if pattern_st not in dominated_by_result:
+                dominated_by_result.append(pattern_st)
             return False
-        elif P1DominatedByP2(p, pattern):
-            to_remove.append(p)
-            if p not in dominated_by_result:
-                dominated_by_result.append(p)
-    for p in to_remove:
-        pattern_treated_unfairly.remove(p)
-    if pattern in dominated_by_result:
-        dominated_by_result.remove(pattern)
-    pattern_treated_unfairly.append(pattern)
+        elif P1DominatedByP2ForStr(st, pattern_st, num_att):
+            to_remove.append(st)
+            if st not in dominated_by_result:
+                dominated_by_result.append(st)
+    for st in to_remove:
+        pattern_treated_unfairly.remove(st)
+    if pattern_st in dominated_by_result:
+        dominated_by_result.remove(pattern_st)
+    pattern_treated_unfairly.append(pattern_st)
     return True
 
 
@@ -464,6 +488,8 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
     num_att = len(attributes)
     root = [-1] * num_att
     S = GenerateChildren(root, whole_data_frame, attributes)
+    root_str = '|' * (num_att - 1)
+    store_children = {root_str: S}
     pattern_treated_unfairly = []  # looking for the most general patterns
     patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k_min], encoded=False)
     patterns_top_kmin.parse_data()
@@ -490,9 +516,8 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         P = S.pop(0)
         st = num2string(P)
         # print("GraphTraverse, st = {}".format(st))
-        if PatternEqual(P, [-1, -1, -1, -1, -1, 1, -1, -1, -1, 0]):
-            print("GraphTraverse, st={}".format(st))
-            print("\n")
+        if st == '|0|2|':
+            print("stop here")
         num_patterns_visited += 1
         whole_cardinality = pc_whole_data.pattern_count(st)
         patterns_size_whole[st] = whole_cardinality
@@ -510,11 +535,15 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         lowerbound = alpha * whole_cardinality * k / data_size
         # print("pattern {}, lb = {}, smallest_valid_k = {}".format(P, lowerbound, smallest_valid_k))
         if num_top_k < lowerbound:
-            CheckDominationAndAddForLowerbound(P, result_set, dominated_by_result)
+            CheckDominationAndAddForLowerbound(st, result_set, dominated_by_result, num_att)
             Add_node_to_set(nodes_dict, k_dict, smallest_valid_k, P, st, num_att)
         else:
             if P[num_att - 1] == -1:
-                children = GenerateChildren(P, whole_data_frame, attributes)
+                if st in store_children:
+                    children = store_children[st]
+                else:
+                    children = GenerateChildren(P, whole_data_frame, attributes)
+                    store_children[st] = children
                 S = children + S
             # maintain sets for k values only for a node not in result set.
             # so now we add this node to nodes_dict
@@ -545,17 +574,17 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         # ancestors are patterns checked in AddNewTuple() function, to avoid checking them again
         result_set = pattern_treated_unfairly[k - 1 - k_min].copy()
         # print("before add new tuple")
-        # if [-1, -1, -1, -1, -1, 1, -1, -1, -1, 0] in result_set:
-        #     print("[-1, -1, -1, -1, -1, 1, -1, -1, -1, 0] is in result set")
-        # if [-1, -1, -1, -1, -1, 1, -1, -1, -1, 0] in dominated_by_result:
-        #     print("[-1, -1, -1, -1, -1, 1, -1, -1, -1, 0] is in dominated by result set")
+        # if '||2||' in result_set:
+        #     print("||2|| is in result set")
+        # if '||2||' in dominated_by_result:
+        #     print("||2|| is in dominated by result set")
         ancestors, num_patterns_visited = AddNewTuple(new_tuple, Thc,
                                                       whole_data_frame, patterns_top_k, k, k_min, k_max,
                                                       pc_whole_data,
                                                       num_patterns_visited,
                                                       patterns_size_whole, alpha, num_att,
                                                       data_size, nodes_dict, k_dict, attributes,
-                                                      result_set, dominated_by_result)
+                                                      result_set, dominated_by_result, store_children)
 
         time2 = time.time()
         # print("after addnewtuple")
@@ -563,26 +592,26 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         #     print("k of {} = {}".format(st, nodes_dict[st].smallest_valid_k))
         # else:
         #     print("st not in nodes_dict")
-        print("time for AddNewTuple = {}".format(time2-time1))
+        # print("time for AddNewTuple = {}".format(time2-time1))
         # print("result_set after AddNewTuple: ", result_set)
         time3 = time.time()
         # print("after add new tuple")
-        # if [-1, -1, -1, -1, -1, 1, -1, -1, -1, 0] in result_set:
-        #     print("[-1, -1, -1, -1, -1, 1, -1, -1, -1, 0] is in result set")
-        # if [-1, -1, -1, -1, -1, 1, -1, -1, -1, 0] in dominated_by_result:
-        #     print("[-1, -1, -1, -1, -1, 1, -1, -1, -1, 0] is in dominated by result set")
+        # if '||2||' in result_set:
+        #     print("||2|| is in result set")
+        # if '||2||' in dominated_by_result:
+        #     print("||2|| is in dominated by result set")
         to_added_to_dominated_by_result = []
         to_remove_from_dominated_by_result = []
         for d in dominated_by_result:
             to_remove_from_result_set = []
             d_dominated_by_result_set = False
-            for p in result_set:
-                if P1DominatedByP2(d, p):
+            for st in result_set:
+                if P1DominatedByP2ForStr(d, st, num_att):
                     d_dominated_by_result_set = True
                     break
-                elif P1DominatedByP2(p, d):
-                    to_remove_from_result_set.append(p)
-                    to_added_to_dominated_by_result.append(p)
+                elif P1DominatedByP2ForStr(st, d, num_att):
+                    to_remove_from_result_set.append(st)
+                    to_added_to_dominated_by_result.append(st)
             if not d_dominated_by_result_set:
                 for p in to_remove_from_result_set:
                     result_set.remove(p)
@@ -598,14 +627,12 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         for st in k_dict[k-1]:
             if st in ancestors:
                 continue
-            # num_patterns_visited += 1
-            p = nodes_dict[st].pattern
-            if p in result_set:
+            if st in result_set:
                 continue
-            CheckDominationAndAddForLowerbound(p, result_set, dominated_by_result)
+            CheckDominationAndAddForLowerbound(st, result_set, dominated_by_result, num_att)
         time4 = time.time()
-        print("time for CheckCandidatesForKValues = {}".format(time4 - time3))
-        print("result_set after CheckCandidatesForKValues: ", result_set)
+        # print("time for CheckCandidatesForKValues = {}".format(time4 - time3))
+        # print("result_set after CheckCandidatesForKValues: ", result_set)
         pattern_treated_unfairly.append(result_set)
     time1 = time.time()
     return pattern_treated_unfairly, num_patterns_visited, time1 - time0
@@ -624,13 +651,19 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
 # for upper bound, we only need to check whether it is above upper bound
 def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_max, pc_whole_data, num_patterns_visited,
                 patterns_size_whole, alpha, num_att, data_size, nodes_dict, k_dict, attributes,
-                result_set, dominated_by_result):
+                result_set, dominated_by_result, store_children):
     ancestors = []
     root = [-1] * num_att
     S = GenerateChildrenRelatedToTuple(root, new_tuple)  # pattern with one deterministic attribute
     # if the k values increases, go to function () without generating children
     # otherwise, generating children and add children to queue
     K_values = [k_max] * len(S)
+    time_smaller_than_lb = 0
+    time_check_k = 0
+    time_generate_children = 0
+    time_generate_children1 = 0
+    time_generate_children2 = 0
+    time_update_k_list = 0
     while len(S) > 0:
         P = S.pop(0)
         st = num2string(P)
@@ -661,44 +694,66 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_ma
                 smallest_valid_k = k_min - 1
             if num_top_k < lowerbound:
                 Update_or_add_node_w_smaller_k(nodes_dict, k_dict, smallest_valid_k, P, st)
-                if P in result_set:
+                if st in result_set:
                     continue
-                if CheckDominationAndAddForLowerbound(P, result_set, dominated_by_result):
-                    print("added {} to result set when k = {}".format(P, k))
+                CheckDominationAndAddForLowerbound(st, result_set, dominated_by_result, num_att)
+                    # print("added {} to result set when k = {}".format(P, k))
                 time2 = time.time()
+                time_smaller_than_lb += time2 - time1
                 # print("time 1-2 in AddNewTuple = {}".format(time2 - time1))
                 continue
+            time3 = time.time()
+            time_smaller_than_lb += time3 - time1
             if smallest_valid_k_ancestor > smallest_valid_k:
                 Update_or_add_node_w_smaller_k(nodes_dict, k_dict, smallest_valid_k, P, st)
             else:
                 Check_and_remove_a_larger_k(nodes_dict, k_dict, P, st)
-            if P in result_set:
-                result_set.remove(P)
-                if P[num_att - 1] == -1:
-                    children = GenerateChildren(P, whole_data_frame, attributes)
-                    S = children + S
+            time4 = time.time()
+            time_check_k += time4 - time3
+            time5 = time.time()
+            if st in result_set:
+                result_set.remove(st)
             else:
-                if P in dominated_by_result:
-                    dominated_by_result.remove(P)
-                if P[num_att - 1] == -1:
+                if st in dominated_by_result:
+                    dominated_by_result.remove(st)
+            time56 = time.time()
+            if P[num_att - 1] == -1:
+                if st in store_children:
+                    children = store_children[st]
+                else:
                     children = GenerateChildren(P, whole_data_frame, attributes)
-                    S = children + S
+                    store_children[st] = children
+                S = S + children
+            time6 = time.time()
             if P[num_att - 1] != -1:
+                time_generate_children1 += time56 - time5
+                time_generate_children2 += time6 - time56
+                time_generate_children += time6 - time5
+                time_update_k_list += time.time() - time6
                 continue
             if smallest_valid_k_ancestor > smallest_valid_k:
-                K_values = [smallest_valid_k] * len(children) + K_values
+                K_values = K_values + [smallest_valid_k] * len(children)
             else:
-                K_values = [smallest_valid_k_ancestor] * len(children) + K_values
+                K_values = K_values + [smallest_valid_k_ancestor] * len(children)
+            time7 = time.time()
+            time_generate_children1 += time56 - time5
+            time_generate_children2 += time6 - time56
+            time_generate_children += time6 - time5
+            time_update_k_list += time7 - time6
+
+    print(time_smaller_than_lb, time_check_k, time_generate_children1, time_generate_children2, time_update_k_list)
     return ancestors, num_patterns_visited
 
 
 all_attributes = ["age_binary", "sex_binary", "race_C", "MarriageStatus_C", "juv_fel_count_C",
-                  "decile_score_C", "juv_misd_count_C", "juv_other_count_C", "priors_count_C",
-                  "days_b_screening_arrest_C",
-                  "c_days_from_compas_C", "c_charge_degree_C", "v_decile_score_C", "start_C", "end_C",
+                  "decile_score_C", "juv_misd_count_C", "juv_other_count_C", "priors_count_C", "days_b_screening_arrest_C",
+                  "c_days_from_compas_C", "v_decile_score_C", "c_charge_degree_C", "start_C", "end_C",
                   "event_C"]
 
-selected_attributes = all_attributes[:12]
+# 11 att, 17s VS 35s
+# 12 att, 70 VS 88
+
+selected_attributes = all_attributes[:13]
 
 original_data_file = r"../../InputData/CompasData/ForRanking/LargeDatasets/compas_data_cat_necessary_att_ranked.csv"
 
@@ -712,7 +767,7 @@ Thc = 50
 
 List_k = list(range(k_min, k_max))
 
-alpha = 0.9
+alpha = 0.8
 
 logger = logging.getLogger('MyLogger')
 

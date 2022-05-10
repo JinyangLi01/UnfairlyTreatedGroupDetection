@@ -21,7 +21,9 @@ for each k, we iterate the whole process again, go top down.
 This alg:
 lowerbound = alpha * whole_cardinality * k / data_size
 
-bug free but slow!!!
+difference from 10:
+add store_children to avoid generating children repeatedly for same pattern
+but it is still slower than naive algorithm
 """
 
 import time
@@ -464,6 +466,8 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
     num_att = len(attributes)
     root = [-1] * num_att
     S = GenerateChildren(root, whole_data_frame, attributes)
+    root_str = '|' * (num_att - 1)
+    store_children = {root_str: S}
     pattern_treated_unfairly = []  # looking for the most general patterns
     patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k_min], encoded=False)
     patterns_top_kmin.parse_data()
@@ -514,7 +518,11 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
             Add_node_to_set(nodes_dict, k_dict, smallest_valid_k, P, st, num_att)
         else:
             if P[num_att - 1] == -1:
-                children = GenerateChildren(P, whole_data_frame, attributes)
+                if st in store_children:
+                    children = store_children[st]
+                else:
+                    children = GenerateChildren(P, whole_data_frame, attributes)
+                    store_children[st] = children
                 S = children + S
             # maintain sets for k values only for a node not in result set.
             # so now we add this node to nodes_dict
@@ -555,7 +563,7 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
                                                       num_patterns_visited,
                                                       patterns_size_whole, alpha, num_att,
                                                       data_size, nodes_dict, k_dict, attributes,
-                                                      result_set, dominated_by_result)
+                                                      result_set, dominated_by_result, store_children)
 
         time2 = time.time()
         # print("after addnewtuple")
@@ -598,7 +606,6 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         for st in k_dict[k-1]:
             if st in ancestors:
                 continue
-            # num_patterns_visited += 1
             p = nodes_dict[st].pattern
             if p in result_set:
                 continue
@@ -624,13 +631,19 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
 # for upper bound, we only need to check whether it is above upper bound
 def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_max, pc_whole_data, num_patterns_visited,
                 patterns_size_whole, alpha, num_att, data_size, nodes_dict, k_dict, attributes,
-                result_set, dominated_by_result):
+                result_set, dominated_by_result, store_children):
     ancestors = []
     root = [-1] * num_att
     S = GenerateChildrenRelatedToTuple(root, new_tuple)  # pattern with one deterministic attribute
     # if the k values increases, go to function () without generating children
     # otherwise, generating children and add children to queue
     K_values = [k_max] * len(S)
+    time_smaller_than_lb = 0
+    time_check_k = 0
+    time_generate_children = 0
+    time_generate_children1 = 0
+    time_generate_children2 = 0
+    time_update_k_list = 0
     while len(S) > 0:
         P = S.pop(0)
         st = num2string(P)
@@ -666,29 +679,49 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_ma
                 if CheckDominationAndAddForLowerbound(P, result_set, dominated_by_result):
                     print("added {} to result set when k = {}".format(P, k))
                 time2 = time.time()
+                time_smaller_than_lb += time2 - time1
                 # print("time 1-2 in AddNewTuple = {}".format(time2 - time1))
                 continue
+            time3 = time.time()
+            time_smaller_than_lb += time3 - time1
             if smallest_valid_k_ancestor > smallest_valid_k:
                 Update_or_add_node_w_smaller_k(nodes_dict, k_dict, smallest_valid_k, P, st)
             else:
                 Check_and_remove_a_larger_k(nodes_dict, k_dict, P, st)
+            time4 = time.time()
+            time_check_k += time4 - time3
+            time5 = time.time()
             if P in result_set:
                 result_set.remove(P)
-                if P[num_att - 1] == -1:
-                    children = GenerateChildren(P, whole_data_frame, attributes)
-                    S = children + S
             else:
                 if P in dominated_by_result:
                     dominated_by_result.remove(P)
-                if P[num_att - 1] == -1:
+            time56 = time.time()
+            if P[num_att - 1] == -1:
+                if st in store_children:
+                    children = store_children[st]
+                else:
                     children = GenerateChildren(P, whole_data_frame, attributes)
-                    S = children + S
+                    store_children[st] = children
+                S = S + children
+            time6 = time.time()
             if P[num_att - 1] != -1:
+                time_generate_children1 += time56 - time5
+                time_generate_children2 += time6 - time56
+                time_generate_children += time6 - time5
+                time_update_k_list += time.time() - time6
                 continue
             if smallest_valid_k_ancestor > smallest_valid_k:
-                K_values = [smallest_valid_k] * len(children) + K_values
+                K_values = K_values + [smallest_valid_k] * len(children)
             else:
-                K_values = [smallest_valid_k_ancestor] * len(children) + K_values
+                K_values = K_values + [smallest_valid_k_ancestor] * len(children)
+            time7 = time.time()
+            time_generate_children1 += time56 - time5
+            time_generate_children2 += time6 - time56
+            time_generate_children += time6 - time5
+            time_update_k_list += time7 - time6
+
+    print(time_smaller_than_lb, time_check_k, time_generate_children1, time_generate_children2, time_update_k_list)
     return ancestors, num_patterns_visited
 
 
