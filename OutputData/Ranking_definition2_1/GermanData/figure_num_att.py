@@ -46,20 +46,20 @@ for line in Lines:
         continue
     if count < 2:
         continue
-    if count > 19 and count < 23:
+    if count > 17 and count < 21:
         continue
-    if count > 40:
+    if count > 36:
         break
     items = line.strip().split(' ')
-    if count < 18:
+    if count < 17:
         x_list.append(int(items[0]))
         x_naive.append(int(items[0]))
         execution_time1.append(float(items[1]))
         execution_time2.append(float(items[2]))
-    elif count == 18 or count == 19:
+    elif count == 17:
         x_list.append(int(items[0]))
         execution_time1.append(float(items[1]))
-    elif count < 39:
+    elif count < 36:
         num_patterns_visited1.append(float(items[1]))
         num_patterns_visited2.append(float(items[2]))
     else:
@@ -74,6 +74,7 @@ plt.plot(x_naive, execution_time2, line_style[1], color=color[1], label=label[1]
              markersize=marker_size)
 plt.xlabel('Number of attributes')
 plt.ylabel('Execution time (s)')
+plt.xticks([5, 10, 15, 17, 18])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
@@ -101,6 +102,7 @@ plt.xlabel('Number of attributes')
 plt.ylabel('Number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
+plt.xticks([5, 10, 15, 17, 18])
 plt.grid(True)
 fig.tight_layout()
 plt.savefig("num_att_calculations_upr_german.png",

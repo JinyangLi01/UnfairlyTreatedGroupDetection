@@ -58,8 +58,8 @@ all_attributes = ["age_binary", "sex_binary", "race_C", "MarriageStatus_C", "juv
 
 # 10 att, rangek=300, naive over time
 # 8 att, rangek = 1000, 47s VS 219s
-# 9 att??
-selected_attributes = all_attributes[:9]
+# 9 att, rangek=200, naive over time
+selected_attributes = all_attributes[:8]
 
 print("num of att = {}".format(len(selected_attributes)))
 
