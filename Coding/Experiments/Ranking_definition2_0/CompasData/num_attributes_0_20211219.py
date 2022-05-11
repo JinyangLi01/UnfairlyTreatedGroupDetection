@@ -2,9 +2,8 @@
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_definition2_8_20211228 as newalg
-from Algorithms import NaiveAlgRanking_definition2_3_20211207 as naivealg
-from Algorithms import Predict_0_20210127 as predict
+from Algorithms import NewAlgRanking_definition2_13_20220509 as newalg
+from Algorithms import NaiveAlgRanking_definition2_5_20220506 as naivealg
 
 
 import matplotlib.pyplot as plt
@@ -30,7 +29,7 @@ line_width = 8
 marker_size = 15
 # f_size = (14, 10)
 
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 
@@ -69,10 +68,7 @@ def GridSearch(original_data, all_attributes, thc, alpha, number_attributes, tim
             k_min, k_max, time_limit)
 
         print("newalg, num_patterns_visited = {}".format(num_patterns_visited1_))
-        print(
-            "time = {} s".format(t1_), "\n",
-            "patterns:\n",
-            pattern_treated_unfairly1)
+        print("time = {} s".format(t1_))
         if t1_ > time_limit:
             raise Exception("new alg exceeds time limit")
         return t1_, num_patterns_visited1_, 0, 0, pattern_treated_unfairly1
@@ -84,10 +80,7 @@ def GridSearch(original_data, all_attributes, thc, alpha, number_attributes, tim
         k_min, k_max, time_limit)
 
     print("newalg, num_patterns_visited = {}".format(num_patterns_visited1_))
-    print(
-        "time = {} s".format(t1_), "\n",
-            "patterns:\n",
-            pattern_treated_unfairly1)
+    print("time = {} s".format(t1_))
     if t1_ > time_limit:
         raise Exception("new alg exceeds time limit")
 
@@ -97,10 +90,7 @@ def GridSearch(original_data, all_attributes, thc, alpha, number_attributes, tim
                                                     k_min, k_max, time_limit)
 
     print("num_patterns_visited = {}".format(num_patterns_visited2_))
-    print(
-        "time = {} s".format(t2_), "\n",
-        "patterns:\n",
-        pattern_treated_unfairly2)
+    print("time = {} s".format(t2_))
 
 
     if t2_ > time_limit:
@@ -131,14 +121,10 @@ original_data = pd.read_csv(original_data_file)[all_attributes]
 time_limit = 10 * 60
 
 
-
-# with 12 att, naive needs 182 s, new needs 55 s
-# with 13 att, naive needs 478 s
-# with 14 att, naive over time
-# with 15 att, new alg over time
+# 14att, new alg over time
 num_att_max_naive = 14
 num_att_min = 3
-num_att_max = 15
+num_att_max = 14
 execution_time1 = list()
 execution_time2 = list()
 num_calculation1 = list()
@@ -158,7 +144,7 @@ num_loops = 1
 k_min = 10
 k_max = 50
 List_k = list(range(k_min, k_max))
-alpha = 0.1
+alpha = 0.8
 
 for number_attributes in range(num_att_min, num_att_max_naive):
     print("\n\nnumber of attributes = {}".format(number_attributes))
@@ -261,7 +247,7 @@ plt.xticks([2, 4, 6, 8, 10, 12, 14])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/num_att_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/num_att_time_upr_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -280,7 +266,7 @@ plt.xticks([2, 4, 6, 8, 10, 12, 14])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/num_att_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/num_att_calculations_upr_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
