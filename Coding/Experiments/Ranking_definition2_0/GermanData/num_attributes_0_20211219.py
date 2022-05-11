@@ -2,9 +2,8 @@
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_definition2_8_20211228 as newalg
-from Algorithms import NaiveAlgRanking_definition2_3_20211207 as naivealg
-from Algorithms import Predict_0_20210127 as predict
+from Algorithms import NewAlgRanking_definition2_13_20220509 as newalg
+from Algorithms import NaiveAlgRanking_definition2_5_20220506 as naivealg
 
 
 import matplotlib.pyplot as plt
@@ -28,9 +27,7 @@ plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 label = ["UPR", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 
@@ -133,9 +130,9 @@ time_limit = 10 * 60
 
 
 # 21 att in total
-num_att_max_naive = 19
+num_att_max_naive = 18
 num_att_min = 3
-num_att_max = 21
+num_att_max = 19
 execution_time1 = list()
 execution_time2 = list()
 num_calculation1 = list()
@@ -227,11 +224,9 @@ for n in range(num_att_max_naive, num_att_max):
 
 output_file.write("\n\nnumber of patterns found\n")
 for n in range(num_att_min, num_att_max_naive):
-    output_file.write('{} {} \n {}\n'.format(n, num_patterns_found[n-num_att_min],
-                                             patterns_found[n-num_att_min]))
+    output_file.write('{} {} \n'.format(n, num_patterns_found[n-num_att_min]))
 for n in range(num_att_max_naive, num_att_max):
-    output_file.write('{} {} \n {}\n'.format(n, num_patterns_found[n-num_att_min],
-                                             patterns_found[n-num_att_min]))
+    output_file.write('{} {} \n'.format(n, num_patterns_found[n-num_att_min]))
 
 
 
@@ -257,7 +252,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/GermanData/num_att_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/GermanData/num_att_time_upr_german.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -275,7 +270,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/GermanData/num_att_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/GermanData/num_att_calculations_upr_german.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

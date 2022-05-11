@@ -1,8 +1,8 @@
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_definition2_8_20211228 as newalg
-from Algorithms import NaiveAlgRanking_definition2_3_20211207 as naivealg
+from Algorithms import NewAlgRanking_definition2_13_20220509 as newalg
+from Algorithms import NaiveAlgRanking_definition2_5_20220506 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 
 import matplotlib.pyplot as plt
@@ -26,9 +26,7 @@ plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 label = ["UPR", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 def ComparePatternSets(set1, set2):
@@ -58,8 +56,11 @@ all_attributes = ['StatusExistingAcc', 'DurationMonth_C', 'CreditHistory', 'Purp
                   'ExistingCredit', 'Job', 'NumPeopleLiable', 'Telephone', 'ForeignWorker']
 
 
-
-selected_attributes = all_attributes[:12]
+# 11 att, ok. range_k=340, time for naive is 308s
+# 12 att, ok
+# 13 att, ok
+# 14 att, over time
+selected_attributes = all_attributes[:13]
 
 thc = 50
 k_min = 10
@@ -103,10 +104,7 @@ for range_k in range_k_list:
             k_min, k_max, time_limit)
 
         print("newalg, num_patterns_visited = {}".format(num_patterns_visited1_))
-        print(
-            "time = {} s".format(t1_), "\n",
-            "patterns:\n",
-            pattern_treated_unfairly1)
+        print("time = {} s".format(t1_))
         if t1_ > time_limit:
             raise Exception("new alg exceeds time limit")
 
@@ -172,7 +170,7 @@ plt.xticks([100, 200, 300, 350])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/GermanData/range_k_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/GermanData/range_k_time_upr_german.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -189,7 +187,7 @@ plt.xticks([100, 200, 300, 350])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/GermanData/range_k_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/GermanData/range_k_calculations_upr_german.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

@@ -2,8 +2,8 @@
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_definition2_8_20211228 as newalg
-from Algorithms import NaiveAlgRanking_definition2_3_20211207 as naivealg
+from Algorithms import NewAlgRanking_definition2_13_20220509 as newalg
+from Algorithms import NaiveAlgRanking_definition2_5_20220506 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 
 import matplotlib.pyplot as plt
@@ -27,9 +27,7 @@ plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 label = ["UPR", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 
@@ -58,8 +56,10 @@ all_attributes = ['StatusExistingAcc', 'DurationMonth_C', 'CreditHistory', 'Purp
                   'ResidenceLength', 'Property', 'Age_C', 'InstallmentPlans', 'Housing',
                   'ExistingCredit', 'Job', 'NumPeopleLiable', 'Telephone', 'ForeignWorker']
 
-
-selected_attributes = all_attributes[:12]
+# 10 att, ok. Thc=10, 53s VS 219s
+# 11 att, Thc = 10, 145s VS 398s
+# with 12 att, Thc = 10, new alg needs 407 s, naive over time
+selected_attributes = all_attributes[:11]
 
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -136,8 +136,7 @@ for Thc in Thc_list:
             raise Exception("naive alg exceeds time limit")
 
         for k in range(0, k_max - k_min):
-            if ComparePatternSets(result1[k],
-                                  result2[k]) is False:
+            if ComparePatternSets(result1[k], result2[k]) is False:
                 raise Exception("sanity check fails! k = {}".format(k + k_min))
 
 
@@ -192,7 +191,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/GermanData/thc_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/GermanData/thc_time_upr_german.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -214,7 +213,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/GermanData/thc_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/GermanData/thc_calculations_upr_german.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
