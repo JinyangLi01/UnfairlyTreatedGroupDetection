@@ -2,9 +2,9 @@
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_definition2_8_20211228 as newalg
-from Algorithms import NaiveAlgRanking_definition2_3_20211207 as naivealg
-from Algorithms import Predict_0_20210127 as predict
+from Algorithms import NewAlgRanking_definition2_13_20220509 as newalg
+from Algorithms import NaiveAlgRanking_definition2_5_20220506 as naivealg
+
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -57,10 +57,11 @@ all_attributes = ["age_binary","sex_binary","race_C","MarriageStatus_C","juv_fel
                   "c_days_from_compas_C","c_charge_degree_C","v_decile_score_C","start_C","end_C",
                   "event_C"]
 
-# with 12 att, ok
-# with 13 att, when thc = 10, naive over time
-# range_k can only handle 9
-selected_attributes = all_attributes[:8]
+# 13 att, new alg over time
+# 10 att, thc = 10, 51s VS 164s
+# 11 att, thc = 10, 75 VS 172
+# 12 att?
+selected_attributes = all_attributes[:12]
 
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -192,7 +193,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/thc_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/thc_time_upr_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -214,7 +215,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/thc_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/thc_calculations_upr_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

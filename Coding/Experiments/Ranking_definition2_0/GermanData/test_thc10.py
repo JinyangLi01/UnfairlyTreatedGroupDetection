@@ -58,7 +58,7 @@ all_attributes = ['StatusExistingAcc', 'DurationMonth_C', 'CreditHistory', 'Purp
 # thc=10
 # 15 att, new alg needs 313 s, naive over time
 # 13 att, new needs 124s, naive over time
-# 11 ??
+# 11 att, new needs 196s, naive 361 s
 selected_attributes = all_attributes[:11]
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]

@@ -1,9 +1,8 @@
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_definition2_8_20211228 as newalg
-from Algorithms import NaiveAlgRanking_definition2_3_20211207 as naivealg
-from Algorithms import Predict_0_20210127 as predict
+from Algorithms import NewAlgRanking_definition2_13_20220509 as newalg
+from Algorithms import NaiveAlgRanking_definition2_5_20220506 as naivealg
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -57,12 +56,10 @@ all_attributes = ["age_binary", "sex_binary", "race_C", "MarriageStatus_C", "juv
                   "c_days_from_compas_C", "c_charge_degree_C", "v_decile_score_C", "start_C", "end_C",
                   "event_C"]
 
-# with 15 att, k=10-50, new alg over time
-# with 10 att, 10-600, naive over time
-# with 12 att, when k = 10-100, naive needs 540 s, when k is larger, naive over time
-# with 11 att, when k = 50-300, naive over time
-# with 9, ok
-selected_attributes = all_attributes[:8]
+# 10 att, rangek=300, naive over time
+# 8 att, rangek = 1000, 47s VS 219s
+# 9 att??
+selected_attributes = all_attributes[:9]
 
 print("num of att = {}".format(len(selected_attributes)))
 
@@ -108,10 +105,7 @@ for range_k in range_k_list:
             k_min, k_max, time_limit)
 
         print("newalg, num_patterns_visited = {}".format(num_patterns_visited1_))
-        print(
-            "time = {} s".format(t1_), "\n",
-            "patterns:\n",
-            pattern_treated_unfairly1)
+        print("time = {} s".format(t1_))
         if t1_ > time_limit:
             raise Exception("new alg exceeds time limit")
 
@@ -124,10 +118,7 @@ for range_k in range_k_list:
                                                         k_min, k_max, time_limit)
 
         print("num_patterns_visited = {}".format(num_patterns_visited2_))
-        print(
-            "time = {} s".format(t2_), "\n",
-            "patterns:\n",
-            pattern_treated_unfairly2)
+        print("time = {} s".format(t2_))
 
         t2 += t2_
         num_patterns_visited2_thc += num_patterns_visited2_
@@ -182,7 +173,7 @@ plt.xticks([200, 400, 600, 800, 1000])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/range_k_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/range_k_time_upr_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -199,7 +190,7 @@ plt.xticks([200, 400, 600, 800, 1000])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/range_k_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/CompasData/range_k_calculations_upr_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

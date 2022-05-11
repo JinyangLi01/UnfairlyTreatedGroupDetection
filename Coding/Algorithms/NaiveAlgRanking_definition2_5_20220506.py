@@ -239,11 +239,6 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
     num_att = len(attributes)
 
     for k in range(k_min, k_max):
-        # print("k={}".format(k))
-        # if q in pattern_treated_unfairly:
-        #     print("q in!!")
-        # else:
-        #     print("q not in ... ")
         if overtime_flag:
             print("naive overtime, exiting the loop of k")
             break
@@ -264,20 +259,11 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
 
             num_patterns_visited += 1
             whole_cardinality = pc_whole_data.pattern_count(st)
-            # print("P={}, whole size={}".format(P, whole_cardinality))
-            # if st == '|0|2|':
-            #     print("stop here")
-            # if '|0|2|1' in result_set and k == 11:
-            #     print("st={}, '|0|2|1' in result set".format(st))
-            # if '|0|2|1' not in result_set and k == 11:
-            #     print("st={}, '|0|2|1' not in result set".format(st))
             if whole_cardinality < Thc:
                 continue
             num_top_k = patterns_top_kmin.pattern_count(st)
             lowerbound = alpha * whole_cardinality * k / data_size  # (whole_cardinality / data_size - alpha) * k
             if num_top_k < lowerbound:
-                # if PatternEqual(P, [-1, -1, 1, -1]):
-                #     print("k={}, pattern equal = {}, num_top_k = {}".format(k, P, num_top_k))
                 CheckDominationAndAdd(st, result_set, num_att)
             else:
                 time1 = time.time()
@@ -286,8 +272,6 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
                 # print("time for GenerateChildren = {}".format(time2 - time1))
                 S = children + S
                 continue
-            # if '|0|2|1' not in result_set:
-            #     print("{} dominated |0|2|1".format(st))
         pattern_treated_unfairly.append(result_set)
     time1 = time.time()
     return pattern_treated_unfairly, num_patterns_visited, time1 - time0
