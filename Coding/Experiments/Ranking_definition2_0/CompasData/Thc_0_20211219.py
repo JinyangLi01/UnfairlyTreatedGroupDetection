@@ -24,7 +24,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["UPR", "IterTD"]
+label = ["PropBounds", "IterTD"]
 line_width = 8
 marker_size = 15
 # f_size = (14, 10)
@@ -57,11 +57,11 @@ all_attributes = ["age_binary","sex_binary","race_C","MarriageStatus_C","juv_fel
                   "c_days_from_compas_C","c_charge_degree_C","v_decile_score_C","start_C","end_C",
                   "event_C"]
 
-# 13 att, new alg over time
-# 10 att, thc = 10, 51s VS 164s
-# 11 att, thc = 10, 75 VS 172
-# 12 att?
-selected_attributes = all_attributes[:12]
+
+# 12 att, 66s VS 129 s
+# 13 att, 183 VS 298s
+# 14 att, out of time
+selected_attributes = all_attributes[:13]
 
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -79,7 +79,7 @@ time_limit = 10*60
 
 List_k = list(range(k_min, k_max))
 
-alpha = 0.1
+alpha = 0.8
 
 
 execution_time1 = list()

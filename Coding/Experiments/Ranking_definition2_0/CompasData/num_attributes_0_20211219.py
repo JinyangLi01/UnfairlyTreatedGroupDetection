@@ -24,7 +24,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["UPR", "IterTD"]
+label = ["PropBounds", "IterTD"]
 line_width = 8
 marker_size = 15
 # f_size = (14, 10)
@@ -121,10 +121,11 @@ original_data = pd.read_csv(original_data_file)[all_attributes]
 time_limit = 10 * 60
 
 
-# 14att, new alg over time
-num_att_max_naive = 14
+# 15 att, both over time
+# 14 att, 475 VS 532 s
+num_att_max_naive = 15
 num_att_min = 3
-num_att_max = 14
+num_att_max = 15
 execution_time1 = list()
 execution_time2 = list()
 num_calculation1 = list()

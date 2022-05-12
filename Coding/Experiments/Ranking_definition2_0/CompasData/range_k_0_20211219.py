@@ -22,7 +22,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["UPR", "IterTD"]
+label = ["PropBounds", "IterTD"]
 line_width = 8
 marker_size = 15
 # f_size = (14, 10)
@@ -56,10 +56,10 @@ all_attributes = ["age_binary", "sex_binary", "race_C", "MarriageStatus_C", "juv
                   "c_days_from_compas_C", "c_charge_degree_C", "v_decile_score_C", "start_C", "end_C",
                   "event_C"]
 
-# 10 att, rangek=300, naive over time
-# 8 att, rangek = 1000, 47s VS 219s
-# 9 att, rangek=200, naive over time
-selected_attributes = all_attributes[:8]
+# 8 att, rangek = 1000, ok
+# 10 att, naive over time for rangek 1000
+# 9 att, ok
+selected_attributes = all_attributes[:9]
 
 print("num of att = {}".format(len(selected_attributes)))
 
@@ -86,7 +86,7 @@ num_patterns_found = list()
 patterns_found = list()
 num_loops = 1
 
-alpha = 0.1
+alpha = 0.8
 
 for range_k in range_k_list:
     k_max = k_min + range_k
