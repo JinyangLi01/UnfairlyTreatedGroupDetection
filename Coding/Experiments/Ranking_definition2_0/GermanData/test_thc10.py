@@ -72,7 +72,7 @@ ranked_data = ranked_data[selected_attributes]
 
 time_limit = 10 * 60
 
-alpha = 0.1
+alpha = 0.8
 
 Thc = 10
 

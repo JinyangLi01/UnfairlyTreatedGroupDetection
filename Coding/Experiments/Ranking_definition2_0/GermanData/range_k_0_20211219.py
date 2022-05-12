@@ -3,7 +3,7 @@ from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
 from Algorithms import NewAlgRanking_definition2_13_20220509 as newalg
 from Algorithms import NaiveAlgRanking_definition2_5_20220506 as naivealg
-from Algorithms import Predict_0_20210127 as predict
+
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -23,7 +23,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["UPR", "IterTD"]
+label = ["PropBounds", "IterTD"]
 line_width = 8
 marker_size = 15
 f_size = (14, 8)
@@ -56,15 +56,16 @@ all_attributes = ['StatusExistingAcc', 'DurationMonth_C', 'CreditHistory', 'Purp
                   'ExistingCredit', 'Job', 'NumPeopleLiable', 'Telephone', 'ForeignWorker']
 
 
-# 11 att, ok. range_k=340, time for naive is 308s
-# 12 att, ok
-# 13 att, ok
-# 14 att, over time
-selected_attributes = all_attributes[:13]
+
+# 13 att, ok, 83 VS 273 s
+# 14 att, ok, 110 VS 356
+# 15 att, ok, 191 VS 500
+selected_attributes = all_attributes[:15]
 
 thc = 50
 k_min = 10
 range_k_list = [40, 90, 140, 190, 240, 290, 340]
+
 
 original_data_file = r"../../../../InputData/GermanCredit/GermanCredit_ranked.csv"
 
@@ -85,7 +86,7 @@ num_patterns_found = list()
 patterns_found = list()
 num_loops = 1
 
-alpha = 0.1
+alpha = 0.8
 
 for range_k in range_k_list:
     k_max = k_min + range_k

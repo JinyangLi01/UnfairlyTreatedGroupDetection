@@ -24,7 +24,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["UPR", "IterTD"]
+label = ["PropBounds", "IterTD"]
 line_width = 8
 marker_size = 15
 f_size = (14, 8)
@@ -56,10 +56,11 @@ all_attributes = ['StatusExistingAcc', 'DurationMonth_C', 'CreditHistory', 'Purp
                   'ResidenceLength', 'Property', 'Age_C', 'InstallmentPlans', 'Housing',
                   'ExistingCredit', 'Job', 'NumPeopleLiable', 'Telephone', 'ForeignWorker']
 
-# 10 att, ok. Thc=10, 53s VS 219s
-# 11 att, Thc = 10, 145s VS 398s
-# with 12 att, Thc = 10, new alg needs 407 s, naive over time
-selected_attributes = all_attributes[:11]
+
+# alpha = 0.8:
+# 13 att, new alg over time
+# 11 att: 28 VS 79
+selected_attributes = all_attributes[:12]
 
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -77,7 +78,7 @@ time_limit = 10*60
 
 List_k = list(range(k_min, k_max))
 
-alpha = 0.1
+alpha = 0.8
 
 
 

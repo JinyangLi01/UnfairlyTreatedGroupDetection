@@ -24,7 +24,7 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["UPR", "IterTD"]
+label = ["PropBounds", "IterTD"]
 line_width = 8
 marker_size = 15
 f_size = (14, 8)
@@ -66,10 +66,7 @@ def GridSearch(original_data, all_attributes, thc, alpha, number_attributes, tim
             k_min, k_max, time_limit)
 
         print("newalg, num_patterns_visited = {}".format(num_patterns_visited1_))
-        print(
-            "time = {} s".format(t1_), "\n",
-            "patterns:\n",
-            pattern_treated_unfairly1)
+        print("time = {} s".format(t1_))
         if t1_ > time_limit:
             raise Exception("new alg exceeds time limit")
         return t1_, num_patterns_visited1_, 0, 0, pattern_treated_unfairly1
@@ -81,10 +78,7 @@ def GridSearch(original_data, all_attributes, thc, alpha, number_attributes, tim
         k_min, k_max, time_limit)
 
     print("newalg, num_patterns_visited = {}".format(num_patterns_visited1_))
-    print(
-        "time = {} s".format(t1_), "\n",
-            "patterns:\n",
-            pattern_treated_unfairly1)
+    print("time = {} s".format(t1_))
     if t1_ > time_limit:
         raise Exception("new alg exceeds time limit")
 
@@ -94,10 +88,7 @@ def GridSearch(original_data, all_attributes, thc, alpha, number_attributes, tim
                                                     k_min, k_max, time_limit)
 
     print("num_patterns_visited = {}".format(num_patterns_visited2_))
-    print(
-        "time = {} s".format(t2_), "\n",
-        "patterns:\n",
-        pattern_treated_unfairly2)
+    print("time = {} s".format(t2_))
 
 
     if t2_ > time_limit:
@@ -130,9 +121,9 @@ time_limit = 10 * 60
 
 
 # 21 att in total
-num_att_max_naive = 18
+num_att_max_naive = 21
 num_att_min = 3
-num_att_max = 19
+num_att_max = 21
 execution_time1 = list()
 execution_time2 = list()
 num_calculation1 = list()
@@ -148,11 +139,10 @@ num_loops = 1
 
 
 
-
 k_min = 10
 k_max = 50
 List_k = list(range(k_min, k_max))
-alpha = 0.1
+alpha = 0.8
 
 for number_attributes in range(num_att_min, num_att_max_naive):
     print("\n\nnumber of attributes = {}".format(number_attributes))

@@ -25,12 +25,10 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["Optimized", "IterTD"]
+label = ["URB", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 
@@ -90,6 +88,8 @@ def GridSearch(original_data_file_pathpre, datasize, Thc, selected_attributes, L
 
     for k in range(0, k_max - k_min):
         if ComparePatternSets(pattern_treated_unfairly_lowerbound1[k], pattern_treated_unfairly_lowerbound2[k]) is False:
+            print("k={}".format(k))
+            print(pattern_treated_unfairly_lowerbound1[k], pattern_treated_unfairly_lowerbound2[k])
             raise Exception("sanity check fails! k = {}".format(k + k_min))
 
 
@@ -104,18 +104,15 @@ all_attributes = ['StatusExistingAcc', 'DurationMonth_C', 'CreditHistory', 'Purp
                   'ExistingCredit', 'Job', 'NumPeopleLiable', 'Telephone', 'ForeignWorker']
 
 
-# with 30 att, ok
-# with 33 att, ok. 33 is the total number
-selected_attributes = all_attributes[:30]
 
-# data_sizes = [400, 500, 600, 700, 800, 900, 1000, 1100, 1200]
+selected_attributes = all_attributes[:20]
 
-data_sizes = [500, 600, 700, 800, 900, 1000, 1100, 1200]
+data_sizes = [1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000]
 
 
 Thc = 50
 
-original_data_file = r"../../../../InputData/GermanCredit/GermanCredit_ranked.csv"
+original_data_file_pathprefix = r"../../../../InputData/GermanCredit/LargerDataset/"
 
 time_limit = 10*60
 
@@ -132,7 +129,6 @@ result = list()
 
 List_k = list(range(k_min, k_max))
 
-# Lowerbounds = [5] * 10 + [10] * 10 + [15] * 10 + [20] * 10
 Lowerbounds = [10] * 10 + [20] * 10 + [30] * 10 + [40] * 10
 
 for datasize in data_sizes:
@@ -165,7 +161,7 @@ for datasize in data_sizes:
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition1_1/StudentData/data_size.txt'
+output_path = r'../../../../OutputData/Ranking_definition1_1/GermanData/data_size.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -179,6 +175,7 @@ for n in range(len(data_sizes)):
 output_file.write("\n\nnumber of patterns\n")
 for n in range(len(data_sizes)):
     output_file.write('{} {} {}\n'.format(data_sizes[n], num_patterns_checked1[n], num_patterns_checked2[n]))
+
 
 output_file.write("\n\npatterns in result\n")
 for n in range(len(data_sizes)):
@@ -195,12 +192,11 @@ plt.plot(data_sizes, execution_time1, line_style[0], color=color[0], label=label
 plt.plot(data_sizes, execution_time2, line_style[1], color=color[1], label=label[1], linewidth=line_width,
              markersize=marker_size)
 plt.xlabel('Data size (K)')
-plt.xticks([400, 600, 800, 1000, 1200])
 plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/datasize_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/GermanData/datasize_time_urb_german.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -216,13 +212,12 @@ plt.plot(data_sizes, num_patterns_checked1, line_style[0], color=color[0], label
 plt.plot(data_sizes, num_patterns_checked2, line_style[1], color=color[1], label=label[1], linewidth=line_width,
              markersize=marker_size)
 plt.xlabel('Data size (K)')
-plt.xticks([400, 600, 800, 1000, 1200])
 plt.ylabel('Number of patterns visited (K)')
 ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/datasize_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/GermanData/datasize_calculations_urb_german.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
