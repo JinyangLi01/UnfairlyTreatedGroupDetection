@@ -197,7 +197,7 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_limit
             break
         num_patterns_visited_k = 0
         result_set_lowerbound = set()
-        S = store_children[root_str]
+        S = store_children[root_str].copy()
         patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_kmin.parse_data()
         # lower bound

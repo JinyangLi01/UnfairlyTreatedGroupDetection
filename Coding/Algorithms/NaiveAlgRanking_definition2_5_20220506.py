@@ -237,17 +237,17 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
     pattern_treated_unfairly = []
     overtime_flag = False
     num_att = len(attributes)
-
+    root_str = '|' * (num_att - 1)
+    root = [-1] * (len(attributes))
+    S = GenerateChildren(root, whole_data_frame, ranked_data, attributes)
+    store_children = {root_str: S}
     for k in range(k_min, k_max):
         if overtime_flag:
             print("naive overtime, exiting the loop of k")
             break
         result_set = set()
-        root = [-1] * (len(attributes))
-        S = GenerateChildren(root, whole_data_frame, ranked_data, attributes)
         patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_kmin.parse_data()
-
         # lower bound
         while len(S) > 0:
             if time.time() - time0 > time_limit:
@@ -256,7 +256,6 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
                 break
             P = S.pop(0)
             st = num2string(P)
-
             num_patterns_visited += 1
             whole_cardinality = pc_whole_data.pattern_count(st)
             if whole_cardinality < Thc:
@@ -266,10 +265,11 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
             if num_top_k < lowerbound:
                 CheckDominationAndAdd(st, result_set, num_att)
             else:
-                time1 = time.time()
-                children = GenerateChildren(P, whole_data_frame, ranked_data, attributes)
-                time2 = time.time()
-                # print("time for GenerateChildren = {}".format(time2 - time1))
+                if st in store_children:
+                    children = store_children[st]
+                else:
+                    children = GenerateChildren(P, whole_data_frame, ranked_data, attributes)
+                    store_children[st] = children
                 S = children + S
                 continue
         pattern_treated_unfairly.append(result_set)
