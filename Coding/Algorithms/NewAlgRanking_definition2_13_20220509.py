@@ -509,9 +509,9 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         k_dict[k] = set()
     k = k_min
     while len(S) > 0:
-        # if time.time() - time0 > time_limit:
-        #     print("newalg overtime")
-        #     break
+        if time.time() - time0 > time_limit:
+            print("newalg overtime")
+            break
         time1 = time.time()
         P = S.pop(0)
         st = num2string(P)
@@ -573,11 +573,6 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         # top down for related patterns, using similar methods as k_min, add to result set if needed
         # ancestors are patterns checked in AddNewTuple() function, to avoid checking them again
         result_set = pattern_treated_unfairly[k - 1 - k_min].copy()
-        # print("before add new tuple")
-        # if '||2||' in result_set:
-        #     print("||2|| is in result set")
-        # if '||2||' in dominated_by_result:
-        #     print("||2|| is in dominated by result set")
         ancestors, num_patterns_visited = AddNewTuple(new_tuple, Thc,
                                                       whole_data_frame, patterns_top_k, k, k_min, k_max,
                                                       pc_whole_data,
@@ -587,19 +582,9 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
                                                       result_set, dominated_by_result, store_children)
 
         time2 = time.time()
-        # print("after addnewtuple")
-        # if st in nodes_dict.keys():
-        #     print("k of {} = {}".format(st, nodes_dict[st].smallest_valid_k))
-        # else:
-        #     print("st not in nodes_dict")
         # print("time for AddNewTuple = {}".format(time2-time1))
         # print("result_set after AddNewTuple: ", result_set)
         time3 = time.time()
-        # print("after add new tuple")
-        # if '||2||' in result_set:
-        #     print("||2|| is in result set")
-        # if '||2||' in dominated_by_result:
-        #     print("||2|| is in dominated by result set")
         to_added_to_dominated_by_result = set()
         to_remove_from_dominated_by_result = set()
         for d in dominated_by_result:

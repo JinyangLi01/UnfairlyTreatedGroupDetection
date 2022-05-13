@@ -1,9 +1,8 @@
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_definition2_8_20211228 as newalg
-from Algorithms import NaiveAlgRanking_definition2_3_20211207 as naivealg
-from Algorithms import Predict_0_20210127 as predict
+from Algorithms import NewAlgRanking_definition2_13_20220509 as newalg
+from Algorithms import NaiveAlgRanking_definition2_5_20220506 as naivealg
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -23,12 +22,10 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["UPR", "IterTD"]
+label = ["PropBounds", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 def ComparePatternSets(set1, set2):
@@ -59,10 +56,11 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstat
                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
 
 
-# with 15 att, ok
-# with 16 att, ok
-# with 17, over time
-selected_attributes = all_attributes[:15]
+# 20 att, new alg over time
+# 18 att, naive over time
+# 16 att, ok
+# 17 att, ok
+selected_attributes = all_attributes[:16]
 
 thc = 50
 k_min = 10
@@ -87,7 +85,7 @@ num_patterns_found = list()
 patterns_found = list()
 num_loops = 1
 
-alpha = 0.1
+alpha = 0.8
 
 for range_k in range_k_list:
     k_max = k_min + range_k
@@ -106,10 +104,7 @@ for range_k in range_k_list:
             k_min, k_max, time_limit)
 
         print("newalg, num_patterns_visited = {}".format(num_patterns_visited1_))
-        print(
-            "time = {} s".format(t1_), "\n",
-            "patterns:\n",
-            pattern_treated_unfairly1)
+        print("time = {} s".format(t1_), "\n")
         if t1_ > time_limit:
             raise Exception("new alg exceeds time limit")
 
@@ -121,11 +116,8 @@ for range_k in range_k_list:
                                                         alpha,
                                                         k_min, k_max, time_limit)
 
-        print("num_patterns_visited = {}".format(num_patterns_visited2_))
-        print(
-            "time = {} s".format(t2_), "\n",
-            "patterns:\n",
-            pattern_treated_unfairly2)
+        print("naive alg, num_patterns_visited = {}".format(num_patterns_visited2_))
+        print("time = {} s".format(t2_))
 
         t2 += t2_
         num_patterns_visited2_thc += num_patterns_visited2_
@@ -178,7 +170,7 @@ plt.xticks([100, 200, 300, 350])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/range_k_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/range_k_time_upr_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -195,7 +187,7 @@ plt.xticks([100, 200, 300, 350])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/range_k_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/range_k_calculations_upr_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

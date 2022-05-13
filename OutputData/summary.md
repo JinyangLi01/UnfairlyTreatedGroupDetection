@@ -1,3 +1,19 @@
+# 2022.May, experiments of ranking for CIKM
+
+proportional bounds (definition2):
+
+
+|            | student | compas | german |
+|------------|---------| --- |--------|
+| num of att | done    |  done  | done   |
+| range k    | done    |   done   | done   |
+| thc        | done    |  done     | done   |
+
+
+
+
+
+
 ## experiment progress
 
 |   | adult | compas | credit card |

@@ -20,9 +20,7 @@ plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 label = ["UPR", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 
@@ -56,12 +54,12 @@ for line in Lines:
         continue
     if count < 2:
         continue
-    if count > 10 and count < 14:
+    if count > 10 and count < 13:
         continue
-    if count > 22:
+    if count > 20:
         break
     items = line.strip().split(' ')
-    if count < 13:
+    if count < 10:
         x_list.append(int(items[0]))
         execution_time1.append(float(items[1]))
         execution_time2.append(float(items[2]))
@@ -81,10 +79,11 @@ plt.plot(x_list, execution_time2, line_style[1], color=color[1], label=label[1],
 plt.xlabel('Data size')
 plt.xticks([400, 600, 800, 1000, 1200])
 plt.ylabel('Execution time (s)')
+plt.yticks([200, 400])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("datasize_time.png",
+plt.savefig("datasize_time_upr_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -103,7 +102,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("datasize_calculations.png",
+plt.savefig("datasize_calculations_upr_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

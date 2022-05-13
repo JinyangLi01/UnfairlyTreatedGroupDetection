@@ -2,9 +2,8 @@
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_definition2_8_20211228 as newalg
-from Algorithms import NaiveAlgRanking_definition2_3_20211207 as naivealg
-from Algorithms import Predict_0_20210127 as predict
+from Algorithms import NewAlgRanking_definition2_13_20220509 as newalg
+from Algorithms import NaiveAlgRanking_definition2_5_20220506 as naivealg
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -24,12 +23,10 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["UPR", "IterTD"]
+label = ["PropBounds", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 
@@ -59,10 +56,8 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstat
                   'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
 
-# with 20 att, when thc = 10, new alg over time
-# with 14 att, ok (files named without 14att)
-# with 15, when thc = 10, naive over time
-selected_attributes = all_attributes[:15]
+
+selected_attributes = all_attributes[:14]
 
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -75,12 +70,12 @@ original_data_file = r"../../../../InputData/StudentDataset/ForRanking_1/student
 ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data[selected_attributes]
 
-time_limit = 10*60
+time_limit = 10 * 60
 
 
 List_k = list(range(k_min, k_max))
 
-alpha = 0.1
+alpha = 0.8
 
 
 
@@ -195,7 +190,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/thc_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/thc_time_upr_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -217,7 +212,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/thc_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition2_1/StudentData/thc_calculations_upr_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
