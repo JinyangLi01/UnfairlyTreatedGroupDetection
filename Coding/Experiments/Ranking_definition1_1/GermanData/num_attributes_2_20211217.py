@@ -26,11 +26,9 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["URB", "IterTD"]
+label = ["GlobalBounds", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
 f_size = (14, 8)
 
 

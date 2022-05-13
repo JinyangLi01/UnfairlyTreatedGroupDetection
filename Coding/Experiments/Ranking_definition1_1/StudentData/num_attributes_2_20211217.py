@@ -25,12 +25,10 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["UPR", "IterTD"]
+label = ["GlobalBounds", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 
@@ -126,11 +124,8 @@ original_data = pd.read_csv(original_data_file)[all_attributes]
 time_limit = 10*60
 
 
-# with 30 att, naive needs 215s
-# with 31 att, naive needs 271 s
-# with 32 att, naive needs 409 s (don't run with too many other programs)
-# with 33 att, naive time out
-num_att_max_naive = 33
+
+num_att_max_naive = 34
 num_att_min = 3
 num_att_max = 34
 execution_time1 = list()
@@ -228,7 +223,7 @@ for n in range(num_att_min, num_att_max):
 
 
 
-# when number of attributes = 8, naive algorithm running time > 10min
+# when number of attributes = 8, naive algorithm running time > 10 min
 # so we only use x[:6]
 x_new = list(range(num_att_min, num_att_max))
 x_naive = list(range(num_att_min, num_att_max_naive))
@@ -247,7 +242,7 @@ plt.xticks([5, 10, 15, 20, 25, 30, 33])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/num_att_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/num_att_time_urb_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -268,7 +263,7 @@ plt.xticks([5, 10, 15, 20, 25, 30, 33])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/num_att_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/num_att_calculations_urb_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

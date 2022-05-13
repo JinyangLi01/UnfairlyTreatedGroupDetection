@@ -3,8 +3,8 @@
 import pandas as pd
 from Algorithms import pattern_count
 from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_19_20211216 as newalg
-from Algorithms import NaiveAlgRanking_4_20211213 as naivealg
+from Algorithms import NewAlgRanking_20_20220510 as newalg
+from Algorithms import NaiveAlgRanking_5_20220510 as naivealg
 from Algorithms import Predict_0_20210127 as predict
 
 import matplotlib.pyplot as plt
@@ -25,12 +25,10 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["UPR", "IterTD"]
+label = ["GlobalBounds", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 
@@ -194,7 +192,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/thc_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/thc_time_urb_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -216,7 +214,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/thc_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/thc_calculations_urb_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

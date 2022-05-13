@@ -23,13 +23,10 @@ line_style = ['o-', 's--', '^:', '-.p']
 color = ['C0', 'C1', 'C2', 'C3', 'C4']
 plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 
-label = ["UPR", "IterTD"]
+label = ["GlobalBounds", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
-f_size = (14, 10)
-
+f_size = (14, 8)
 
 def ComparePatternSets(set1, set2):
     len1 = len(set1)
@@ -60,10 +57,8 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstat
                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
 
 
-# with 32 att, k = 10-50, naive alg needs 483 s, k = 10-100, naive over time
-# with 31 att, over time
 # with 30 att, ok
-selected_attributes = all_attributes[:30]
+selected_attributes = all_attributes[:33]
 
 Thc = 50
 k_min = 10
@@ -204,7 +199,7 @@ plt.xticks([100, 200, 300, 350])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/range_k_time.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/range_k_time_urb_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -223,7 +218,7 @@ plt.xticks([100, 200, 300, 350])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/range_k_calculations.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/range_k_calculations_urb_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

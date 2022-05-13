@@ -20,9 +20,7 @@ plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 label = ["URB", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 
@@ -85,7 +83,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("datasize_time.png",
+plt.savefig("datasize_time_urb_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -105,7 +103,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("datasize_calculations.png",
+plt.savefig("datasize_calculations_urb_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
