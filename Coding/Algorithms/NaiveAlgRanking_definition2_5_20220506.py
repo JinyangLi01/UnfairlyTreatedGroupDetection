@@ -248,6 +248,7 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
         result_set = set()
         patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_kmin.parse_data()
+        S = store_children[root_str].copy()
         # lower bound
         while len(S) > 0:
             if time.time() - time0 > time_limit:
