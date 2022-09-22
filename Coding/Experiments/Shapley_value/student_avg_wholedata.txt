@@ -1,0 +1,12 @@
+age_binary, sex_binary, race_C, MarriageStatus_C, juv_fel_count_C, decile_score_C, juv_misd_count_C, juv_other_count_C, priors_count_C, days_b_screening_arrest_C, c_days_from_compas_C, c_charge_degree_C, v_decile_score_C, start_C, end_C, event_C
+
+group [0, -1, -1, -1] size 9
+[-4.09281667 -7.69892565 -3.5529662  -6.50477782]
+group [-1, 0, -1, -1] size 7
+[ -4.09281667 -13.44439255  -3.5529662   -6.50477782]
+group [-1, 1, -1, -1] size 3
+[ 2.72854444 12.41020851 -3.5529662   4.33651855]
+group [-1, -1, -1, 0] size 9
+[-4.09281667 -7.69892565 -3.5529662  -6.50477782]
+group [-1, -1, -1, 1] size 1
+[16.37126667 12.41020851 -3.5529662  26.0191113 ]

@@ -1,0 +1,8 @@
+school_C, sex_C, age_C, address_C, famsize_C, Pstatus_C, Medu_C, Fedu_C, Mjob_C, Fjob_C, reason_C, guardian_C, traveltime_C, studytime_C, failures_C, schoolsup_C, famsup_C, paid_C, activities_C, nursery_C, higher_C, internet_C, romantic_C, famrel_C, freetime_C, goout_C, Dalc_C, Walc_C, health_C, absences_C, G1_C, G2_C, G3_C
+
+group [-1, -1, -1, -1, 10] size 0
+
+group [-1, -1, -1, 1, -1] size 1
+[  17.12495517    1.45162338   -0.71906023    4.30748623 -196.20836969]
+group [-1, 1, -1, -1, -1] size 3
+[   2.85415919    1.45162338   -0.71906023    0.71791437 -188.45003163]
