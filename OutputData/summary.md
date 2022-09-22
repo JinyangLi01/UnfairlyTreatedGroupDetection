@@ -1,15 +1,29 @@
 # 2022.May, experiments of ranking for CIKM
 
-proportional bounds (definition2):
+ranking with bounds.
+NaiveAlgRanking_5
+NewAlgRanking_20
 
+
+|            | student | compas | german |
+|------------|---------|--------|--------|
+| num of att |         | done   |  done  |
+| range k    |         | done   |  done  |
+| thc        | done    | done   |  done  |
+
+
+
+
+
+proportional bounds (definition2):
+this is with NaiveAlgRanking_definition2_4
+I need to do them again for NaiveAlgRanking_definition2_5
 
 |            | student | compas | german |
 |------------|---------| --- |--------|
 | num of att | done    |  done  | done   |
 | range k    | done    |   done   | done   |
 | thc        | done    |  done     | done   |
-
-
 
 
 

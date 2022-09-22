@@ -25,9 +25,7 @@ plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 label = ["PropBounds", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 def ComparePatternSets(set1, set2):
@@ -56,10 +54,10 @@ all_attributes = ["age_binary", "sex_binary", "race_C", "MarriageStatus_C", "juv
                   "c_days_from_compas_C", "c_charge_degree_C", "v_decile_score_C", "start_C", "end_C",
                   "event_C"]
 
-# 8 att, rangek = 1000, ok
-# 10 att, naive over time for rangek 1000
+
 # 9 att, ok
-selected_attributes = all_attributes[:9]
+#10, ok
+selected_attributes = all_attributes[:10]
 
 print("num of att = {}".format(len(selected_attributes)))
 

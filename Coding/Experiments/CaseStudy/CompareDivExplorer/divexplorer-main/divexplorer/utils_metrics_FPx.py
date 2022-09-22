@@ -17,8 +17,13 @@ def tnr_df(df_cm):
 """
 
 
+
 def tpr_df(df_cm):
     return (df_cm["tp"] / (df_cm["tp"] + df_cm["fn"])).fillna(0)
+
+#
+# def fpr_df(df_cm):
+#     return (df_cm["fp"] / (df_cm["fp"] + df_cm["tn"])).fillna(0)
 
 
 def fpr_df(df_cm):

@@ -56,7 +56,8 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstat
                   'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
                   'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
 
-
+# 14 att, ok
+# 15, over time
 selected_attributes = all_attributes[:14]
 
 

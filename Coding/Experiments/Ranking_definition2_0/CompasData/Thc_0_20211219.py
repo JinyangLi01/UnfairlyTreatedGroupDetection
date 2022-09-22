@@ -27,9 +27,7 @@ plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 label = ["PropBounds", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
-f_size = (14, 10)
+f_size = (14, 8)
 
 
 
@@ -58,10 +56,10 @@ all_attributes = ["age_binary","sex_binary","race_C","MarriageStatus_C","juv_fel
                   "event_C"]
 
 
-# 12 att, 66s VS 129 s
+
 # 13 att, 183 VS 298s
-# 14 att, out of time
-selected_attributes = all_attributes[:13]
+# 14 att, over time
+selected_attributes = all_attributes[:14]
 
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]

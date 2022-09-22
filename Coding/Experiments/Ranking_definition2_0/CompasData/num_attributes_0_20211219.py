@@ -27,8 +27,6 @@ plt_title = ["BlueNile", "COMPAS", "Credit Card"]
 label = ["PropBounds", "IterTD"]
 line_width = 8
 marker_size = 15
-# f_size = (14, 10)
-
 f_size = (14, 8)
 
 
@@ -123,9 +121,9 @@ time_limit = 10 * 60
 
 # 15 att, both over time
 # 14 att, 475 VS 532 s
-num_att_max_naive = 15
+num_att_max_naive = 14
 num_att_min = 3
-num_att_max = 15
+num_att_max = 14
 execution_time1 = list()
 execution_time2 = list()
 num_calculation1 = list()

@@ -60,12 +60,12 @@ all_attributes = ['StatusExistingAcc', 'DurationMonth_C', 'CreditHistory', 'Purp
 # 13 att, ok, 83 VS 273 s
 # 14 att, ok, 110 VS 356
 # 15 att, ok, 191 VS 500
+# 16 att, over time
 selected_attributes = all_attributes[:15]
 
 thc = 50
 k_min = 10
 range_k_list = [40, 90, 140, 190, 240, 290, 340]
-
 
 original_data_file = r"../../../../InputData/GermanCredit/GermanCredit_ranked.csv"
 
