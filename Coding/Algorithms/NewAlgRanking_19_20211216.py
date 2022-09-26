@@ -508,6 +508,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
             if not CheckDominationAndAddForLowerbound_topdown_search(P, result_set_lowerbound):
                 patterns_dominated_by_result.append(st)
         else:
+            # print("good group {}".format(P))
             if P[num_att - 1] == -1:  # no children
                 children = GenerateChildren(P, whole_data_frame, attributes)
                 S = S + children
