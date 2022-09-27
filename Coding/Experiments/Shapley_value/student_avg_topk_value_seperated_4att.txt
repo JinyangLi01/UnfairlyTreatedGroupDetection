@@ -1,9 +1,0 @@
-school_C, sex_C, age_C, address_C
-group [-1, 0, -1, -1] att school_C = 0 size 7 avg -4.092816666514267
-group [-1, 0, -1, -1] att school_C = 1 size 0
-group [-1, 0, -1, -1] att sex_C = 0 size 7 avg -13.444392547869102
-group [-1, 0, -1, -1] att sex_C = 1 size 0
-group [-1, 0, -1, -1] att age_C = 0 size 7 avg -3.5529661960711287
-group [-1, 0, -1, -1] att address_C = 0 size 7 avg -6.504777824613286
-group [-1, 0, -1, -1] att address_C = 1 size 0
- address_C = 1 size 0
