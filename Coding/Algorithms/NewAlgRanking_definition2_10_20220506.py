@@ -13,7 +13,7 @@ But here, patterns have different bounds depending on their sizes. We only do lo
 
 """
 naive alg:
-AniveAlgRanking_definition2_3...
+NaiveAlgRanking_definition2_3...
 for each k, we iterate the whole process again, go top down.
 """
 
