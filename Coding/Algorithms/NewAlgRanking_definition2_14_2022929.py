@@ -21,8 +21,9 @@ for each k, we iterate the whole process again, go top down.
 This alg:
 lowerbound = alpha * whole_cardinality * k / data_size
 
-difference from 12:
-result_set, dominated_by_result_set are sets not lists
+difference from 13:
+
+In AddNewTuple, only check patterns related to the new tuple
 
 """
 
@@ -98,6 +99,20 @@ def GenerateChildrenRelatedToTuple(P, new_tuple):
         s[j] = new_tuple[j]
         children.append(s)
     return children
+
+
+def GenerateDominatedGroup(P, whole_data_frame, attributes):
+    dominated = []
+    length = len(P)
+    i = 0
+    for i in range(0, length):
+        if P[i] == -1:
+            for a in range(int(whole_data_frame[attributes[i]]['min']),
+                           int(whole_data_frame[attributes[i]]['max']) + 1):
+                s = P.copy()
+                s[i] = a
+                dominated.append(s)
+    return dominated
 
 
 def GenerateChildren(P, whole_data_frame, attributes):
@@ -516,7 +531,7 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         P = S.pop(0)
         st = num2string(P)
         # print("GraphTraverse, st = {}".format(st))
-        if st == '|0|2|':
+        if st == '|0||6':
             print("stop here")
         num_patterns_visited += 1
         whole_cardinality = pc_whole_data.pattern_count(st)
@@ -558,7 +573,8 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
     time1 = time.time()
     print("time for k_min = {}".format(time1 - time0))
     print("finish kmin")
-    # print(result_set)
+    print(result_set)
+    print(k_dict)
     pattern_treated_unfairly.append(result_set)
 
     for k in range(k_min + 1, k_max):
@@ -569,7 +585,8 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         patterns_top_k = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_k.parse_data()
         new_tuple = ranked_data.iloc[[k - 1]].values.flatten().tolist()
-        # print("k={}, new tuple = {}".format(k, new_tuple))
+        print("k={}, new tuple = {}".format(k, new_tuple))
+        print(k_dict)
         # top down for related patterns, using similar methods as k_min, add to result set if needed
         # ancestors are patterns checked in AddNewTuple() function, to avoid checking them again
         result_set = pattern_treated_unfairly[k - 1 - k_min].copy()
@@ -583,7 +600,8 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
 
         time2 = time.time()
         # print("time for AddNewTuple = {}".format(time2-time1))
-        # print("result_set after AddNewTuple: ", result_set)
+        print("result_set after AddNewTuple: ", result_set)
+        print(k_dict)
         time3 = time.time()
         to_added_to_dominated_by_result = set()
         to_remove_from_dominated_by_result = set()
@@ -653,10 +671,11 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_ma
         P = S.pop(0)
         st = num2string(P)
         smallest_valid_k_ancestor = K_values.pop(0)
-        # if PatternEqual(P, [-1, -1, -1, -1, -1, 1, -1, -1, -1, 0]):
-        #     print("st={}".format(st))
-        #     print("\n")
+        if PatternEqual(P, [-1, -1, -1, 6]):
+            print("st={}".format(st))
+            print("\n")
         # print("in addnewtuple, st={}".format(st))
+        # print(P)
         time1 = time.time()
         children = []
         ancestors.append(P)
@@ -691,6 +710,7 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_ma
             time_smaller_than_lb += time3 - time1
             if smallest_valid_k_ancestor > smallest_valid_k:
                 Update_or_add_node_w_smaller_k(nodes_dict, k_dict, smallest_valid_k, P, st)
+
             else:
                 Check_and_remove_a_larger_k(nodes_dict, k_dict, P, st)
             time4 = time.time()
@@ -698,21 +718,34 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_ma
             time5 = time.time()
             if st in result_set:
                 result_set.remove(st)
-            else:
-                if st in dominated_by_result:
-                    dominated_by_result.remove(st)
-            time56 = time.time()
-            if P[num_att - 1] == -1:
-                if st in store_children:
-                    children = store_children[st]
-                else:
-                    children = GenerateChildren(P, whole_data_frame, attributes)
-                    store_children[st] = children
+                # check everything dominated by it
+                children = GenerateDominatedGroup(P, whole_data_frame, attributes)
+                store_children[st] = children
                 S = S + children
+            elif st in dominated_by_result:
+                time56 = time.time()
+                dominated_by_result.remove(st)
+                if P[num_att - 1] == -1:
+                    if st in store_children:
+                        children = store_children[st]
+                    else:
+                        children = GenerateChildren(P, whole_data_frame, attributes)
+                        store_children[st] = children
+                    S = S + children
+            else:
+                time56 = time.time()
+                if P[num_att - 1] == -1:
+                    # if st in store_children:
+                    #     children = store_children[st]
+                    # else:
+                    children = GenerateChildrenRelatedToTuple(P, new_tuple)
+                    # children = GenerateChildren(P, whole_data_frame, attributes)
+                    store_children[st] = children
+                    S = S + children
             time6 = time.time()
             if P[num_att - 1] != -1:
-                time_generate_children1 += time56 - time5
-                time_generate_children2 += time6 - time56
+                # time_generate_children1 += time56 - time5
+                # time_generate_children2 += time6 - time56
                 time_generate_children += time6 - time5
                 time_update_k_list += time.time() - time6
                 continue
@@ -721,87 +754,89 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_ma
             else:
                 K_values = K_values + [smallest_valid_k_ancestor] * len(children)
             time7 = time.time()
-            time_generate_children1 += time56 - time5
-            time_generate_children2 += time6 - time56
+            # time_generate_children1 += time56 - time5
+            # time_generate_children2 += time6 - time56
             time_generate_children += time6 - time5
             time_update_k_list += time7 - time6
 
     # print(time_smaller_than_lb, time_check_k, time_generate_children1, time_generate_children2, time_update_k_list)
     return ancestors, num_patterns_visited
 
-#
-# all_attributes = ["age_binary", "sex_binary", "race_C", "MarriageStatus_C", "juv_fel_count_C",
-#                   "decile_score_C", "juv_misd_count_C", "juv_other_count_C", "priors_count_C", "days_b_screening_arrest_C",
-#                   "c_days_from_compas_C", "v_decile_score_C", "c_charge_degree_C", "start_C", "end_C",
-#                   "event_C"]
-#
-# att_num = 14
-# # 13 att, 70 VS 150
-# # 14 att, 210 VS 264
-# selected_attributes = all_attributes[:att_num]
-# print("{} attributes".format(att_num))
-# original_data_file = r"../../InputData/CompasData/ForRanking/LargeDatasets/compas_data_cat_necessary_att_ranked.csv"
-#
-# ranked_data = pd.read_csv(original_data_file)
-# ranked_data = ranked_data[selected_attributes]
-#
-# time_limit = 10 * 60
-# k_min = 10
-# k_max = 30
-# Thc = 50
-#
-# List_k = list(range(k_min, k_max))
-#
-# alpha = 0.8
-#
-# logger = logging.getLogger('MyLogger')
-#
-# print("start the new alg")
-#
-# pattern_treated_unfairly, num_patterns_visited, running_time = \
-#     GraphTraverse(ranked_data, selected_attributes, Thc,
-#                   alpha, k_min, k_max, time_limit)
-#
-# print("num_patterns_visited = {}".format(num_patterns_visited))
-# print("time = {} s".format(running_time))
-# # for k in range(0, k_max - k_min):
-# #     print("k = {}, num = {}, patterns =".format(k + k_min, len(pattern_treated_unfairly[k])),
-# #           pattern_treated_unfairly[k])
-#
-#
-# print("start the naive alg")
-#
-# pattern_treated_unfairly2, num_patterns_visited2, running_time2 = \
-#     naiveranking.NaiveAlg(ranked_data, selected_attributes, Thc,
-#                           alpha,
-#                           k_min, k_max, time_limit)
-#
-# print("num_patterns_visited = {}".format(num_patterns_visited2))
-# print("time = {} s".format(running_time2))
-# # for k in range(0, k_max - k_min):
-# #     print("k = {}, num = {}, patterns =".format(k + k_min, len(pattern_treated_unfairly2[k])),
-# #           pattern_treated_unfairly2[k])
-#
-#
-# k_printed = False
-# print("p in pattern_treated_unfairly but not in pattern_treated_unfairly2:")
+
+all_attributes = ["age_binary", "sex_binary", "race_C", "MarriageStatus_C", "juv_fel_count_C",
+                  "decile_score_C", "juv_misd_count_C", "juv_other_count_C", "priors_count_C", "days_b_screening_arrest_C",
+                  "c_days_from_compas_C", "v_decile_score_C", "c_charge_degree_C", "start_C", "end_C",
+                  "event_C"]
+
+att_num = 4
+# 13 att, 70 VS 150
+# 14 att, 210 VS 264
+selected_attributes = all_attributes[:att_num]
+print("{} attributes".format(att_num))
+original_data_file = r"../../InputData/CompasData/ForRanking/LargeDatasets/compas_data_cat_necessary_att_ranked.csv"
+
+ranked_data = pd.read_csv(original_data_file)
+ranked_data = ranked_data[selected_attributes]
+
+time_limit = 10 * 60
+k_min = 29
+k_max = 47
+Thc = 50
+
+List_k = list(range(k_min, k_max))
+
+alpha = 0.8
+
+logger = logging.getLogger('MyLogger')
+
+print("start the new alg")
+
+pattern_treated_unfairly, num_patterns_visited, running_time = \
+    GraphTraverse(ranked_data, selected_attributes, Thc,
+                  alpha, k_min, k_max, time_limit)
+
+print("num_patterns_visited = {}".format(num_patterns_visited))
+print("time = {} s".format(running_time))
 # for k in range(0, k_max - k_min):
-#     for p in pattern_treated_unfairly[k]:
-#         if p not in pattern_treated_unfairly2[k]:
-#             if k_printed is False:
-#                 print("k=", k + k_min)
-#                 k_printed = True
-#             print(p)
-#
-# print("\n\n\n")
-#
-# k_printed = False
-# print("p in pattern_treated_unfairly2 but not in pattern_treated_unfairly:")
-# for k in range(0, k_max - k_min):
-#     for p in pattern_treated_unfairly2[k]:
-#         if p not in pattern_treated_unfairly[k]:
-#             if k_printed is False:
-#                 print("k=", k + k_min)
-#                 k_printed = True
-#             print(p)
-#
+#     print("k = {}, num = {}, patterns =".format(k + k_min, len(pattern_treated_unfairly[k])),
+#           pattern_treated_unfairly[k])
+
+
+print("start the naive alg")
+
+pattern_treated_unfairly2, num_patterns_visited2, running_time2 = \
+    naiveranking.NaiveAlg(ranked_data, selected_attributes, Thc,
+                          alpha,
+                          k_min, k_max, time_limit)
+
+print("num_patterns_visited = {}".format(num_patterns_visited2))
+print("time = {} s".format(running_time2))
+for k in range(0, k_max - k_min):
+    print("k = {}, num = {}, patterns =".format(k + k_min, len(pattern_treated_unfairly2[k])),
+          pattern_treated_unfairly2[k])
+
+
+k_printed = False
+print("p in pattern_treated_unfairly but not in pattern_treated_unfairly2:")
+for k in range(0, k_max - k_min):
+    k_printed = False
+    for p in pattern_treated_unfairly[k]:
+        if p not in pattern_treated_unfairly2[k]:
+            if k_printed is False:
+                print("k=", k + k_min)
+                k_printed = True
+            print(p)
+
+print("\n\n\n")
+
+k_printed = False
+print("p in pattern_treated_unfairly2 but not in pattern_treated_unfairly:")
+for k in range(0, k_max - k_min):
+    k_printed = False
+    for p in pattern_treated_unfairly2[k]:
+        if p not in pattern_treated_unfairly[k]:
+            if k_printed is False:
+                print("k=", k + k_min)
+                k_printed = True
+            print(p)
+
