@@ -122,7 +122,6 @@ def GenerateUnrelatedChildren(P, whole_data_frame, attributes, new_tuple):
     return children
 
 
-
 def GenerateDominatedGroup(P, whole_data_frame, attributes, smallest_valid_k, k, smallest_valid_k_ancestor, K_values):
     children = []
     length = len(P)
@@ -406,18 +405,49 @@ def Add_node_to_set(nodes_dict, k_dict, smallest_valid_k, p, st, num_att):
     nodes_dict[original_st] = Node(p, original_st, smallest_valid_k)
     k_dict[smallest_valid_k].add(original_st)
 
+
+def Check_k_related_patterns_in_dominated_by_results(p, st, whole_data_frame, attributes,
+                                                     patterns_size_whole, pc_whole_data, patterns_top_k, data_size,
+                                                     new_tuple,
+                                                     result_set, dominated_by_result, num_att, k, Thc, alpha):
+    S = GenerateChildrenRelatedToTuple(p, new_tuple)
+    while len(S) > 0:
+        p = S.pop(0)
+        st = num2string(p)
+        if st in patterns_size_whole:
+            whole_cardinality = patterns_size_whole[st]
+        else:
+            whole_cardinality = pc_whole_data.pattern_count(st)
+        if whole_cardinality < Thc:
+            continue
+        if st in dominated_by_result:
+            num_top_k = patterns_top_k.pattern_count(st)
+            lowerbound = alpha * whole_cardinality * k / data_size
+            if num_top_k >= lowerbound:
+                dominated_by_result.remove(st)
+        else:
+            if p[num_att - 1] == -1:
+                children = GenerateChildrenRelatedToTuple(p, new_tuple)
+                S = S + children
+
+
 """
 check the k for children unrelated with new tuple, add to nodes_dict is they are smaller than ancestor k
 stop when a node is in nodes_dict
 """
-def Check_k_with_non_related_patterns(nodes_dict, k_dict, smallest_valid_k_ancestor, p, st, whole_data_frame, attributes,
+
+
+def Check_k_with_non_related_patterns(nodes_dict, k_dict, smallest_valid_k_ancestor, p, st, whole_data_frame,
+                                      attributes,
                                       patterns_size_whole, pc_whole_data, patterns_top_k, data_size, new_tuple,
-                                      result_set, dominated_by_result, num_att, k):
+                                      result_set, dominated_by_result, num_att, k, Thc, alpha, k_max, k_min):
     S = GenerateUnrelatedChildren(p, whole_data_frame, attributes, new_tuple)
     K_values = [smallest_valid_k_ancestor] * len(S)
     while len(S) > 0:
         p = S.pop(0)
         st = num2string(p)
+        if st == "|0|1|6|||0|0":
+            print("stop here Check_k_with_non_related_patterns")
         if st in nodes_dict.keys():
             continue
         smallest_valid_k_ancestor = K_values.pop(0)
@@ -431,7 +461,8 @@ def Check_k_with_non_related_patterns(nodes_dict, k_dict, smallest_valid_k_ances
         lowerbound = alpha * whole_cardinality * k / data_size
         if num_top_k < lowerbound:
             CheckDominationAndAddForLowerbound(st, result_set, dominated_by_result, num_att)
-            Add_node_to_set(nodes_dict, k_dict, math.floor(num_top_k * data_size / (alpha * whole_cardinality)), p, st, num_att)
+            Add_node_to_set(nodes_dict, k_dict, math.floor(num_top_k * data_size / (alpha * whole_cardinality)), p, st,
+                            num_att)
             continue
         smallest_valid_k = math.floor(num_top_k * data_size / (alpha * whole_cardinality))
         if smallest_valid_k > k_max:
@@ -446,7 +477,7 @@ def Check_k_with_non_related_patterns(nodes_dict, k_dict, smallest_valid_k_ances
         else:
             children = GenerateChildren(p, whole_data_frame, attributes)
             S += children
-            K_values += [smallest_valid_k] * len(children)
+            K_values += [smallest_valid_k_ancestor] * len(children)
     return
 
 
@@ -611,7 +642,7 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         P = S.pop(0)
         st = num2string(P)
         # print("GraphTraverse, st = {}".format(st))
-        if st == '0|1||':
+        if st == '|1|1|1||':
             print("stop here")
         num_patterns_visited += 1
         whole_cardinality = pc_whole_data.pattern_count(st)
@@ -656,6 +687,8 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
     print(result_set)
     print(k_dict)
     pattern_treated_unfairly.append(result_set)
+    if "|0|1|6|||0|0" in dominated_by_result:
+        print("{} in dominated after kmin\n".format("|0|1|6|||0|0"))
 
     for k in range(k_min + 1, k_max):
         if time.time() - time0 > time_limit:
@@ -681,6 +714,13 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         time2 = time.time()
         # print("time for AddNewTuple = {}".format(time2-time1))
         print("result_set after AddNewTuple: ", result_set)
+        # if "|0|1|||||" in nodes_dict.keys():
+        #     print("k of |0|1||||| = {}\n".format(nodes_dict["|0|1|||||"].smallest_valid_k))
+        #
+        # if "|0|1|6|||0|0" in nodes_dict.keys():
+        #     print("k of |0|1|6|||0|0 = {}\n".format(nodes_dict["|0|1|6|||0|0"].smallest_valid_k))
+        # if "|0|1|6|||0|0" in dominated_by_result:
+        #     print("{} in dominated after addnewtuple\n".format("|0|1|6|||0|0"))
         time3 = time.time()
         # check k
         # print("k_dict[k-1] = ", k_dict[k - 1])
@@ -754,11 +794,11 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_ma
         P = S.pop(0)
         st = num2string(P)
         smallest_valid_k_ancestor = K_values.pop(0)
-        if PatternEqual(P, [0, 1, -1, -1]):
+        if PatternEqual(P, [-1, 0, 1, -1, -1, -1, -1, -1]) and k == 23:
             print("st={}".format(st))
             print("\n")
-        # print("in addnewtuple, st={}".format(st))
-        # print(P)
+        if st == "|0||||||":  #  |0|1|6|||0|0
+            print("stop here")
         time1 = time.time()
         children = []
         ancestors.append(P)
@@ -778,7 +818,7 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_ma
             if st in nodes_dict:
                 old_k = nodes_dict[st].smallest_valid_k
             else:
-                old_k = smallest_valid_k_ancestor
+                old_k = 0
             if smallest_valid_k > k_max:
                 smallest_valid_k = k_max + 1
             elif smallest_valid_k < k_min:
@@ -787,6 +827,13 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_ma
                 if smallest_valid_k > old_k:
                     Update_or_add_node_w_smaller_k(nodes_dict, k_dict, smallest_valid_k, P, st)
                 if st in result_set:
+                    Check_k_related_patterns_in_dominated_by_results(P, st, whole_data_frame,
+                                                                     attributes,
+                                                                     patterns_size_whole, pc_whole_data, patterns_top_k,
+                                                                     data_size,
+                                                                     new_tuple, result_set, dominated_by_result,
+                                                                     num_att, k, Thc,
+                                                                     alpha)
                     continue
                 CheckDominationAndAddForLowerbound(st, result_set, dominated_by_result, num_att)
                 # print("added {} to result set when k = {}".format(P, k))
@@ -805,7 +852,8 @@ def AddNewTuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_ma
                     Check_and_remove_a_larger_k(nodes_dict, k_dict, P, st)
                 Check_k_with_non_related_patterns(nodes_dict, k_dict, smaller_k, P, st, whole_data_frame, attributes,
                                                   patterns_size_whole, pc_whole_data, patterns_top_k, data_size,
-                                                  new_tuple, result_set, dominated_by_result, num_att, k)
+                                                  new_tuple, result_set, dominated_by_result, num_att, k, Thc, alpha,
+                                                  k_max, k_min)
             else:  # k doesn't change
                 if smallest_valid_k_ancestor > smallest_valid_k:
                     Update_or_add_node_w_smaller_k(nodes_dict, k_dict, smallest_valid_k, P, st)
@@ -835,7 +883,7 @@ all_attributes = ["age_binary", "sex_binary", "race_C", "MarriageStatus_C", "juv
                   "c_days_from_compas_C", "v_decile_score_C", "c_charge_degree_C", "start_C", "end_C",
                   "event_C"]
 
-att_num = 4
+att_num = 9
 # 13 att, 70 VS 150
 # 14 att, 210 VS 264
 selected_attributes = all_attributes[:att_num]
@@ -846,8 +894,8 @@ ranked_data = pd.read_csv(original_data_file)
 ranked_data = ranked_data[selected_attributes]
 
 time_limit = 10 * 60
-k_min = 50
-k_max = 120
+k_min = 15
+k_max = 300
 Thc = 50
 
 List_k = list(range(k_min, k_max))
