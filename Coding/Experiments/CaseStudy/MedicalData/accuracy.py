@@ -1,12 +1,6 @@
 import pandas as pd
 
-from itertools import combinations
-from Algorithms import pattern_count
-import time
-from Algorithms import NewAlg_2_20211001 as newalg
-from Algorithms import NaiveAlgGeneral_1_202105258 as naivealg
-from Algorithms import Predict_0_20210127 as predict
-
+from Algorithms.DevelopingHistory import NewAlg_2_20211001 as newalg
 
 """
 SEX:

@@ -1,7 +1,6 @@
 import PySimpleGUI as sg
 import pandas as pd
-from Algorithms import NewAlgGeneral_SizeFairnessValue_2_20210528 as newalggeneral
-from Algorithms import NewAlg_1_20210529 as newalgclassification
+from Algorithms.DevelopingHistory import NewAlgGeneral_SizeFairnessValue_2_20210528 as newalggeneral
 
 # sg.theme('BlueMono')
 font = ("Arial", 20)

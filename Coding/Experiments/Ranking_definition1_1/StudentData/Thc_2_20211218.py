@@ -1,11 +1,7 @@
 
 
 import pandas as pd
-from Algorithms import pattern_count
-from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_20_20220510 as newalg
-from Algorithms import NaiveAlgRanking_5_20220510 as naivealg
-from Algorithms import Predict_0_20210127 as predict
+from Algorithms.DevelopingHistory import NaiveAlgRanking_5_20220510 as naivealg, NewAlgRanking_20_20220510 as newalg
 
 import matplotlib.pyplot as plt
 import seaborn as sns

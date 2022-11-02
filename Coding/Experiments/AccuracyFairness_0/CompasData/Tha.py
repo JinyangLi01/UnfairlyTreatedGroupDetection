@@ -16,12 +16,7 @@ Thc = 30
 
 """
 
-
-import pandas as pd
-from Algorithms import pattern_count
-from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlg_0_20201128 as newalg
-from Algorithms import NaiveAlg_0_20201111 as naivealg
+from Algorithms.DevelopingHistory import NewAlg_0_20201128 as newalg, WholeProcess_0_20201211 as wholeprocess
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 

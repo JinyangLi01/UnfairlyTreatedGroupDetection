@@ -1,8 +1,6 @@
 import pandas as pd
-from Algorithms import pattern_count
-from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_definition2_13_20220509 as newalg
-from Algorithms import NaiveAlgRanking_definition2_5_20220506 as naivealg
+from Algorithms.DevelopingHistory import NaiveAlgRanking_definition2_5_20220506 as naivealg, \
+    NewAlgRanking_definition2_13_20220509 as newalg
 
 import matplotlib.pyplot as plt
 import seaborn as sns

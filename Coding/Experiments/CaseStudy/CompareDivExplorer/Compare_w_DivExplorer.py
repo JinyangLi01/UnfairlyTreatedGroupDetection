@@ -54,8 +54,7 @@ TN = TN[selected_attributes]
 FP = FP[selected_attributes]
 FN = FN[selected_attributes]
 
-
-from Algorithms import NewAlgGeneral_StatisticalSignificant_0_20220125 as newalg
+from Algorithms.DevelopingHistory import NewAlgGeneral_StatisticalSignificant_0_20220125 as newalg
 
 thc = 61.72
 time_limit = 5 * 60

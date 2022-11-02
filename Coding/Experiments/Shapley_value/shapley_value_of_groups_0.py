@@ -1,27 +1,15 @@
-import copy
-
 import pandas as pd
 import sys
-import math
 
 sys.path.append('../Coding')
-from itertools import combinations
-from Algorithms import pattern_count
-import time
-from Algorithms import NewAlgRanking_19_20211216 as newalg
-from Algorithms import NaiveAlgRanking_4_20211213 as naivealg
 import numpy as np
-import copy
-import sys
-import math
 from sklearn.linear_model import LinearRegression
 import shap
 import matplotlib.pyplot as plt
 import seaborn as sns
-from matplotlib.ticker import FuncFormatter
 
-from Algorithms import NewAlgRanking_definition2_13_20220509 as newalg2
-from Algorithms import NaiveAlgRanking_definition2_5_20220506 as naivealg2
+from Algorithms.DevelopingHistory import NewAlgRanking_definition2_13_20220509 as newalg2, \
+    NewAlgRanking_19_20211216 as newalg
 
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif')

@@ -1,5 +1,3 @@
-import copy
-
 import pandas as pd
 import sys
 import math
@@ -7,9 +5,7 @@ import math
 sys.path.append('../Coding')
 from itertools import combinations
 from Algorithms import pattern_count
-import time
-from Algorithms import NewAlgRanking_19_20211216 as newalg
-from Algorithms import NaiveAlgRanking_4_20211213 as naivealg
+from Algorithms.DevelopingHistory import NewAlgRanking_19_20211216 as newalg
 
 all_attributes = ["age_binary", "sex_binary", "race_C", "MarriageStatus_C", "juv_fel_count_C",
                   "decile_score_C", "juv_misd_count_C", "juv_other_count_C", "priors_count_C",

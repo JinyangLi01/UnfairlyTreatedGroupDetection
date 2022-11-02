@@ -1,9 +1,6 @@
 import pandas as pd
 
-from itertools import combinations
-from Algorithms import pattern_count
-import time
-from Algorithms import NewAlgGeneral_SizeFairnessValue_3_20210111 as newalg
+from Algorithms.DevelopingHistory import NewAlgGeneral_SizeFairnessValue_3_20210111 as newalg
 
 """
 SEX:

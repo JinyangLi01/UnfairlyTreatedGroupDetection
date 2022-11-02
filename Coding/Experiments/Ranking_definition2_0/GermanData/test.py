@@ -1,12 +1,9 @@
 import pandas as pd
-from Algorithms import pattern_count
-from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlgRanking_definition2_8_20211228 as newalg
-from Algorithms import NaiveAlgRanking_definition2_3_20211207 as naivealg
+from Algorithms.DevelopingHistory import NewAlgRanking_definition2_8_20211228 as newalg, \
+    NaiveAlgRanking_definition2_3_20211207 as naivealg
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-from matplotlib.ticker import FuncFormatter
 
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif')

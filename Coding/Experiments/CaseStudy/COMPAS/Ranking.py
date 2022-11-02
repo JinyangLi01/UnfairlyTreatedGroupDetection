@@ -24,14 +24,8 @@ num of pattern_treated_unfairly_upperbound = 2
 
 import pandas as pd
 
-from itertools import combinations
-from Algorithms import pattern_count
-import time
-from Algorithms import Predict_0_20210127 as predict
-from Algorithms import NaiveAlgRanking_1_20210611 as naiveranking
-from Algorithms import NewAlgRanking_5_20210624 as newranking
-
-
+from Algorithms.DevelopingHistory import NewAlgRanking_5_20210624 as newranking, \
+    NaiveAlgRanking_1_20210611 as naiveranking
 
 # all_attributes = ["age_binary", "age_bucketized", "sex_binary", "race_C", "MarriageStatus_C", "juv_fel_count_C",
 #                   "decile_score_C",

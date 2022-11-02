@@ -1,13 +1,6 @@
 import pandas as pd
 
-from itertools import combinations
-from Algorithms import pattern_count
-import time
-from Algorithms import NewAlgGeneral_1_20210528 as newalg
-from Algorithms import NaiveAlgGeneral_1_202105258 as naivealg
-from Algorithms import Predict_0_20210127 as predict
-
-
+from Algorithms.DevelopingHistory import NewAlgGeneral_1_20210528 as newalg, Predict_0_20210127 as predict
 
 # all_attributes = ["age_binary", "age_bucketized", "sex_binary", "race_C", "MarriageStatus_C", "juv_fel_count_C",
 #                   "decile_score_C",

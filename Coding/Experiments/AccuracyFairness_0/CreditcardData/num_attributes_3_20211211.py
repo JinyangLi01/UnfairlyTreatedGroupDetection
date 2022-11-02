@@ -14,10 +14,7 @@ threshold of minority group accuracy: overall acc - 20
 
 
 import pandas as pd
-from Algorithms import pattern_count
-from Algorithms import WholeProcess_0_20201211 as wholeprocess
-from Algorithms import NewAlg_1_20210529 as newalg # when deterministic attributes are -1, use NewAlg_1, when -2, use NewALg_2
-from Algorithms import NaiveAlg_2_20211020 as naivealg
+from Algorithms.DevelopingHistory import NaiveAlg_2_20211020 as naivealg, NewAlg_1_20210529 as newalg
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.ticker import FuncFormatter
