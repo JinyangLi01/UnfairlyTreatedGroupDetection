@@ -38,3 +38,7 @@
 Additional note: there are several (382) students that belong to both datasets . 
 These students can be identified by searching for identical attributes
 that characterize each student, as shown in the annexed R file.
+
+
+# bucktize
+3 age_C - student's age, 0 - 15-17, 1 - 18-20, 2 - 21-22
