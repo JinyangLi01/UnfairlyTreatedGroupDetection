@@ -11,6 +11,34 @@ from sortedcontainers import SortedDict
 import logging
 
 
+def string2list(st):
+    p = list()
+    idx = 0
+    item = ''
+    i = ''
+    for i in st:
+        if i == '|':
+            if item == '':
+                p.append(-1)
+            else:
+                if item.isnumeric():
+                    p.append(int(item))
+                else:
+                    p.append(item)
+                item = ''
+            idx += 1
+        else:
+            item += i
+    if i != '|':
+        if item.isnumeric():
+            p.append(int(item))
+        else:
+            p.append(item)
+    else:
+        p.append(-1)
+    return p
+
+
 def P1DominatedByP2ForStr(str1, str2, num_att):
     if str1 == str2:
         return True
@@ -73,7 +101,7 @@ def GenerateChildrenRelatedToTuple(P, new_tuple):
     return children
 
 
-def GenerateUnrelatedChildren(P, whole_data_frame, attributes, new_tuple):
+def GenerateUnrelatedChildren(P, whole_data_frame, ranked_data, attributes, new_tuple):
     children = []
     length = len(P)
     i = 0
@@ -84,8 +112,10 @@ def GenerateUnrelatedChildren(P, whole_data_frame, attributes, new_tuple):
         i -= 1
     for j in range(i + 1, length, 1):
         if P[j] == -1:
-            for a in range(int(whole_data_frame[attributes[j]]['min']),
-                           int(whole_data_frame[attributes[j]]['max']) + 1):
+            all_values = ranked_data[attributes[j]].unique()
+            for a in all_values:
+            # for a in range(int(whole_data_frame[attributes[j]]['min']),
+            #                int(whole_data_frame[attributes[j]]['max']) + 1):
                 if a == new_tuple[j]:
                     continue
                 s = P.copy()
@@ -93,8 +123,42 @@ def GenerateUnrelatedChildren(P, whole_data_frame, attributes, new_tuple):
                 children.append(s)
     return children
 
+#
+# def GenerateDominatedGroup(P, whole_data_frame, ranked_data, attributes, smallest_valid_k, k, smallest_valid_k_ancestor, K_values):
+#     children = []
+#     length = len(P)
+#     i = 0
+#     for i in range(length - 1, -1, -1):
+#         if P[i] != -1:
+#             break
+#     if P[i] == -1:
+#         i -= 1
+#     for j in range(i + 1, length, 1):
+#         all_values = ranked_data[attributes[j]].unique()
+#         for a in all_values:
+#         # for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max']) + 1):
+#             s = P.copy()
+#             s[j] = a
+#             children.append(s)
+#     if smallest_valid_k_ancestor > smallest_valid_k:
+#         K_values = K_values + [smallest_valid_k] * len(children)
+#     else:
+#         K_values = K_values + [smallest_valid_k_ancestor] * len(children)
+#
+#     for j in range(0, i):
+#         if P[i] == -1:
+#             all_values = ranked_data[attributes[j]].unique()
+#             for a in all_values:
+#             # for a in range(int(whole_data_frame[attributes[j]]['min']),
+#             #                int(whole_data_frame[attributes[j]]['max']) + 1):
+#                 s = P.copy()
+#                 s[j] = a
+#                 children.append(s)
+#                 K_values.append(k + 1)
+#     return children, K_values
 
-def GenerateDominatedGroup(P, whole_data_frame, attributes, smallest_valid_k, k, smallest_valid_k_ancestor, K_values):
+
+def GenerateChildren(P, whole_data_frame, ranked_data, attributes):
     children = []
     length = len(P)
     i = 0
@@ -104,61 +168,43 @@ def GenerateDominatedGroup(P, whole_data_frame, attributes, smallest_valid_k, k,
     if P[i] == -1:
         i -= 1
     for j in range(i + 1, length, 1):
-        for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max']) + 1):
+        all_values = ranked_data[attributes[j]].unique()
+        for a in all_values:
             s = P.copy()
             s[j] = a
             children.append(s)
-    if smallest_valid_k_ancestor > smallest_valid_k:
-        K_values = K_values + [smallest_valid_k] * len(children)
-    else:
-        K_values = K_values + [smallest_valid_k_ancestor] * len(children)
-
-    for j in range(0, i):
-        if P[i] == -1:
-            for a in range(int(whole_data_frame[attributes[j]]['min']),
-                           int(whole_data_frame[attributes[j]]['max']) + 1):
-                s = P.copy()
-                s[j] = a
-                children.append(s)
-                K_values.append(k + 1)
-    return children, K_values
-
-
-def GenerateChildren(P, whole_data_frame, attributes):
-    children = []
-    length = len(P)
-    i = 0
-    for i in range(length - 1, -1, -1):
-        if P[i] != -1:
-            break
-    if P[i] == -1:
-        i -= 1
-    for j in range(i + 1, length, 1):
-        for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max']) + 1):
-            s = P.copy()
-            s[j] = a
-            children.append(s)
+        # for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max']) + 1):
+        #     s = P.copy()
+        #     s[j] = a
+        #     children.append(s)
     return children
 
 
-def GenerateChildrenAndChildrenRelatedToNewTuple(P, whole_data_frame, attributes, new_tuple):
-    children = []
-    children_related_to_new_tuple = []
-    length = len(P)
-    i = 0
-    for i in range(length - 1, -1, -1):
-        if P[i] != -1:
-            break
-    if P[i] == -1:
-        i -= 1
-    for j in range(i + 1, length, 1):
-        for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max']) + 1):
-            s = P.copy()
-            s[j] = a
-            children.append(s)
-            if s[j] == new_tuple[j]:
-                children_related_to_new_tuple.append(s)
-    return children, children_related_to_new_tuple
+# def GenerateChildrenAndChildrenRelatedToNewTuple(P, whole_data_frame, ranked_data, attributes, new_tuple):
+#     children = []
+#     children_related_to_new_tuple = []
+#     length = len(P)
+#     i = 0
+#     for i in range(length - 1, -1, -1):
+#         if P[i] != -1:
+#             break
+#     if P[i] == -1:
+#         i -= 1
+#     for j in range(i + 1, length, 1):
+#         all_values = ranked_data[attributes[j]].unique()
+#         for a in all_values:
+#             s = P.copy()
+#             s[j] = a
+#             children.append(s)
+#             if s[j] == new_tuple[j]:
+#                 children_related_to_new_tuple.append(s)
+#         # for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max']) + 1):
+#         #     s = P.copy()
+#         #     s[j] = a
+#         #     children.append(s)
+#         #     if s[j] == new_tuple[j]:
+#         #         children_related_to_new_tuple.append(s)
+#     return children, children_related_to_new_tuple
 
 
 def num2string(pattern):
@@ -379,8 +425,8 @@ stop when a node is in nodes_dict
 def Check_k_with_non_related_patterns(nodes_dict, k_dict, smallest_valid_k_ancestor, p, st, whole_data_frame,
                                       attributes,
                                       patterns_size_whole, pc_whole_data, patterns_top_k, data_size, new_tuple,
-                                      result_set, dominated_by_result, num_att, k, Thc, alpha, k_max, k_min):
-    S = GenerateUnrelatedChildren(p, whole_data_frame, attributes, new_tuple)
+                                      result_set, dominated_by_result, num_att, k, Thc, alpha, k_max, k_min, ranked_data):
+    S = GenerateUnrelatedChildren(p, whole_data_frame, ranked_data, attributes, new_tuple)
     K_values = [smallest_valid_k_ancestor] * len(S)
     while len(S) > 0:
         p = S.pop(0)
@@ -411,7 +457,7 @@ def Check_k_with_non_related_patterns(nodes_dict, k_dict, smallest_valid_k_ances
             smallest_valid_k = k_min - 1
         if smallest_valid_k < smallest_valid_k_ancestor:
             Update_or_add_node_w_smaller_k(nodes_dict, k_dict, smallest_valid_k, p, st)
-            children = GenerateChildren(p, whole_data_frame, attributes)
+            children = GenerateChildren(p, whole_data_frame, ranked_data, attributes)
             S += children
             K_values += [smallest_valid_k] * len(children)
         else:
@@ -421,7 +467,7 @@ def Check_k_with_non_related_patterns(nodes_dict, k_dict, smallest_valid_k_ances
                 k_dict[old_k].remove(st)
                 if st in dominated_by_result:
                     dominated_by_result.remove(st)
-            children = GenerateChildren(p, whole_data_frame, attributes)
+            children = GenerateChildren(p, whole_data_frame, ranked_data, attributes)
             S += children
             K_values += [smallest_valid_k_ancestor] * len(children)
     return
@@ -514,8 +560,8 @@ def AddDominatedToLowerbound(pattern, pattern_treated_unfairly, dominated_by_res
 # p is added to result set or dominated set
 # we need to remove its children from dominated set
 def Remove_children_from_dominated(st, p, result_set, dominated_by_result, num_att, whole_data_frame, attributes,
-                                   patterns_size_whole, pc_whole_data, patterns_top_k, alpha, k, data_size, Thc):
-    S = GenerateChildren(p, whole_data_frame, attributes)
+                                   patterns_size_whole, pc_whole_data, patterns_top_k, alpha, k, data_size, Thc, ranked_data):
+    S = GenerateChildren(p, whole_data_frame, ranked_data, attributes)
     while len(S) > 0:
         p = S.pop(0)
         st = num2string(p)
@@ -528,7 +574,7 @@ def Remove_children_from_dominated(st, p, result_set, dominated_by_result, num_a
         if st in dominated_by_result:
             dominated_by_result.remove(st)
         else:
-            children = GenerateChildren(p, whole_data_frame, attributes)
+            children = GenerateChildren(p, whole_data_frame, ranked_data, attributes)
             S += children
 
 
@@ -578,7 +624,7 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
     num_patterns_visited = 0
     num_att = len(attributes)
     root = [-1] * num_att
-    S = GenerateChildren(root, whole_data_frame, attributes)
+    S = GenerateChildren(root, whole_data_frame, ranked_data, attributes)
     root_str = '|' * (num_att - 1)
     store_children = {root_str: S}
     pattern_treated_unfairly = []  # looking for the most general patterns
@@ -630,7 +676,7 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
                 if st in store_children:
                     children = store_children[st]
                 else:
-                    children = GenerateChildren(P, whole_data_frame, attributes)
+                    children = GenerateChildren(P, whole_data_frame, ranked_data, attributes)
                     store_children[st] = children
                 S = children + S
             # maintain sets for k values only for a node not in result set.
@@ -665,7 +711,7 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
                                                         num_patterns_visited,
                                                         patterns_size_whole, alpha, num_att,
                                                         data_size, nodes_dict, k_dict, attributes,
-                                                        result_set, dominated_by_result, store_children)
+                                                        result_set, dominated_by_result, store_children, ranked_data)
         to_added_to_dominated_by_result = set()
         to_remove_from_dominated_by_result = set()
         for d in dominated_by_result:
@@ -700,7 +746,7 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
                 Remove_children_from_dominated(st, string2num(st), result_set, dominated_by_result, num_att,
                                                whole_data_frame, attributes,
                                                patterns_size_whole, pc_whole_data, patterns_top_k, alpha, k, data_size,
-                                               Thc)
+                                               Thc, ranked_data)
         pattern_treated_unfairly.append(result_set)
     time1 = time.time()
     return pattern_treated_unfairly, num_patterns_visited, time1 - time0
@@ -719,7 +765,7 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
 # for upper bound, we only need to check whether it is above upper bound
 def Add_new_tuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_max, pc_whole_data,
                   num_patterns_visited, patterns_size_whole, alpha, num_att, data_size, nodes_dict, k_dict, attributes,
-                  result_set, dominated_by_result, store_children):
+                  result_set, dominated_by_result, store_children, ranked_data):
     ancestors = []
     root = [-1] * num_att
     S = GenerateChildrenRelatedToTuple(root, new_tuple)  # pattern with one deterministic attribute
@@ -785,7 +831,7 @@ def Add_new_tuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_
             Check_k_with_non_related_patterns(nodes_dict, k_dict, smaller_k, P, st, whole_data_frame, attributes,
                                               patterns_size_whole, pc_whole_data, patterns_top_k, data_size,
                                               new_tuple, result_set, dominated_by_result, num_att, k, Thc, alpha,
-                                              k_max, k_min)
+                                              k_max, k_min, ranked_data)
         else:  # k doesn't change
             if smallest_valid_k_ancestor > smallest_valid_k:
                 Update_or_add_node_w_smaller_k(nodes_dict, k_dict, smallest_valid_k, P, st)
@@ -804,41 +850,49 @@ def Add_new_tuple(new_tuple, Thc, whole_data_frame, patterns_top_k, k, k_min, k_
 
 
 
+
 ############################################ Example ##################################################
 
-# all_attributes = ['StatusExistingAcc', 'DurationMonth_C', 'CreditHistory', 'Purpose', 'CreditAmount_C',
-#                   'SavingsAccount', 'EmploymentLength', 'InstallmentRate', 'MarriedNSex', 'Debtors',
-#                   'ResidenceLength', 'Property', 'Age_C', 'InstallmentPlans', 'Housing',
-#                   'ExistingCredit', 'Job', 'NumPeopleLiable', 'Telephone', 'ForeignWorker']
+
 #
-# att_num = 10
-# selected_attributes = all_attributes[:att_num]
-# print("{} attributes".format(att_num))
+# all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C', 'Pstatus_C', 'Medu_C',
+#                       'Fedu_C', 'Mjob_C', 'Fjob_C', 'reason_C', 'guardian_C', 'traveltime_C', 'studytime_C',
+#                       'failures_C', 'schoolsup_C', 'famsup_C', 'paid_C', 'activities_C', 'nursery_C', 'higher_C',
+#                       'internet_C', 'romantic_C', 'famrel_C', 'freetime_C', 'goout_C', 'Dalc_C', 'Walc_C',
+#                       'health_C', 'absences_C', 'G1_C', 'G2_C', 'G3_C']
 #
-# original_data_file = r"../../InputData/GermanCredit/GermanCredit_ranked.csv"
-# ranked_data = pd.read_csv(original_data_file)
-# ranked_data = ranked_data[selected_attributes]
+# all_attributes_original = ['student\'s school', 'student\'s sex', 'student\'s age',
+#                   'student\'s home address type', 'family size', 'parent\'s cohabitation status',
+#                   'mother\'s education', 'father\'s education', 'mother\'s job',
+#                   'father\'s job', 'reason to choose this school', 'student\'s guardian',
+#                   'home to school travel time', 'weekly study time', 'number of past class failures',
+#                   'extra educational support', 'family educational support', 'extra paid classes within the course subject',
+#                   'extra-curricular activities', 'attended nursery school', 'wants to take higher education',
+#                   'Internet access at home', 'with a romantic relationship', 'quality of family relationships',
+#                   'free time after school', 'going out with friends', 'workday alcohol consumption',
+#                   'weekend alcohol consumption', 'current health status', 'number of school absences',
+#                   'first period grade', 'second period grade', 'final grade']
 #
-# time_limit = 10 * 60
-# k_min = 10
-# k_max = 80
-# Thc = 50
 #
-# List_k = list(range(k_min, k_max))
+# original_data_file = r"../../InputData/StudentDataset/ForRanking_1/student-mat_cat_ranked.csv"
+#
+# ranked_data = pd.read_csv(original_data_file, index_col=False)
+#
+# selected_attributes = all_attributes[:6]
 #
 # alpha = 0.8
-#
-# logger = logging.getLogger('MyLogger')
-#
-# pattern_treated_unfairly, num_patterns_visited, running_time = \
-#     GraphTraverse(ranked_data, selected_attributes, Thc,
-#                   alpha, k_min, k_max, time_limit)
-#
-# # print("num_patterns_visited = {}".format(num_patterns_visited))
-# # print("time = {} s".format(running_time))
-# print("patterns treated unfairly for each k\n")
-# for k in range(0, k_max - k_min):
-#     print("k = {}, num = {}, patterns =".format(k + k_min, len(pattern_treated_unfairly[k])),
-#           pattern_treated_unfairly[k])
-#
+# k = 49
+# k_min = k
+# k_max = k
+# thc = 50
+# time_limit = 5*60
+# result_prop_bounds, num_patterns_visited1_, t1_ \
+#             = GraphTraverse(
+#             ranked_data[selected_attributes], selected_attributes, thc,
+#             alpha,
+#             k_min, k_max, time_limit)
+# print(result_prop_bounds)
+# groups_prop_bounds = result_prop_bounds[0]
+# print(groups_prop_bounds)
+# print([string2list(s) for s in groups_prop_bounds])
 #
