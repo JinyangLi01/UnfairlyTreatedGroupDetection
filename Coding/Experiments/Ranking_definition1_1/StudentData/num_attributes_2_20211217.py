@@ -237,7 +237,7 @@ plt.xticks([5, 10, 15, 20, 25, 30, 33])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/num_att_time_urb_student.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/num_att_time_global_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -258,7 +258,7 @@ plt.xticks([5, 10, 15, 20, 25, 30, 33])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/num_att_calculations_urb_student.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/num_att_calculations_global_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

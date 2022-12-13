@@ -1,7 +1,7 @@
 
 
 import pandas as pd
-from Algorithms.DevelopingHistory import NaiveAlgRanking_5_20220510 as naivealg, NewAlgRanking_20_20220510 as newalg
+from Algorithms.DevelopingHistory import NaiveAlgRanking_4_20211213 as naivealg, NewAlgRanking_19_20211216 as newalg
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -58,9 +58,8 @@ all_attributes = ['school_C', 'sex_C', 'age_C', 'address_C', 'famsize_C',
 
 
 # 33 att in total
-# 30 att, ok
-# 33, over time
-selected_attributes = all_attributes[:30]
+# 32 ok
+selected_attributes = all_attributes[:33]
 
 Thc_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 k_min = 10
@@ -191,7 +190,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/thc_time_urb_student.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/thc_time_global_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -212,7 +211,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/thc_calculations_urb_student.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/StudentData/thc_calculations_global_student.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

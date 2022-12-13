@@ -191,7 +191,7 @@ plt.xticks([200, 400, 600, 800, 1000])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/range_k_time_urb_compas.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/range_k_time_global_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -210,7 +210,7 @@ plt.xticks([200, 400, 600, 800, 1000])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/range_k_calculations_urb_compas.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/range_k_calculations_global_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

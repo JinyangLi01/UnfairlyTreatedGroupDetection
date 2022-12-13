@@ -1,7 +1,7 @@
 
 
 import pandas as pd
-from Algorithms.DevelopingHistory import NaiveAlgRanking_5_20220510 as naivealg, NewAlgRanking_20_20220510 as newalg
+from Algorithms.DevelopingHistory import NaiveAlgRanking_4_20211213 as naivealg, NewAlgRanking_19_20211216 as newalg
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -188,7 +188,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/thc_time_urb_compas.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/thc_time_global_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -210,7 +210,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/thc_calculations_urb_compas.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/thc_calculations_global_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

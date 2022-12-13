@@ -251,7 +251,7 @@ plt.xticks([2, 4, 6, 8, 10, 12, 14, 16])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/num_att_time_urb_compas.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/num_att_time_global_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -270,7 +270,7 @@ plt.xticks([2, 4, 6, 8, 10, 12, 14, 16])
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/num_att_calculations_urb_compas.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/CompasData/num_att_calculations_global_compas.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

@@ -154,7 +154,7 @@ for Thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition1_1/GermanData/thc_urb_german.txt'
+output_path = r'../../../../OutputData/Ranking_definition1_1/GermanData/thc_global_german.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -188,7 +188,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/GermanData/thc_time_urb_german.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/GermanData/thc_time_global_german.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -209,7 +209,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/GermanData/thc_calculations_urb_german.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/GermanData/thc_calculations_global_german.png",
             bbox_inches='tight')
 plt.show()
 plt.close()

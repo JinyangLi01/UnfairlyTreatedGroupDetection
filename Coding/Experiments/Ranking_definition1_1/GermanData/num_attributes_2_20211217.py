@@ -191,7 +191,7 @@ for number_attributes in range(num_att_max_naive, num_att_max):
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition1_1/GermanData/num_att_urb_german.txt'
+output_path = r'../../../../OutputData/Ranking_definition1_1/GermanData/num_att_global_german.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -236,7 +236,7 @@ plt.ylabel('Execution time (s)')
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/GermanData/num_att_time_urb_german.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/GermanData/num_att_time_global_german.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
@@ -256,7 +256,7 @@ ax.yaxis.set_major_formatter(FuncFormatter(thousands_formatter))
 plt.legend(loc='best')
 plt.grid(True)
 fig.tight_layout()
-plt.savefig("../../../../OutputData/Ranking_definition1_1/GermanData/num_att_calculations_urb_german.png",
+plt.savefig("../../../../OutputData/Ranking_definition1_1/GermanData/num_att_calculations_global_german.png",
             bbox_inches='tight')
 plt.show()
 plt.close()
