@@ -1,4 +1,8 @@
-
+"""
+full copy from NaiveAlgRanking_definition2_5
+only difference:
+don't store size of nodes
+"""
 
 import time
 import pandas as pd
