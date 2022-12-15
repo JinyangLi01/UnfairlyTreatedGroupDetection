@@ -218,8 +218,7 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
     num_att = len(attributes)
     root_str = '|' * (num_att - 1)
     root = [-1] * (len(attributes))
-    S = GenerateChildren(root, whole_data_frame, ranked_data, attributes)
-    store_children = {root_str: S}
+    S_start = GenerateChildren(root, whole_data_frame, ranked_data, attributes)
     for k in range(k_min, k_max):
         if overtime_flag:
             print("naive overtime, exiting the loop of k")
@@ -227,7 +226,7 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
         result_set = set()
         patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_kmin.parse_data()
-        S = store_children[root_str].copy()
+        S = S_start
         # lower bound
         while len(S) > 0:
             if time.time() - time0 > time_limit:
@@ -245,11 +244,7 @@ def NaiveAlg(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit):
             if num_top_k < lowerbound:
                 CheckDominationAndAdd(st, result_set, num_att)
             else:
-                if st in store_children:
-                    children = store_children[st]
-                else:
-                    children = GenerateChildren(P, whole_data_frame, ranked_data, attributes)
-                    store_children[st] = children
+                children = GenerateChildren(P, whole_data_frame, ranked_data, attributes)
                 S = children + S
                 continue
         pattern_treated_unfairly.append(result_set)
