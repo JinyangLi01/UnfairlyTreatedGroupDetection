@@ -108,13 +108,13 @@ def GenerateChildren(P, whole_data_frame, ranked_data, attributes):
     if P[i] == -1:
         i -= 1
     for j in range(i+1, length, 1):
-        for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max'])+1):
+        all_values = ranked_data[attributes[j]].unique()
+        for a in all_values:
+        # for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max'])+1):
             s = P.copy()
             s[j] = a
-            # print(ranked_data.loc[3, attributes[j]], type(ranked_data.loc[3, attributes[j]]))
-            if not isinstance(ranked_data.loc[3, attributes[j]], (int, np.integer)):
-            #if type(whole_data_frame[attributes[j]]['min']) is not int:
-                s[j] = float(a)
+            # if not isinstance(ranked_data.loc[3, attributes[j]], (int, np.integer)):
+            #     s[j] = float(a)
             children.append(s)
     return children
 
@@ -174,7 +174,6 @@ def NaiveAlg(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_limit
         S = GenerateChildren(root, whole_data_frame, ranked_data, attributes)
         patterns_top_kmin = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_kmin.parse_data()
-
         # lower bound
         while len(S) > 0:
             if time.time() - time0 > time_limit:
