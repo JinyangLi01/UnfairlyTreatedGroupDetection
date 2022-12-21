@@ -1,0 +1,7 @@
+size threshold = thc = 200
+
+k_min = 10
+k_max = 50
+
+alpha = 0.8
+
