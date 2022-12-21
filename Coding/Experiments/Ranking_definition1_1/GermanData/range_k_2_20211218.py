@@ -161,7 +161,7 @@ for range_k in range_k_list:
     execution_time2.append(t2)
     num_patterns_visited2.append(num_patterns_visited2_thc)
 
-output_path = r'../../../../OutputData/Ranking_definition1_1/GermanData/range_k.txt'
+output_path = r'../../../../OutputData/Ranking_definition1_1_thc50/GermanData/range_k.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -178,11 +178,24 @@ for n in range(len(range_k_list)):
     output_file.write(
         'k={} {} \n {}\n'.format(range_k_list[n], num_patterns_found_lowerbound[n], patterns_found_lowerbound[n]))
 
-# output_file.write("\n\npatterns below lowerbound\n")
-# for n in range(len(range_k_list)):
-#     output_file.write('k={} {} \n {}\n'.format(range_k_list[n], len(pattern_treated_unfairly_lowerbound[n]),
-#                                                pattern_treated_unfairly_lowerbound[n]))
-#
+output_file.write("\n\npatterns below lowerbound\n")
+for n in range(len(range_k_list)):
+    output_file.write("\nfor k={} to {}\n".format(n, k_min, k_min + range_k_list[n]))
+    for gp in patterns_found_lowerbound[n]:
+        output_file.write("num={} {}\n".format(len(gp), gp))
+
+
+output_path_outputsize = r'../../../../OutputData/Ranking_definition1_1_thc50/GermanData/range_k_outputsize.txt'
+output_file_outputsize = open(output_path_outputsize, "w")
+
+
+output_file_outputsize.write("\n\nnumber of patterns found lowerbound\n")
+for n in range(len(range_k_list)):
+    output_file_outputsize.write("\nfor k={} to {}\n".format(n, k_min, k_min + range_k_list[n]))
+    for gp in patterns_found_lowerbound[n]:
+        output_file_outputsize.write("{} ".format(len(gp)))
+
+
 
 
 fig, ax = plt.subplots(1, 1, figsize=f_size)

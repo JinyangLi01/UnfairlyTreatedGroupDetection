@@ -154,7 +154,7 @@ for datasize in data_sizes:
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition1_1/CompasData/data_size.txt'
+output_path = r'../../../../OutputData/Ranking_definition1_1_thc50/CompasData/data_size.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 

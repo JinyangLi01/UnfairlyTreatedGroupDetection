@@ -203,7 +203,7 @@ for number_attributes in range(num_att_max_naive, num_att_max):
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition1_1/CompasData/num_att.txt'
+output_path = r'../../../../OutputData/Ranking_definition1_1_thc50/CompasData/num_att.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -223,10 +223,24 @@ for n in range(num_att_max_naive, num_att_max):
 
 
 
-output_file.write("\n\nnumber of patterns found lowebound\n")
+output_file.write("\n\nnumber of patterns found lowerbound\n")
 for n in range(num_att_min, num_att_max):
-    output_file.write('{} {} \n {}\n'.format(n, num_patterns_found_lowerbound[ n -num_att_min],
-                                             patterns_found_lowerbound[ n -num_att_min]))
+    output_file.write("\nnum att = {}, for k={} to {}\n".format(n, k_min, k_max))
+    for gp in patterns_found_lowerbound[n - num_att_min]:
+        output_file.write("num={} {}\n".format(len(gp), gp))
+
+
+output_path_outputsize = r'../../../../OutputData/Ranking_definition1_1_thc50/CompasData/num_att_outputsize.txt'
+output_file_outputsize = open(output_path_outputsize, "w")
+
+
+output_file_outputsize.write("\n\nnumber of patterns found lowebound\n")
+for n in range(num_att_min, num_att_max):
+    output_file_outputsize.write("\nnum att = {}, for k={} to {}\n".format(n, k_min, k_max))
+    for gp in patterns_found_lowerbound[n - num_att_min]:
+        output_file_outputsize.write("{} ".format(len(gp)))
+
+
 
 
 

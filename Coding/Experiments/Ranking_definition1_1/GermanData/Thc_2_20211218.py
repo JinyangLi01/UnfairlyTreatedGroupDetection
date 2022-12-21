@@ -154,7 +154,7 @@ for Thc in Thc_list:
 
 
 
-output_path = r'../../../../OutputData/Ranking_definition1_1/GermanData/thc_global_german.txt'
+output_path = r'../../../../OutputData/Ranking_definition1_1_thc50/GermanData/thc_global_german.txt'
 output_file = open(output_path, "w")
 num_lines = len(execution_time1)
 
@@ -168,9 +168,24 @@ for n in range(len(Thc_list)):
     output_file.write('{} {} {}\n'.format(Thc_list[n], num_patterns_visited1[n], num_patterns_visited2[n]))
 
 
+
 output_file.write("\n\nnumber of patterns found, lowerbound\n")
 for n in range(len(Thc_list)):
     output_file.write('{} {} \n {}\n'.format(Thc_list[n], num_patterns_found_lowerbound[n], patterns_found_lowerbound[n]))
+    output_file.write("\nfor k={} to {}, size threshold={}\n".format(n, k_min, k_max, Thc_list[n]))
+    for gp in patterns_found_lowerbound[n]:
+        output_file.write("num={} {}\n".format(len(gp), gp))
+
+
+output_path_outputsize = r'../../../../OutputData/Ranking_definition1_1_thc50/GermanData/thc_outputsize.txt'
+output_file_outputsize = open(output_path_outputsize, "w")
+
+
+output_file_outputsize.write("\n\nnumber of patterns found lowerbound\n")
+for n in range(len(Thc_list)):
+    output_file_outputsize.write("\nsize threshold = {}\n".format(Thc_list[n]))
+    for gp in patterns_found_lowerbound[n]:
+        output_file_outputsize.write("{} ".format(len(gp)))
 
 
 
