@@ -1,0 +1,9 @@
+size threshold = thc = 200
+
+k_min = 10
+k_max = 50
+
+Lowerbounds = [10] * 10 + [20] * 10 + [30] * 10 + [40] * 10
+
+
+
