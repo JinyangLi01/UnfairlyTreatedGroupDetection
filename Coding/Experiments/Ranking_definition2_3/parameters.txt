@@ -1,0 +1,8 @@
+size threshold = thc = 50
+
+k_min = 10
+k_max = 50
+
+alpha = 0.8
+
+output the number of patterns
