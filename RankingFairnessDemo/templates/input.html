@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dataset Selection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 1em;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+        select, button {
+            width: 100%;
+            height: 2em;
+            font-size: 1em;
+        }
+        table {
+            width: 100%;
+            margin-top: 1em;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.5em;
+            border: 1px solid #ccc;
+        }
+        .preview-container {
+            max-height: 250px;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Dataset Selection</h1>
+    <div class="form-group">
+        <label for="dataset">Select Dataset:</label>
+        <select id="dataset">
+            <option value="">-- Select --</option>
+            <option value="student">Student Dataset</option>
+            <!-- Add more options here if needed -->
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="kmin">Set k_min:</label>
+        <input type="number" id="kmin" name="kmin" value="10" min="0">
+    </div>
+
+    <div class="form-group">
+        <label for="kmax">Set k_max:</label>
+        <input type="number" id="kmax" name="kmax" value="15" min="0">
+    </div>
+
+    <div class="form-group">
+        <label for="size-threshold">Set Size Threshold:</label>
+        <input type="number" id="size-threshold" min="1" step="1" value="50">
+    </div>
+
+    <div class="form-group">
+        <label for="alpha">Set Alpha:</label>
+        <input type="number" id="alpha" min="0" max="1" step="0.01" value="0.80">
+    </div>
+
+    <div class="preview-container">
+        <table id="preview-table">
+            <!-- Table content will be dynamically populated using JavaScript -->
+        </table>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var datasetSelect = document.getElementById('dataset');
+        var previewTable = document.getElementById('preview-table');
+
+        datasetSelect.addEventListener('change', function() {
+            var selectedDataset = datasetSelect.value;
+
+            var kmin = document.getElementById('kmin').value;
+            var kmax = document.getElementById('kmax').value;
+            var sizeThresholdInput = document.getElementById('size-threshold');
+            var alphaInput = document.getElementById('alpha');
+
+            if (selectedDataset === '') {
+                previewTable.innerHTML = '';  // Clear table if no dataset is selected
+            } else {
+                // Fetch dataset from Flask API
+                fetch('/api/datasets/' + selectedDataset)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Generate table rows dynamically
+                        var columnOrder = data.column_order;
+                        var rowData = data.data;
+
+                        var html = '<thead><tr>';
+                        columnOrder.forEach(function(column) {
+                            html += '<th>' + column + '</th>';
+                        });
+                        html += '</tr></thead><tbody>';
+
+                        for (var i = 0; i < rowData.length; i++) {
+                            html += '<tr>';
+                            columnOrder.forEach(function(column) {
+                                html += '<td>' + rowData[i][column] + '</td>';
+                            });
+                            html += '</tr>';
+                        }
+
+                        html += '</tbody>';
+
+                        previewTable.innerHTML = html;
+                    })
+                    .catch(error => console.error(error));
+            }
+        });
+    });
+</script>
+</body>
+</html>
