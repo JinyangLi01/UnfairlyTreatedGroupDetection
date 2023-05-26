@@ -1,8 +1,4 @@
 """
-Naive algorithm for group detection in ranking
-fairness definition: the number of a group members in top-k should be proportional to the group size, k_min <= k
-We don't include k_max here !
-
 Expected output: most general patterns treated unfairly, w.r.t. lower bound
 Difference from definition 1: in definition 1, we find most specific patterns for upper bound,
 most general for lower bound, and all patterns have same bounds.
@@ -148,39 +144,6 @@ def GenerateUnrelatedChildren(P, whole_data_frame, ranked_data, attributes, new_
                 children.append(s)
     return children
 
-#
-# def GenerateDominatedGroup(P, whole_data_frame, ranked_data, attributes, smallest_valid_k, k, smallest_valid_k_ancestor, K_values):
-#     children = []
-#     length = len(P)
-#     i = 0
-#     for i in range(length - 1, -1, -1):
-#         if P[i] != -1:
-#             break
-#     if P[i] == -1:
-#         i -= 1
-#     for j in range(i + 1, length, 1):
-#         all_values = ranked_data[attributes[j]].unique()
-#         for a in all_values:
-#         # for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max']) + 1):
-#             s = P.copy()
-#             s[j] = a
-#             children.append(s)
-#     if smallest_valid_k_ancestor > smallest_valid_k:
-#         K_values = K_values + [smallest_valid_k] * len(children)
-#     else:
-#         K_values = K_values + [smallest_valid_k_ancestor] * len(children)
-#
-#     for j in range(0, i):
-#         if P[i] == -1:
-#             all_values = ranked_data[attributes[j]].unique()
-#             for a in all_values:
-#             # for a in range(int(whole_data_frame[attributes[j]]['min']),
-#             #                int(whole_data_frame[attributes[j]]['max']) + 1):
-#                 s = P.copy()
-#                 s[j] = a
-#                 children.append(s)
-#                 K_values.append(k + 1)
-#     return children, K_values
 
 
 def GenerateChildren(P, whole_data_frame, ranked_data, attributes):
@@ -204,32 +167,6 @@ def GenerateChildren(P, whole_data_frame, ranked_data, attributes):
         #     children.append(s)
     return children
 
-
-# def GenerateChildrenAndChildrenRelatedToNewTuple(P, whole_data_frame, ranked_data, attributes, new_tuple):
-#     children = []
-#     children_related_to_new_tuple = []
-#     length = len(P)
-#     i = 0
-#     for i in range(length - 1, -1, -1):
-#         if P[i] != -1:
-#             break
-#     if P[i] == -1:
-#         i -= 1
-#     for j in range(i + 1, length, 1):
-#         all_values = ranked_data[attributes[j]].unique()
-#         for a in all_values:
-#             s = P.copy()
-#             s[j] = a
-#             children.append(s)
-#             if s[j] == new_tuple[j]:
-#                 children_related_to_new_tuple.append(s)
-#         # for a in range(int(whole_data_frame[attributes[j]]['min']), int(whole_data_frame[attributes[j]]['max']) + 1):
-#         #     s = P.copy()
-#         #     s[j] = a
-#         #     children.append(s)
-#         #     if s[j] == new_tuple[j]:
-#         #         children_related_to_new_tuple.append(s)
-#     return children, children_related_to_new_tuple
 
 
 def num2string(pattern):
@@ -535,14 +472,6 @@ def A_is_ancestor_of_B(a, b):
     return True
 
 
-# def PatternInSet(p, set):
-#     if isinstance(p, str):
-#         p = string2num(p)
-#     for q in set:
-#         if PatternEqual(p, q):
-#             return True
-#     return False
-
 
 def AddDominatedToLowerbound(pattern, pattern_treated_unfairly, dominated_by_result):
     to_remove = []
@@ -559,28 +488,6 @@ def AddDominatedToLowerbound(pattern, pattern_treated_unfairly, dominated_by_res
     return True
 
 
-#
-# # return whether it is added or not, patterns are stored as list
-# def CheckDominationAndAddForLowerbound(pattern, pattern_treated_unfairly, dominated_by_result):
-#     to_remove = []
-#     for p in pattern_treated_unfairly:
-#         # if PatternEqual(p, pattern):
-#         #     return
-#         if P1DominatedByP2(pattern, p):
-#             if pattern not in dominated_by_result:
-#                 dominated_by_result.append(pattern)
-#             return False
-#         elif P1DominatedByP2(p, pattern):
-#             to_remove.append(p)
-#             if p not in dominated_by_result:
-#                 dominated_by_result.append(p)
-#     for p in to_remove:
-#         pattern_treated_unfairly.remove(p)
-#     if pattern in dominated_by_result:
-#         dominated_by_result.remove(pattern)
-#     pattern_treated_unfairly.append(pattern)
-#     return True
-#
 
 # p is added to result set or dominated set
 # we need to remove its children from dominated set
@@ -658,6 +565,11 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
     patterns_size_whole = dict()
     k_dict = dict()
     dominated_by_result = set()
+    """
+       to get pattern in top k for the purpose of demo:
+       """
+    patterns_size_topk = dict()
+    patterns_size_topk[k_min] = patterns_top_kmin
 
     # this dict stores all patterns, indexed by num2string(p)
     nodes_dict = SortedDict()
@@ -724,6 +636,7 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
         time1 = time.time()
         patterns_top_k = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_k.parse_data()
+        patterns_size_topk[k] = patterns_top_k
         new_tuple = ranked_data.iloc[[k - 1]].values.flatten().tolist()
         # print("k={}, new tuple = {}".format(k, new_tuple))
         # print("dominated_by_result: ", dominated_by_result)
@@ -774,7 +687,12 @@ def GraphTraverse(ranked_data, attributes, Thc, alpha, k_min, k_max, time_limit)
                                                Thc, ranked_data)
         pattern_treated_unfairly.append(result_set)
     time1 = time.time()
-    return pattern_treated_unfairly, num_patterns_visited, time1 - time0
+    """
+    to get pattern in top k for the purpose of demo:
+    when the string format of a pattern is st, then size of st in top k is 
+    size = patterns_size_topk[k].pattern_count(st)
+    """
+    return pattern_treated_unfairly, num_patterns_visited, time1 - time0, pc_whole_data, patterns_size_topk
 
 
 # search top-down to go over all patterns related to new_tuple

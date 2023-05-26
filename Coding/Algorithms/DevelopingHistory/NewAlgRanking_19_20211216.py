@@ -510,6 +510,11 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
     # 3. no children
     patterns_dominated_by_result = []  # doesn't include patterns in result set
     # patterns_children_small_size = []
+    """
+    to get pattern in top k for the purpose of demo:
+    """
+    patterns_size_topk = dict()
+    patterns_size_topk[k_min] = patterns_top_kmin
 
     # DFS
     # this part is the main time consumption
@@ -547,6 +552,7 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
         result_set_lowerbound = result_set_lowerbound.copy()
         patterns_top_k = pattern_count.PatternCounter(ranked_data[:k], encoded=False)
         patterns_top_k.parse_data()
+        patterns_size_topk[k] = patterns_top_k
         new_tuple = ranked_data.iloc[[k - 1]].values.flatten().tolist()
         # print("k={}, new tuple = {}".format(k, new_tuple))
 
@@ -649,7 +655,12 @@ def GraphTraverse(ranked_data, attributes, Thc, Lowerbounds, k_min, k_max, time_
                 patterns_dominated_by_result.append(st)
             pattern_treated_unfairly_lowerbound.append(result_set_lowerbound)
     time1 = time.time()
-    return pattern_treated_unfairly_lowerbound, num_patterns_visited, time1 - time0
+    """
+    to get pattern in top k for the purpose of demo:
+    when the string format of a pattern is st, then size of st in top k is 
+    size = patterns_size_topk[k].pattern_count(st)
+    """
+    return pattern_treated_unfairly_lowerbound, num_patterns_visited, time1 - time0, pc_whole_data, patterns_size_topk
 
 
 # go down to p's all descendants
